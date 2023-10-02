@@ -6,22 +6,16 @@ const cookieParser	= require('cookie-parser')
 const mongoose		= require('mongoose')
 const path			= require('path')
 const corsOptions	= require('./config/cors')
-// const connectDB		= require('./config/database')
+const connectDB		= require('./config/database')
 const credentials	= require('./middleware/credentials')
 const errorHandlerMiddleware	= require('./middleware/error_handler')
 const authenticationMiddleware	= require('./middleware/authentication')
 
-const app	= express()
-const PORT	= process.env.PORT || 10000;
+const app = express()
+const PORT = process.env.PORT || 10000;
 
 // Execute Connection
-// connectDB()
-mongoose.connect(process.env.DATABASE_URI,{useNewUrlParser:true})
-.then(()=>{
-	console.log("MongoDB is Connected..")
-}).catch(err=>{
-	console.log(err.message);
-})
+connectDB()
 
 // Allow Credentials
 app.use(credentials)
@@ -74,7 +68,7 @@ app.all('*', (req, res) => {
 	}
 })
 
-// mongoose.connection.once('open', () => {
-// 	console.log('DB connected')
-// })
-app.listen(PORT, () => { console.log(`Listening on port ${PORT}`) })
+mongoose.connection.once('open', () => {
+	console.log('DB connected')
+	app.listen(PORT, () => { console.log(`Listening on port ${PORT}`) })
+})
