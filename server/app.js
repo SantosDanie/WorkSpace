@@ -68,7 +68,7 @@ app.all('*', (req, res) => {
 	}
 })
 
-mongoose.connection.once('open', ()=>{
+mongoose.connection.once('open', () => {
 	console.log('DB connected')
 	app.listen(PORT, () => { console.log(`Listening on port ${PORT}`) })
 })
