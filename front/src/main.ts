@@ -1,0 +1,57 @@
+import { createApp } from 'vue'
+import { createPinia } from 'pinia'
+import { OhVueIcon, addIcons } from "oh-vue-icons"
+import {
+	MdDragindicator,
+	HiTrash,
+	HiPlus,
+	HiSolidSearch,
+	BiTextLeft,
+	BiTypeH1,
+	BiTypeH2,
+	BiTypeH3,
+	BiCardHeading,
+	FaHeading,
+	OiHeading,
+	BiLayoutThreeColumns,
+	BiHr,
+	BiQuote,
+	MdImageOutlined
+} from "oh-vue-icons/icons"
+import { authentication } from '@/plugins/authentication'
+import App from './App.vue'
+import router from './router'
+import './index.css'
+
+addIcons(
+	MdDragindicator,
+	HiTrash,
+	HiPlus,
+	HiSolidSearch,
+	BiTextLeft,
+	BiTypeH1,
+	BiTypeH2,
+	BiTypeH3,
+	BiCardHeading,
+	FaHeading,
+	OiHeading,
+	BiLayoutThreeColumns,
+	BiHr,
+	BiQuote,
+	MdImageOutlined
+)
+
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
+
+import './scss/styles.scss';
+import './index.css';
+
+const app = createApp(App)
+app.use(createPinia())
+authentication.install()
+.then(() => {
+	app.use(router)
+	app.component("v-icon", OhVueIcon)
+	app.mount('#app')
+})

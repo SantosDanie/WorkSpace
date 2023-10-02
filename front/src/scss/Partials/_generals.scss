@@ -1,0 +1,41 @@
+* {
+	font-family: $primaryFont;
+	padding: 0;
+	margin: 0;
+	box-sizing: border-box;
+}
+
+h1, .h1,
+h2, .h2,
+h3, .h3,
+h4, .h4,
+h5, .h5,
+h6, .h6 { 
+	font-family: $secondaryFont;
+	color: $bg-text;
+}
+
+p, .p 	{
+	color: $bg-text;
+	letter-spacing: 0.3px;
+	font-family: $primaryFont;
+}
+
+body {
+	background-color: rgba(gray, 0.1);
+	min-height: 100vh;
+}
+
+img { max-width: 100%; }
+
+.link-hover {
+	transition: 300ms;
+	&:hover {
+		text-decoration: none;
+		background-color: rgba(#000, 0.1);
+	}
+}
+
+.cursor-pointer {
+	cursor: pointer;
+}

@@ -1,0 +1,33 @@
+@mixin resizing($property, $max, $min, $max-width: 1140, $smaller: 321) {
+	@if $property == pt { 		padding-top : 		calc(#{$min}px + (#{$max} - #{$min}) * ((100vw - #{$smaller}px) / (#{$max-width} - #{$smaller}))); }
+	@else if $property == pr {  padding-right : 	calc(#{$min}px + (#{$max} - #{$min}) * ((100vw - #{$smaller}px) / (#{$max-width} - #{$smaller}))); }
+	@else if $property == pb {  padding-bottom : 	calc(#{$min}px + (#{$max} - #{$min}) * ((100vw - #{$smaller}px) / (#{$max-width} - #{$smaller})));}
+	@else if $property == pl {  padding-left : 		calc(#{$min}px + (#{$max} - #{$min}) * ((100vw - #{$smaller}px) / (#{$max-width} - #{$smaller}))); }
+
+	@else if $property == py { 
+		padding-top : 		calc(#{$min}px + (#{$max} - #{$min}) * ((100vw - #{$smaller}px) / (#{$max-width} - #{$smaller})));
+		padding-bottom : 	calc(#{$min}px + (#{$max} - #{$min}) * ((100vw - #{$smaller}px) / (#{$max-width} - #{$smaller})));
+	}
+	@else if $property == px {
+		padding-left : 		calc(#{$min}px + (#{$max} - #{$min}) * ((100vw - #{$smaller}px) / (#{$max-width} - #{$smaller})));
+		padding-right : 	calc(#{$min}px + (#{$max} - #{$min}) * ((100vw - #{$smaller}px) / (#{$max-width} - #{$smaller})));
+	}
+	
+	@else if $property == mt {	margin-top : 	calc(#{$min}px + (#{$max} - #{$min}) * ((100vw - #{$smaller}px) / (#{$max-width} - #{$smaller}))); }
+	@else if $property == mr { 	margin-right : 	calc(#{$min}px + (#{$max} - #{$min}) * ((100vw - #{$smaller}px) / (#{$max-width} - #{$smaller}))); }
+	@else if $property == mb {	margin-bottom : calc(#{$min}px + (#{$max} - #{$min}) * ((100vw - #{$smaller}px) / (#{$max-width} - #{$smaller}))); }
+	@else if $property == ml { 	margin-left : 	calc(#{$min}px + (#{$max} - #{$min}) * ((100vw - #{$smaller}px) / (#{$max-width} - #{$smaller}))); }
+	@else if $property == fsz{ font-size : 		calc(#{$min}px + (#{$max} - #{$min}) * ((100vw - #{$smaller}px) / (#{$max-width} - #{$smaller}))); }
+	@else if $property == lh { line-height : 	calc(#{$min}px + (#{$max} - #{$min}) * ((100vw - #{$smaller}px) / (#{$max-width} - #{$smaller}))); }
+	@else if $property == ls { letter-spacing : calc(#{$min}px + (#{$max} - #{$min}) * ((100vw - #{$smaller}px) / (#{$max-width} - #{$smaller}))); }
+	@else if $property == w  { width : 			calc(#{$min}px + (#{$max} - #{$min}) * ((100vw - #{$smaller}px) / (#{$max-width} - #{$smaller}))); }
+	@else if $property == h  { height : 		calc(#{$min}px + (#{$max} - #{$min}) * ((100vw - #{$smaller}px) / (#{$max-width} - #{$smaller}))); }
+	@else if $property == maxw { max-width : 	calc(#{$min}px + (#{$max} - #{$min}) * ((100vw - #{$smaller}px) / (#{$max-width} - #{$smaller}))); }
+	@else if $property == maxh { max-height : 	calc(#{$min}px + (#{$max} - #{$min}) * ((100vw - #{$smaller}px) / (#{$max-width} - #{$smaller}))); }
+	@else if $property == minw { min-width : 	calc(#{$min}px + (#{$max} - #{$min}) * ((100vw - #{$smaller}px) / (#{$max-width} - #{$smaller}))); }
+	@else if $property == minh { min-height : 	calc(#{$min}px + (#{$max} - #{$min}) * ((100vw - #{$smaller}px) / (#{$max-width} - #{$smaller}))); }
+	@else if $property == top  {   top : 		calc(#{$min}px + (#{$max} - #{$min}) * ((100vw - #{$smaller}px) / (#{$max-width} - #{$smaller}))); }
+	@else if $property == right  { right : 		calc(#{$min}px + (#{$max} - #{$min}) * ((100vw - #{$smaller}px) / (#{$max-width} - #{$smaller}))); }
+	@else if $property == bottom { bottom : 	calc(#{$min}px + (#{$max} - #{$min}) * ((100vw - #{$smaller}px) / (#{$max-width} - #{$smaller}))); }
+	@else if $property == left   { left : 		calc(#{$min}px + (#{$max} - #{$min}) * ((100vw - #{$smaller}px) / (#{$max-width} - #{$smaller}))); }
+}
