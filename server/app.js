@@ -12,7 +12,7 @@ const errorHandlerMiddleware	= require('./middleware/error_handler')
 const authenticationMiddleware	= require('./middleware/authentication')
 
 const app = express()
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8800;
 
 // Execute Connection
 connectDB()
