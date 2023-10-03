@@ -9,7 +9,6 @@ import Create			from '@/pages/WorkSpace/Create.vue'
 import Login 			from '@/pages/Logs/Login.vue'
 import Register 		from '@/pages/Logs/Register.vue'
 import ForgotPass 		from '@/pages/Logs/forgot-pass.vue'
-import Page				from '@/pages/Page.vue'
 
 // Routes
 const router = createRouter({
@@ -20,12 +19,6 @@ const router = createRouter({
 			name: 'home',
 			component: Home,
 			meta: { requiresAuth: true }
-		},
-		{
-			path: '/page/',
-			name: 'page',
-			component: Page,
-			// meta: { requiresAuth: true }
 		},
 		{
 			path: '/settings/',
@@ -75,15 +68,15 @@ const router = createRouter({
 })
 
 router.beforeResolve(async (to, from, next)=>{
-	// const authStore = useAuthStore()
+	const authStore = useAuthStore()
 
-	// if (to.meta.requiresAuth && !authStore.isAuthenticated) {   
-	// 	return next({name: 'login', query: {redirect: to.fullPath}})
-	// } else if(to.meta.requiresGuest && authStore.isAuthenticated) {
-	// 	return next({name: 'home'})
-	// } else{
+	if (to.meta.requiresAuth && !authStore.isAuthenticated) {   
+		return next({name: 'login', query: {redirect: to.fullPath}})
+	} else if(to.meta.requiresGuest && authStore.isAuthenticated) {
+		return next({name: 'home'})
+	} else{
 		return next()
-	// }
+	}
 })
 
 export default router
