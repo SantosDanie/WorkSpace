@@ -45,9 +45,6 @@ app.use('/static', express.static(path.join(__dirname, 'public')))
 app.use(errorHandlerMiddleware)
 
 // Routes
-// app.use('/api', (req, res) => {
-// 	res.json({'message': 'Welcome to this app'});
-// });
 
 // Auth
 app.use('/api/auth', require('./routes/api/auth'))
