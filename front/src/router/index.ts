@@ -9,6 +9,8 @@ import Create			from '@/pages/WorkSpace/Create.vue'
 import Login 			from '@/pages/Logs/Login.vue'
 import Register 		from '@/pages/Logs/Register.vue'
 import ForgotPass 		from '@/pages/Logs/forgot-pass.vue'
+import Page				from '@/pages/Projects/index.vue'
+import PageCreate		from '@/pages/Projects/Create.vue'
 
 // Routes
 const router = createRouter({
@@ -63,7 +65,20 @@ const router = createRouter({
 			name: 'create',
 			component: Create,
 			meta: { requiresAuth: true }
-		}
+		},
+		// Page
+		{
+			path: "/page/",
+			name: 'page',
+			component: Page,
+			meta: { requiresAuth: true }
+		},
+		{
+			path: "/page/create",
+			name: 'PageCreate',
+			component: PageCreate,
+			meta: { requiresAuth: true }
+		},
 	]
 })
 

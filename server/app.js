@@ -49,6 +49,9 @@ app.use(errorHandlerMiddleware)
 // Auth
 app.use('/api/auth', require('./routes/api/auth'))
 
+// Project
+app.use('/api/project', require('./routes/api/project'))
+
 // Pages
 app.use('/api/page', require('./routes/api/pages'))
 

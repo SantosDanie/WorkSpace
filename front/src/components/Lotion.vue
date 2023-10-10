@@ -1,5 +1,5 @@
 <template>
-	<div class="lotion w-100 mx-auto my-24 font-sans text-base" v-if="props.page" ref="editor"><!-- /@paste="onPaste($event)" -->
+	<div class="lotion w-100 mx-auto my-5 font-sans text-base" v-if="props.page" ref="editor">
 		<h1 id="title" ref="title" :contenteditable="!props.readonly" spellcheck="false" data-ph="Untitled"
 			@keydown.enter.prevent="splitTitle"
 			@keydown.down="blockElements[0]?.moveToFirstLine(); scrollIntoView();"
@@ -8,8 +8,7 @@
 			:class="props.page.name ? '' : 'empty'">
 			{{ props.page.name || '' }}
 		</h1>
-		<draggable id="blocks" tag="div" :list="props.page.blocks"  handle=".handle"
-			v-bind="dragOptions" class="-ml-24 space-y-2 pb-4">
+		<draggable id="blocks" tag="div" :list="props.page.blocks" handle=".handle" v-bind="dragOptions" class="space-y-2 pb-4 ml-editor">
 			<transition-group type="transition">
 				<BlockComponent :block="block" v-for="block, i in props.page.blocks" :key="i" :id="'block-'+block.id"
 					:blockTypes="props.blockTypes"
@@ -117,18 +116,17 @@
 		// If cursor is between Submit button and last block, insert block there 
 		const lastBlockRect = blocks?.lastElementChild?.getClientRects()[0]
 		if (!lastBlockRect) return
-		if (event.clientX > (lastBlockRect as DOMRect).left && event.clientX < (lastBlockRect as DOMRect).right
-			&& event.clientY > (lastBlockRect as DOMRect).bottom) {
-				const lastBlock = props.page.blocks[props.page.blocks.length-1]
-				const lastBlockComponent = blockElements.value[props.page.blocks.length-1]
-				if (lastBlock.type === BlockType.Text && lastBlockComponent.getTextContent() === '') {
-					// If last block is empty Text, focus on last block
-					setTimeout(lastBlockComponent.moveToEnd)
-				} else {
-					// Otherwise add new empty Text block
-					insertBlock(props.page.blocks.length-1)
-				}
+		if (event.clientX > (lastBlockRect as DOMRect).left && event.clientX < (lastBlockRect as DOMRect).right && event.clientY > (lastBlockRect as DOMRect).bottom) {
+			const lastBlock = props.page.blocks[props.page.blocks.length-1]
+			const lastBlockComponent = blockElements.value[props.page.blocks.length-1]
+			if (lastBlock.type === BlockType.Text && lastBlockComponent.getTextContent() === '') {
+				// If last block is empty Text, focus on last block
+				setTimeout(lastBlockComponent.moveToEnd)
+			} else {
+				// Otherwise add new empty Text block
+				insertBlock(props.page.blocks.length-1)
 			}
+		}
 	})
 
 	const dragOptions = {
@@ -196,7 +194,7 @@
 		props.page.blocks.splice(blockIdx, 1)
 		// Always keep at least one block
 		if (props.page.blocks.length === 0) {
-			insertBlock(0)
+			insertBlock(0);
 		}
 	}
 
@@ -221,22 +219,21 @@
 	}
 
 	function merge (blockIdx: number) {
-		if (props.onDeleteBlock) props.onDeleteBlock(props.page.blocks[blockIdx])
-		// When deleting the first character of non-text block
-		// the block should first turn into a text block
-		if([BlockType.H1, BlockType.H2, BlockType.H3, BlockType.Quote]
-				.includes(props.page.blocks[blockIdx].type)){
-			const prevBlockContent = blockElements.value[blockIdx].getTextContent()    
-			setBlockType(blockIdx, BlockType.Text)
-			props.page.blocks[blockIdx].details.value = prevBlockContent
-			setTimeout(()=>{
-				blockElements.value[blockIdx].moveToStart()
-			})
-			return
+		if(blockIdx > 0 || [BlockType.H1, BlockType.H2, BlockType.H3, BlockType.Quote].includes(props.page.blocks[blockIdx].type)) {
+			if (props.onDeleteBlock) props.onDeleteBlock(props.page.blocks[blockIdx])
+			// When deleting the first character of non-text block
+			// the block should first turn into a text block
+			if([BlockType.H1, BlockType.H2, BlockType.H3, BlockType.Quote].includes(props.page.blocks[blockIdx].type)){
+				const prevBlockContent = blockElements.value[blockIdx].getTextContent()    
+				setBlockType(blockIdx, BlockType.Text)
+				props.page.blocks[blockIdx].details.value = prevBlockContent
+				setTimeout(()=>{ blockElements.value[blockIdx].moveToStart() })
+				return
+			}
+	
+			if (blockIdx === 0) mergeTitle()
+			else mergeBlocks(blockIdx-1, blockIdx)
 		}
-
-		if (blockIdx === 0) mergeTitle()
-		else mergeBlocks(blockIdx-1, blockIdx)
 	}
 
 	function mergeBlocks (prefixBlockIdx: number, suffixBlockIdx: number) {
@@ -303,57 +300,8 @@
 		props.page.name = titleString.slice(0, caretPos)
 		props.page.blocks[0].details.value = titleString.slice(caretPos)
 	}
-
-	// // New script
-	// const onPaste = async (e) => {
-	// 	e.preventDefault();
-	// 	const clipboardItems = typeof navigator?.clipboard?.read === 'function' ? await navigator.clipboard.read() : e.clipboardData.files;
-	// 	for (const clipboardItem of clipboardItems) {
-	// 		let blob;
-	// 		if (clipboardItem.type?.startsWith('image/')) {
-	// 			blob = clipboardItem
-	// 			appendImage(blob);
-	// 		} else {
-	// 			const imageTypes = clipboardItem.types?.filter(type => type.startsWith('image/'))
-	// 			for (const imageType of imageTypes) {
-	// 				blob = await clipboardItem.getType(imageType);
-	// 				appendImage(blob);
-	// 			}
-	// 		}
-	// 	}
-	// }
-
-	// const appendImage = (blob) => {
-	// 	// const result		= this.BlocksList.find((item: { component: string; }) => item.tag === 'img');
-
-	// 	// const name			= this.getType(blob.type);
-	// 	// const file			= new File([blob], name, { type: blob.type });
-
-	// 	// const pageStore		= usePageStore();
-	// 	// const pageId		= ref(this.route.params.id);
-
-	// 	// const SaveImagePage = reactive<SaveImagePage>({
-	// 	// 	page: pageId.value,
-	// 	// 	image: file,
-	// 	// 	style: [{
-	// 	// 		width: 100,
-	// 	// 		height: 100
-	// 	// 	}],
-	// 	// 	old_image: ''
-	// 	// })
-
-	// 	// await pageStore.saveImage(SaveImagePage)
-	// 	// .then(res => {
-	// 	// 	const NewBlock = {
-	// 	// 		tag: 'img',
-	// 	// 		html: res.imageUrl,
-	// 	// 		name: result.name,
-	// 	// 		placeholder: result.placeholder,
-	// 	// 		component: result.component,
-	// 	// 	}
-
-	// 	// 	this.Blocks.push(NewBlock);
-	// 	// })
-	// 	// .catch(err => console.log(err));
-	// }
 </script>
+
+<style lang="scss">
+	.ml-editor{ margin-left: -80px; }
+</style>

@@ -20,7 +20,7 @@
 </script>
 
 <style lang="scss">
-.group:hover .group-hover\:opacity-100 {
-	opacity: 1!important;
-}
+	.group:hover .group-hover\:opacity-100 {
+		opacity: 1!important;
+	}
 </style>

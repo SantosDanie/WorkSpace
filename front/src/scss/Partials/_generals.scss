@@ -39,3 +39,34 @@ img { max-width: 100%; }
 .cursor-pointer {
 	cursor: pointer;
 }
+
+// new code
+.isEmpty		{ color: rgba(gray, 0.5); }
+.isEmpty:after	{ content: 'Work Space Name' }
+.typeWorkSpae .dropdown {
+	padding: 5px 10px;
+	background-color: rgba(gray, 0.15);
+	border-radius: 5px;
+	p { margin-bottom: 0; }
+	position: relative;
+	z-index: 5;
+	cursor: pointer;
+	.dropdown-option {
+		display: none;
+		position: absolute;
+		top: 100%;
+		background-color: rgb(235, 235, 235);
+		width: calc(100% - 20px);
+		padding: 15px;
+		border-radius: 0 0 5px 5px;
+		color: #000;
+		span {
+			width: 100%;
+			display: block;
+			border-radius: 3px;
+			padding: 3px 5px;
+			&:hover { background-color: rgba(gray, 0.2); }
+		}
+	}
+	.dropdown-option.active { display: block; }
+}

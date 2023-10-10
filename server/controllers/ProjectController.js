@@ -1,8 +1,8 @@
-const Post = require('../models/Post')
+const Project = require('../models/Project')
 const fs = require('fs');
 
 // Get Posts
-async function getPosts(req, res){
+async function getProjects(req, res){
 	try {
 		const posts = await Post.find()
 		res.status(200).json(posts)
@@ -12,7 +12,7 @@ async function getPosts(req, res){
 }
 
 // Get Post
-async function getPost(req, res){
+async function getProject(req, res){
 	const id = req.params.id
 	try {
 		const post = await Post.findById(id)
@@ -23,20 +23,20 @@ async function getPost(req, res){
 }
 
 // Create Post
-async function createPost(req, res){
-	const post = req.body
+async function createProject(req, res){
+	const project = req.body
 	const imagename = req.file.filename
-	post.image = imagename
+	project.image = imagename
 	try {
-		await Post.create(post)
-		res.status(201).json({ message: 'Post created successfully.' })
+		await Project.create(project)
+		res.status(201).json({ message: 'Project created successfully.' })
 	} catch (err) {
 		res.status(400).json({ message: err.message })
 	}
 }
 
 // Update Post
-async function updatePost(req, res){
+async function updateProject(req, res){
 	const id = req.params.id
 	let new_image = ''
 	
@@ -65,7 +65,7 @@ async function updatePost(req, res){
 }
 
 // Delete Post
-async function deletePost(req, res){
+async function deleteProject(req, res){
 	const id = req.params.id
 	try {
 		const post = await Post.findByIdAndDelete(id)
@@ -82,4 +82,4 @@ async function deletePost(req, res){
 	}
 }
 
-module.exports = { getPosts, getPost, createPost, updatePost, deletePost }
+module.exports = { getProjects, getProject, createProject, updateProject, deleteProject }

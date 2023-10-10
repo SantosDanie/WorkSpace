@@ -14,8 +14,7 @@
 				'py-1.5': ![BlockType.H1, BlockType.H2, BlockType.H3].includes(block.type),
 			}">
 			<!-- <Tooltip value="<span class='text-neutral-400'><span class='text-white'>Click</span> to delete block</span>">
-				<v-icon name="hi-trash" @click="emit('deleteBlock')"
-					class="w-6 h-6 hover:bg-neutral-100 hover:text-neutral-400 p-0.5 rounded group-hover:opacity-100 opacity-0" />
+				<v-icon name="hi-trash" @click="emit('deleteBlock')" class="w-6 h-6 hover:bg-neutral-100 hover:text-neutral-400 p-0.5 rounded group-hover:opacity-100 opacity-0" />
 			</Tooltip> -->
 			<Tooltip value="<span class='text-neutral-400'><span class='text-white'>Click</span> to add block below</span>">
 				<v-icon name="hi-plus" @click="emit('newBlock')"
@@ -24,11 +23,7 @@
 			<BlockMenu ref="menu" @setBlockType="setBlockType" :blockTypes="props.block.details.blockTypes || props.blockTypes"/>
 		</div>
 		<div class="w-full relative" :class="{ 'px-0': block.type !== BlockType.Divider }">
-			<!-- Actual content -->
-			<component :is="BlockComponents[props.block.type]" ref="content"
-				:block="block" :readonly="props.readonly"
-				@keydown="keyDownHandler"
-				@keyup="parseMarkdown" />
+			<component :is="BlockComponents[props.block.type]" ref="content" :block="block" :readonly="props.readonly" @keydown="keyDownHandler" @keyup="parseMarkdown" />
 		</div>
 	</div>
 </template>
@@ -166,8 +161,8 @@
 		return [BlockType.Text, BlockType.Quote, BlockType.H1, BlockType.H2, BlockType.H3].includes(props.block.type)
 	}
 
-	const content = ref<any>(null)
-	const menu = ref<typeof BlockMenu|null>(null)
+	const content	= ref<any>(null)
+	const menu		= ref<typeof BlockMenu|null>(null)
 
 	function atFirstChar () {
 		const startCoord = getStartCoordinates()

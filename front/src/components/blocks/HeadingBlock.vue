@@ -2,11 +2,11 @@
 	<div ref="content" :key="props.block.type"
 		:contenteditable="!props.readonly" spellcheck="false"
 		@blur="props.block.details.value=content?.innerText"
-		class="focus:outline-none focus-visible:outline-none w-50 py-1.5 font-semibold"
+		class="focus:outline-none focus-visible:outline-none w-100 py-1.5 font-semibold"
 		:block-type="props.block.type"
+		:class="headingConfig[props.block.type]?.class"
+		:data-ph="headingConfig[props.block.type]?.placeholder"
 		>
-		<!-- :class="headingConfig[props.block.type]?.class"
-		:data-ph="headingConfig[props.block.type]?.placeholder" -->
 		{{ props.block.details.value }}
 	</div>
 </template>
@@ -28,18 +28,18 @@
 			placeholder: 'Heading 3',
 			class: 'text-2xl font-medium',
 		},
-		[BlockType.H4]: {
-			placeholder: 'Heading 4',
-			class: 'text-2xl font-medium',
-		},
-		[BlockType.H5]: {
-			placeholder: 'Heading 5',
-			class: 'text-2xl font-medium',
-		},
-		[BlockType.H6]: {
-			placeholder: 'Heading 6',
-			class: 'text-2xl font-medium',
-		},
+		// [BlockType.H4]: {
+		// 	placeholder: 'Heading 4',
+		// 	class: 'text-1lg font-medium',
+		// },
+		// [BlockType.H5]: {
+		// 	placeholder: 'Heading 5',
+		// 	class: 'text-1md font-medium',
+		// },
+		// [BlockType.H6]: {
+		// 	placeholder: 'Heading 6',
+		// 	class: 'text-3md font-medium',
+		// },
 		// Irrelevant BlockTypes
 		[BlockType.Text]: null,
 		[BlockType.Divider]: null,
