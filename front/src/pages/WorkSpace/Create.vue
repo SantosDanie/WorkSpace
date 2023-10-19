@@ -41,17 +41,11 @@
 
 	const title			= ref<string|null>(null);
 	const isEmpty		= ref<Boolean>(true);
-	const page			= ref({
-		name: title.value
-	});
+	const page			= ref({ name: title.value });
 
 	function writeTitle(text: HTMLParagraphElement): void {
-		if(text == '') {
-			isEmpty.value = true;
-		} else {
-			isEmpty.value = false;
-		}
-
+		if(text == '') { isEmpty.value = true; }
+		if(text != '') { isEmpty.value = false; }
 		page.value.name = text;
 	}
 

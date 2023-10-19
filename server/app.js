@@ -1,62 +1,35 @@
 // Imports
 require('dotenv').config()
-const express		= require('express')
-const cors			= require('cors')
-const cookieParser	= require('cookie-parser')
-const mongoose		= require('mongoose')
-const path			= require('path')
-const corsOptions	= require('./config/cors')
-const connectDB		= require('./config/database')
-const credentials	= require('./middleware/credentials')
+const express					= require('express')
+const cors						= require('cors')
+const cookieParser				= require('cookie-parser')
+const mongoose					= require('mongoose')
+const path						= require('path')
+const corsOptions				= require('./config/cors')
+const connectDB					= require('./config/database')
+const credentials				= require('./middleware/credentials')
 const errorHandlerMiddleware	= require('./middleware/error_handler')
 const authenticationMiddleware	= require('./middleware/authentication')
+const app						= express()
+const PORT						= process.env.PORT || 10000;
 
-const app = express()
-const PORT = process.env.PORT || 10000;
+connectDB()										// Execute Connection
+app.use(credentials)							// Allow Credentials
+app.use(cors(corsOptions))						// Cors
+app.use(express.json())							// Application/json
+app.use(express.urlencoded({ extended: true }))	// Application.x-www-form-urlencoded
 
-// Execute Connection
-connectDB()
-
-// Allow Credentials
-app.use(credentials)
-
-// Cors
-app.use(cors(corsOptions))
-
-// Application/json
-app.use(express.json())
-
-// Application.x-www-form-urlencoded
-app.use(express.urlencoded({
-	extended: true
-}))
-
-// Middleware Cookies
-app.use(cookieParser())
+app.use(cookieParser())													// Middleware Cookies
 app.use(authenticationMiddleware)
-
-// Uploads
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-// Static Files
-app.use('/static', express.static(path.join(__dirname, 'public')))
-
-// Default Error Handler
-app.use(errorHandlerMiddleware)
+app.use('/uploads',	express.static(path.join(__dirname, 'uploads')))	// Uploads
+app.use('/static',	express.static(path.join(__dirname, 'public')))		// Static Files
+app.use(errorHandlerMiddleware)											// Default Error Handler
 
 // Routes
-
-// Auth
-app.use('/api/auth', require('./routes/api/auth'))
-
-// Project
-app.use('/api/project', require('./routes/api/project'))
-
-// Pages
-app.use('/api/page', require('./routes/api/pages'))
-
-// Media
-app.use('/api/media', require('./routes/api/media'))
+app.use('/api/auth',	require('./routes/api/auth'))	// auth
+app.use('/api/project',	require('./routes/api/project'))// Project
+app.use('/api/page',	require('./routes/api/pages'))	// Pages
+app.use('/api/media',	require('./routes/api/media'))	// Media
 
 app.all('*', (req, res) => {
 	res.status(404)

@@ -7,4 +7,4 @@ router.post('/login',		authControllers.login)
 router.post('/logout',		authControllers.logout)
 router.post('/refresh',		authControllers.refresh)
 router.get('/user',			authMiddleware, authControllers.user)
-module.exports = router
+module.exports				= router

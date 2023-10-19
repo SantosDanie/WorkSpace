@@ -1,5 +1,5 @@
 <template>
-	<div class="lotion w-100 mx-auto my-5 font-sans text-base" v-if="props.page" ref="editor">
+	<div class="lotion w-100 mx-auto mt-5 font-sans text-base" v-if="props.page" ref="editor">
 		<h1 id="title" ref="title" :contenteditable="!props.readonly" spellcheck="false" data-ph="Untitled"
 			@keydown.enter.prevent="splitTitle"
 			@keydown.down="blockElements[0]?.moveToFirstLine(); scrollIntoView();"
@@ -73,7 +73,6 @@
 		if (!blocks || !title || !editorRect) {
 			return
 		}
-
 		// Check that click is outside Editor
 		if ((event.clientX < ((editorRect as DOMRect).left || -1)) || (event.clientX > (editorRect?.right || window.innerWidth))) {
 			// Focus on title
@@ -114,11 +113,12 @@
 				return
 			}
 		}
-		
-		// If cursor is between Submit button and last block, insert block there 
+
+		// If cursor is between Submit button and last block, insert block there
 		const lastBlockRect = blocks?.lastElementChild?.getClientRects()[0]
+		// console.log(editor.value);
 		if (!lastBlockRect) return
-		if (event.clientX > (lastBlockRect as DOMRect).left && event.clientX < (lastBlockRect as DOMRect).right && event.clientY > (lastBlockRect as DOMRect).bottom) {
+		if (event.clientY < (editorRect as DOMRect).bottom && event.clientX > (lastBlockRect as DOMRect).left && event.clientX < (lastBlockRect as DOMRect).right && event.clientY > (lastBlockRect as DOMRect).bottom) {
 			const lastBlock = props.page.blocks[props.page.blocks.length-1]
 			const lastBlockComponent = blockElements.value[props.page.blocks.length-1]
 			if (lastBlock.type === BlockType.Text && lastBlockComponent.getTextContent() === '') {

@@ -4,13 +4,19 @@ import { useAuthStore } from '@/stores/auth'
 import Home				from '@/pages/Home.vue'
 import Settings			from '@/pages/Settings/Settings.vue'
 import Profile			from '@/pages/Settings/Profile.vue'
+import PageTeam			from '@/pages/Settings/Team.vue'
+import Calendar			from '@/pages/Settings/Calendar.vue'
+
 import App				from '@/pages/WorkSpace/Index.vue'
 import Create			from '@/pages/WorkSpace/Create.vue'
+
 import Login 			from '@/pages/Logs/Login.vue'
 import Register 		from '@/pages/Logs/Register.vue'
 import ForgotPass 		from '@/pages/Logs/forgot-pass.vue'
+
 import Page				from '@/pages/Projects/index.vue'
 import PageCreate		from '@/pages/Projects/Create.vue'
+import PageEdit			from '@/pages/Projects/Edit.vue'
 
 // Routes
 const router = createRouter({
@@ -29,9 +35,21 @@ const router = createRouter({
 			meta: { requiresAuth: true }
 		},
 		{
+			path: '/team/',
+			name: 'team',
+			component: PageTeam,
+			meta: { requiresAuth: true }
+		},
+		{
 			path: '/profile/',
 			name: 'profile',
 			component: Profile,
+			meta: { requiresAuth: true }
+		},
+		{
+			path: '/calendar/',
+			name: 'calendar',
+			component: Calendar,
 			meta: { requiresAuth: true }
 		},
 		// Register
@@ -79,6 +97,12 @@ const router = createRouter({
 			component: PageCreate,
 			meta: { requiresAuth: true }
 		},
+		{
+			path: "/page/:id",
+			name: 'PageEdit',
+			component: PageEdit,
+			meta: { requiresAuth: true }
+		}
 	]
 })
 

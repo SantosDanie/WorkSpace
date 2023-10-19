@@ -15,7 +15,7 @@ export interface State {
 export interface CreateProjectData {
 	title: string,
 	description: string,
-	image: File
+	// image: File
 }
 
 export interface UpdateProjectData {
@@ -31,7 +31,11 @@ const config = {
 	},
 };
 
-export const usePostStore = defineStore('post', {
+const configJson = {
+	headers: { 'Content-Type': 'application/json'},
+};
+
+export const useProjectStore = defineStore('project', {
 	state: (): State => {
 		return {
 			project: {} as Project,
@@ -39,25 +43,25 @@ export const usePostStore = defineStore('post', {
 	},
 
 	actions:{
-		async attempt(){
+		async attempt() {
 			try {
-				await this.getProject()
+				await this.getProjects()
 			} catch (error) {
 				return
 			}
 			return
 		},
 	  
-		async createProject(payload: CreateProjectData){
+		async createProject(payload: CreateProjectData) {
 			try {
-				const { data } = await useApi().post(`/api/project`, payload, config);
+				const { data } = await useApi().post(`/api/project`, payload, configJson);
 				return data
 			} catch (error: Error | any) {
 				throw error.message
 			}
 		},
 
-		async getProjects(){
+		async getProjects() {
 			try {
 				const {data} = await useApi().get(`/api/project`);
 				this.project = data
@@ -67,7 +71,7 @@ export const usePostStore = defineStore('post', {
 			}
 		},
 
-		async getProject(id: string){
+		async getProject(id: string) {
 			try {
 				const {data} = await useApi().get(`/api/project/${id}`);
 				this.project = data

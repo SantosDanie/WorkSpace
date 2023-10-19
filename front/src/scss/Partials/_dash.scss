@@ -1,0 +1,39 @@
+.sidebar {
+	width: 100%;
+	max-width: 200px;
+	.nav-link {
+		transition: 300ms;
+		-webkit-transition: 300ms;
+		-moz-transition: 300ms;
+		-ms-transition: 300ms;
+		-o-transition: 300ms;
+		width: 100%;
+		max-width: 200px;
+		span {
+			color: #616161;
+			transition: 300ms;
+			-webkit-transition: 300ms;
+			-moz-transition: 300ms;
+			-ms-transition: 300ms;
+			-o-transition: 300ms;
+		}
+		path {
+			transition: 300ms;
+			-webkit-transition: 300ms;
+			-moz-transition: 300ms;
+			-ms-transition: 300ms;
+			-o-transition: 300ms;
+		}
+		&:hover {
+			background-color: #4e88e0;
+			span { color: #ffffff; }
+			path { fill: #ffffff; }
+		}
+	}
+
+	.container-sidebar {
+		position: fixed;
+		top: 0;
+		left: 0;
+	}
+}

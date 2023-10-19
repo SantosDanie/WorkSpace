@@ -7,4 +7,4 @@ router.post('/',			mediaControllers.createMedia)
 router.patch('/:id',		mediaControllers.updateMedia)
 router.delete('/:id',		mediaControllers.deleteMedia)
 router.delete('/all/:id',	mediaControllers.deleteAll)
-module.exports = router
+module.exports				= router

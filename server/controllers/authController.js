@@ -79,9 +79,8 @@ async function refresh(req, res){
 	const cookies = req.cookies
 	if(!cookies.refresh_token) return res.sendStatus(401)
 
-	const refreshToken = cookies.refresh_token
-
-	const user = await User.findOne({refresh_token: refreshToken}).exec()
+	const refreshToken	= cookies.refresh_token
+	const user			= await User.findOne({refresh_token: refreshToken}).exec()
 
 	if(!user) return res.sendStatus(403)
 
