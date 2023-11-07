@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 	import { PropType } from 'vue'
-	import { Block } from '@/utils/types'
+	import { Block }	from '@/utils/types'
 
 	const props = defineProps({
 		block: {

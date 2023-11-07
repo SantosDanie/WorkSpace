@@ -1,6 +1,10 @@
 <template>
 	<div class="lotion w-100 mx-auto my-5 font-sans text-base" v-if="props.page" ref="editor">
-		<h1 id="title" ref="title" :contenteditable="!props.readonly" spellcheck="false" data-ph="Untitled"
+		<h1
+			id="title"
+			ref="title"
+			:contenteditable="!props.readonly"
+			spellcheck="false" data-ph="Untitled"
 			@keydown.enter.prevent="splitTitle"
 			@keydown.down="blockElements[0]?.moveToFirstLine(); scrollIntoView();"
 			@blur="props.page.name=($event.target as HTMLElement).innerText.replace('\n', '')"
@@ -8,9 +12,17 @@
 			:class="props.page.name ? '' : 'empty'">
 			{{ props.page.name || '' }}
 		</h1>
-		<draggable id="blocks" tag="div" :list="props.page.blocks" handle=".handle" v-bind="dragOptions" class="space-y-2 pb-4 ml-editor">
+		<draggable
+			id="blocks"
+			tag="div"
+			:list="props.page.blocks"
+			handle=".handle"
+			v-bind="dragOptions"
+			class="space-y-2 pb-4 ml-editor">
 			<transition-group type="transition">
-				<BlockComponent :block="block" v-for="block, i in props.page.blocks" :key="i" :id="'block-'+block.id"
+				<BlockComponent
+					:block="block" v-for="block, i in props.page.blocks"
+					:key="i" :id="'block-'+block.id"
 					:blockTypes="props.blockTypes"
 					:readonly="props.readonly"
 					:ref="el => blockElements[i] = (el as unknown as typeof Block)"
@@ -23,21 +35,26 @@
 					@merge="merge(i)"
 					@split="split(i)"
 					@setBlockType="type => setBlockType(i, type)"
-					/>
+				/>
 			</transition-group>
 		</draggable>
 	</div>
 </template>
 
 <script setup lang="ts">
-	import { ref, onBeforeUpdate, PropType } from 'vue'
-	import { VueDraggableNext as draggable } from 'vue-draggable-next'
-	import { v4 as uuidv4 } from 'uuid'
-	import { Block, BlockType, isTextBlock, availableBlockTypes } from '@/utils/types'
-	import { htmlToMarkdown } from '@/utils/utils'
-	import BlockComponent from './Block.vue'
+	import { ref, onBeforeUpdate, PropType }	from 'vue'
+	import { VueDraggableNext as draggable }	from 'vue-draggable-next'
+	import { v4 as uuidv4 }						from 'uuid'
+	import {
+		Block,
+		BlockType,
+		isTextBlock,
+		availableBlockTypes
+	}											from '@/utils/types'
+	import { htmlToMarkdown }					from '@/utils/utils'
+	import BlockComponent						from './Block.vue'
 
-	const props = defineProps({
+	const props			= defineProps({
 		page: {
 			type: Object as PropType<{ name:string, blocks:Block[] }>,
 			required: true,
@@ -63,8 +80,16 @@
 			type: Function as PropType<(block:Block) => void>,
 		},
 	})
+	const editor		= ref<HTMLDivElement|null>(null)
+	const blockElements	= ref<typeof BlockComponent[]>([])
+	const title			= ref<HTMLDivElement|null>(null)
+	const dragOptions	= {
+		animation: 150,
+		group: 'blocks',
+		disabled: false,
+		ghostClass: 'lotion-ghost',
+	}
 
-	const editor = ref<HTMLDivElement|null>(null)
 	document.addEventListener('mouseup', (event:MouseEvent) => {
 		// Automatically focus on nearest block on click
 		const blocks = document.getElementById('blocks')
@@ -131,18 +156,9 @@
 		}
 	})
 
-	const dragOptions = {
-		animation: 150,
-		group: 'blocks',
-		disabled: false,
-		ghostClass: 'lotion-ghost',
-	}
-
 	onBeforeUpdate(() => {
 		blockElements.value = []
 	})
-
-	const blockElements = ref<typeof BlockComponent[]>([])
 
 	function scrollIntoView () {
 		const selection = window.getSelection()
@@ -221,11 +237,9 @@
 	}
 
 	function merge (blockIdx: number) {
-		if(blockIdx > 0 || [BlockType.H1, BlockType.H2, BlockType.H3, BlockType.Quote].includes(props.page.blocks[blockIdx].type)) {
+		if(blockIdx > 0 || [BlockType.H1, BlockType.H2, BlockType.H3, BlockType.H4, BlockType.H5, BlockType.H6, BlockType.Quote].includes(props.page.blocks[blockIdx].type)) {
 			if (props.onDeleteBlock) props.onDeleteBlock(props.page.blocks[blockIdx])
-			// When deleting the first character of non-text block
-			// the block should first turn into a text block
-			if([BlockType.H1, BlockType.H2, BlockType.H3, BlockType.Quote].includes(props.page.blocks[blockIdx].type)){
+			if([BlockType.H1, BlockType.H2, BlockType.H3, BlockType.H4, BlockType.H5, BlockType.H6, BlockType.Quote].includes(props.page.blocks[blockIdx].type)){
 				const prevBlockContent = blockElements.value[blockIdx].getTextContent()    
 				setBlockType(blockIdx, BlockType.Text)
 				props.page.blocks[blockIdx].details.value = prevBlockContent
@@ -248,7 +262,7 @@
 			setTimeout(() => {
 				blockElements.value[prefixBlockIdx].setCaretPos(prevBlockContentLength)
 			})
-		} else if ([BlockType.H1, BlockType.H2, BlockType.H3].includes(props.page.blocks[prefixBlockIdx].type)) {
+		} else if ([BlockType.H1, BlockType.H2, BlockType.H3, BlockType.H4, BlockType.H5, BlockType.H6].includes(props.page.blocks[prefixBlockIdx].type)) {
 			const prevBlockContentLength = (props.page.blocks[prefixBlockIdx] as any).details.value.length
 			props.page.blocks[prefixBlockIdx].details.value += blockElements.value[suffixBlockIdx].getTextContent()
 			props.page.blocks.splice(suffixBlockIdx, 1)
@@ -291,7 +305,6 @@
 		setTimeout(() => blockElements.value[blockIdx+1].moveToStart())
 	}
 
-	const title = ref<HTMLDivElement|null>(null)
 	function splitTitle () {
 		if (!title.value) return
 		const selection = window.getSelection()
@@ -301,6 +314,43 @@
 		const titleString = title.value.textContent as string
 		props.page.name = titleString.slice(0, caretPos)
 		props.page.blocks[0].details.value = titleString.slice(caretPos)
+	}
+
+	document.addEventListener('paste', (event) => {
+		const clipboardItems = event.clipboardData.items;
+		const items = [].slice.call(clipboardItems).filter((item) => {
+			return item.type.indexOf('image') !== -1;
+		});
+
+		if (items.length === 0) {
+			return;
+		}
+
+		const item = items[0];
+		const blob = item.getAsFile();
+
+		const imageUrl = URL.createObjectURL(blob);
+
+		const newBlock = {
+			id: uuidv4(),
+			type: BlockType.Image,
+			details: {
+				value: imageUrl,
+				type: blob.type,
+				name: blob.name,
+				size: blob.size
+			}
+		}
+		insertNewBlock(props.page.blocks.length-1, newBlock);
+	});
+
+	function insertNewBlock (blockIdx: number, block: object) {
+		props.page.blocks.splice(blockIdx + 1, 0, block)
+		if (props.onCreateBlock) props.onCreateBlock(props.page.blocks[blockIdx+1])
+		setTimeout(() => {
+			blockElements.value[blockIdx+1].moveToStart()
+			scrollIntoView()
+		})
 	}
 </script>
 

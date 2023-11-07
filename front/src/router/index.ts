@@ -15,8 +15,11 @@ import Register 		from '@/pages/Logs/Register.vue'
 import ForgotPass 		from '@/pages/Logs/forgot-pass.vue'
 
 import Page				from '@/pages/Projects/index.vue'
-import PageCreate		from '@/pages/Projects/Create.vue'
+import PageCreate		from '@/pages/Worksheet/Create.vue'
 import PageEdit			from '@/pages/Projects/Edit.vue'
+
+import WorkList			from '@/pages/WorkList/index.vue'
+import WorkListCreate	from '@/pages/WorkList/Create.vue'
 
 // Routes
 const router = createRouter({
@@ -101,6 +104,19 @@ const router = createRouter({
 			path: "/page/:id",
 			name: 'PageEdit',
 			component: PageEdit,
+			meta: { requiresAuth: true }
+		},
+		// WorkList
+		{
+			path: '/worklist/',
+			name: 'WorkList',
+			component: WorkList,
+			meta: { requiresAuth: true }
+		},
+		{
+			path: '/worklist/create',
+			name: 'WorkListCreate',
+			component: WorkListCreate,
 			meta: { requiresAuth: true }
 		}
 	]

@@ -1,21 +1,14 @@
 <template>
-	<div class="group flex w-full rounded"
-		:class="{
-			// Add top margin for headings
-			'pt-12 first:pt-0': block.type === BlockType.H1,
-			'pt-4 first:pt-0': block.type === BlockType.H2,
-		}">
-		<div class="h-full pl-4 pr-2 text-center cursor-pointer transition-all duration-150 text-neutral-300 flex"
+	<div class="group flex w-full rounded m-0">
+		<div class="menu-tooltip h-full pl-4 pr-2 text-center cursor-pointer transition-all duration-150 text-neutral-300 flex"
 			:class="{
-				'invisible': props.readonly,
-				'py-3.5': block.type === BlockType.H1,
-				'py-3': block.type === BlockType.H2,
-				'py-2.5': block.type === BlockType.H3,
-				'py-1.5': ![BlockType.H1, BlockType.H2, BlockType.H3].includes(block.type),
+				'pHeading-1': block.type === BlockType.H1,
+				'pHeading-2': block.type === BlockType.H2,
+				'pHeading-3': block.type === BlockType.H3,
+				'pHeading-4': block.type === BlockType.H4,
+				'pHeading-5': block.type === BlockType.H5,
+				'pHeading-6': block.type === BlockType.H6,
 			}">
-			<!-- <Tooltip value="<span class='text-neutral-400'><span class='text-white'>Click</span> to delete block</span>">
-				<v-icon name="hi-trash" @click="emit('deleteBlock')" class="w-6 h-6 hover:bg-neutral-100 hover:text-neutral-400 p-0.5 rounded group-hover:opacity-100 opacity-0" />
-			</Tooltip> -->
 			<Tooltip value="<span class='text-neutral-400'><span class='text-white'>Click</span> to add block below</span>">
 				<v-icon name="hi-plus" @click="emit('newBlock')"
 					class="w-6 h-6 hover:bg-neutral-100 hover:text-neutral-400 p-0.5 rounded group-hover:opacity-100 opacity-0" />
@@ -23,16 +16,27 @@
 			<BlockMenu ref="menu" @setBlockType="setBlockType" :blockTypes="props.block.details.blockTypes || props.blockTypes"/>
 		</div>
 		<div class="w-full relative" :class="{ 'px-0': block.type !== BlockType.Divider }">
-			<component :is="BlockComponents[props.block.type]" ref="content" :block="block" :readonly="props.readonly" @keydown="keyDownHandler" @keyup="parseMarkdown" />
+			<component
+			ref="content"
+			:is="BlockComponents[props.block.type]"
+			:block="block"
+			:readonly="props.readonly"
+			@keydown="keyDownHandler"
+			@keyup="parseMarkdown"/>
 		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
-	import { ref, PropType } from 'vue'
-	import { Block, BlockType, BlockComponents, isTextBlock } from '@/utils/types'
-	import BlockMenu from './BlockMenu.vue'
-	import Tooltip from './elements/Tooltip.vue'
+	import { ref, PropType }	from 'vue'
+	import {
+		Block,
+		BlockType,
+		BlockComponents, 
+		isTextBlock
+	}							from '@/utils/types'
+	import BlockMenu			from './BlockMenu.vue'
+	import Tooltip				from './elements/Tooltip.vue'
 
 	const props = defineProps({
 		block: {
@@ -158,7 +162,16 @@
 	}
 
 	function isContentBlock () {
-		return [BlockType.Text, BlockType.Quote, BlockType.H1, BlockType.H2, BlockType.H3].includes(props.block.type)
+		return [
+			BlockType.Text,
+			BlockType.Quote,
+			BlockType.H1,
+			BlockType.H2,
+			BlockType.H3,
+			BlockType.H4,
+			BlockType.H5,
+			BlockType.H6,
+		].includes(props.block.type)
 	}
 
 	const content	= ref<any>(null)
@@ -435,6 +448,9 @@
 			[BlockType.H1]: /^#\s(.*)$/,
 			[BlockType.H2]: /^##\s(.*)$/,
 			[BlockType.H3]: /^###\s(.*)$/,
+			[BlockType.H4]: /^###\s(.*)$/,
+			[BlockType.H5]: /^###\s(.*)$/,
+			[BlockType.H6]: /^###\s(.*)$/,
 			[BlockType.Quote]: /^>\s(.*)$/,
 			[BlockType.Divider]: /^---\s$/
 		}
@@ -449,13 +465,18 @@
 			})
 		}
 
-
 		if (textContent.match(markdownRegexpMap[BlockType.H1]) && event.key === ' ') {
 			handleMarkdownContent(BlockType.H1)
 		} else if (textContent.match(markdownRegexpMap[BlockType.H2]) && event.key === ' ') {
 			handleMarkdownContent(BlockType.H2)
 		} else if (textContent.match(markdownRegexpMap[BlockType.H3]) && event.key === ' ') {
 			handleMarkdownContent(BlockType.H3)
+		} else if (textContent.match(markdownRegexpMap[BlockType.H4]) && event.key === ' ') {
+			handleMarkdownContent(BlockType.H4)
+		} else if (textContent.match(markdownRegexpMap[BlockType.H5]) && event.key === ' ') {
+			handleMarkdownContent(BlockType.H5)
+		} else if (textContent.match(markdownRegexpMap[BlockType.H6]) && event.key === ' ') {
+			handleMarkdownContent(BlockType.H6)
 		} else if (textContent.match(markdownRegexpMap[BlockType.Quote]) && event.key === ' ') {
 			handleMarkdownContent(BlockType.Quote)
 		} else if (textContent.match(markdownRegexpMap[BlockType.Divider]) && event.key === ' ') {
@@ -481,7 +502,6 @@
 	}
 
 	async function clearSearch (searchTermLength: number, newBlockType: BlockType, openedWithSlash: boolean = false) {
-		// If openedWithSlash, searchTermLength = 0 but we still need to clear
 		const pos = getCaretPosWithoutTags().pos
 		let startIdx = pos - (searchTermLength ? searchTermLength + 1 : 0)
 		let endIdx = pos
@@ -507,3 +527,13 @@
 		setCaretPos,
 	})
 </script>
+
+<style lang="scss">
+	.menu-tooltip	{	margin-top: 5px; }
+	.pHeading-1		{ padding-top: 5px; }
+	.pHeading-2		{ padding-top: 3px; }
+	.pHeading-3		{ padding-top: 1px; }
+	.pHeading-4		{ margin-top: 2px; }
+	.pHeading-5		{ margin-top: 0px; }
+	.pHeading-6		{ margin-top: -3px; }
+</style>

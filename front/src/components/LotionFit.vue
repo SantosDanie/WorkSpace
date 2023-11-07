@@ -10,7 +10,10 @@
 		</h1>
 		<draggable id="blocks" tag="div" :list="props.page.blocks" handle=".handle" v-bind="dragOptions" class="space-y-2 pb-4 ml-editor">
 			<transition-group type="transition">
-				<BlockComponent :block="block" v-for="block, i in props.page.blocks" :key="i" :id="'block-'+block.id"
+				<BlockComponent
+					v-for="block, i in props.page.blocks"
+					:block="block"
+					:key="i" :id="'block-'+block.id"
 					:blockTypes="props.blockTypes"
 					:readonly="props.readonly"
 					:ref="el => blockElements[i] = (el as unknown as typeof Block)"
@@ -30,12 +33,12 @@
 </template>
 
 <script setup lang="ts">
-	import { ref, onBeforeUpdate, PropType } from 'vue'
-	import { VueDraggableNext as draggable } from 'vue-draggable-next'
-	import { v4 as uuidv4 } from 'uuid'
+	import { ref, onBeforeUpdate, PropType }	from 'vue'
+	import { VueDraggableNext as draggable }	from 'vue-draggable-next'
+	import { v4 as uuidv4 }						from 'uuid'
 	import { Block, BlockType, isTextBlock, availableBlockTypes } from '@/utils/types'
-	import { htmlToMarkdown } from '@/utils/utils'
-	import BlockComponent from './Block.vue'
+	import { htmlToMarkdown }					from '@/utils/utils'
+	import BlockComponent						from './Block.vue'
 
 	const props = defineProps({
 		page: {
