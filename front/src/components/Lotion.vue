@@ -7,10 +7,10 @@
 			spellcheck="false" data-ph="Untitled"
 			@keydown.enter.prevent="splitTitle"
 			@keydown.down="blockElements[0]?.moveToFirstLine(); scrollIntoView();"
-			@blur="props.page.name=($event.target as HTMLElement).innerText.replace('\n', '')"
+			@blur="props.page.title=($event.target as HTMLElement).innerText.replace('\n', '')"
 			class="focus:outline-none focus-visible:outline-none text-5xl font-bold mb-12"
-			:class="props.page.name ? '' : 'empty'">
-			{{ props.page.name || '' }}
+			:class="props.page.title ? '' : 'empty'">
+			{{ props.page.title || '' }}
 		</h1>
 		<draggable
 			id="blocks"
@@ -56,7 +56,7 @@
 
 	const props			= defineProps({
 		page: {
-			type: Object as PropType<{ name:string, blocks:Block[] }>,
+			type: Object as PropType<{ title:string, blocks:Block[] }>,
 			required: true,
 		},
 		blockTypes: {
@@ -177,8 +177,8 @@
 				const selection = window.getSelection()
 				const range = document.createRange()
 				if (title.value.childNodes.length) {
-					range.setStart(title.value.childNodes[0], props.page.name.length)
-					range.setEnd(title.value.childNodes[0], props.page.name.length)
+					range.setStart(title.value.childNodes[0], props.page.title.length)
+					range.setEnd(title.value.childNodes[0], props.page.title.length)
 				} else {
 					range.setStart(title.value, 0)
 					range.setEnd(title.value, 0)
@@ -278,8 +278,8 @@
 	function mergeTitle (blockIdx:number = 0) {
 		const titleElement = document.getElementById('title')
 		if (!titleElement) return
-		const title = props.page.name
-		props.page.name = title + blockElements.value[blockIdx].getTextContent()
+		const title = props.page.title
+		props.page.title = title + blockElements.value[blockIdx].getTextContent()
 		props.page.blocks.splice(blockIdx, 1)
 		setTimeout(() => {
 			const selection = window.getSelection()
@@ -312,46 +312,46 @@
 		const caretPos = selection.anchorOffset
 		insertBlock(-1)
 		const titleString = title.value.textContent as string
-		props.page.name = titleString.slice(0, caretPos)
+		props.page.title = titleString.slice(0, caretPos)
 		props.page.blocks[0].details.value = titleString.slice(caretPos)
 	}
 
-	document.addEventListener('paste', (event) => {
-		const clipboardItems = event.clipboardData.items;
-		const items = [].slice.call(clipboardItems).filter((item) => {
-			return item.type.indexOf('image') !== -1;
-		});
+	// document.addEventListener('paste', (event) => {
+	// 	const clipboardItems = event.clipboardData.items;
+	// 	const items = [].slice.call(clipboardItems).filter((item) => {
+	// 		return item.type.indexOf('image') !== -1;
+	// 	});
 
-		if (items.length === 0) {
-			return;
-		}
+	// 	if (items.length === 0) {
+	// 		return;
+	// 	}
 
-		const item = items[0];
-		const blob = item.getAsFile();
+	// 	const item = items[0];
+	// 	const blob = item.getAsFile();
 
-		const imageUrl = URL.createObjectURL(blob);
+	// 	const imageUrl = URL.createObjectURL(blob);
 
-		const newBlock = {
-			id: uuidv4(),
-			type: BlockType.Image,
-			details: {
-				value: imageUrl,
-				type: blob.type,
-				name: blob.name,
-				size: blob.size
-			}
-		}
-		insertNewBlock(props.page.blocks.length-1, newBlock);
-	});
+	// 	const newBlock = {
+	// 		id: uuidv4(),
+	// 		type: BlockType.Image,
+	// 		details: {
+	// 			value: imageUrl,
+	// 			type: blob.type,
+	// 			name: blob.name,
+	// 			size: blob.size
+	// 		}
+	// 	}
+	// 	insertNewBlock(props.page.blocks.length-1, newBlock);
+	// });
 
-	function insertNewBlock (blockIdx: number, block: object) {
-		props.page.blocks.splice(blockIdx + 1, 0, block)
-		if (props.onCreateBlock) props.onCreateBlock(props.page.blocks[blockIdx+1])
-		setTimeout(() => {
-			blockElements.value[blockIdx+1].moveToStart()
-			scrollIntoView()
-		})
-	}
+	// function insertNewBlock (blockIdx: number, block: object) {
+	// 	props.page.blocks.splice(blockIdx + 1, 0, block)
+	// 	if (props.onCreateBlock) props.onCreateBlock(props.page.blocks[blockIdx+1])
+	// 	setTimeout(() => {
+	// 		blockElements.value[blockIdx+1].moveToStart()
+	// 		scrollIntoView()
+	// 	})
+	// }
 </script>
 
 <style lang="scss">

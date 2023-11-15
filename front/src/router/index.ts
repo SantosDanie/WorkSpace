@@ -7,19 +7,12 @@ import Profile			from '@/pages/Settings/Profile.vue'
 import PageTeam			from '@/pages/Settings/Team.vue'
 import Calendar			from '@/pages/Settings/Calendar.vue'
 
-import App				from '@/pages/WorkSpace/Index.vue'
-import Create			from '@/pages/WorkSpace/Create.vue'
-
 import Login 			from '@/pages/Logs/Login.vue'
 import Register 		from '@/pages/Logs/Register.vue'
 import ForgotPass 		from '@/pages/Logs/forgot-pass.vue'
 
 import Page				from '@/pages/Projects/index.vue'
-import PageCreate		from '@/pages/Worksheet/Create.vue'
-import PageEdit			from '@/pages/Projects/Edit.vue'
-
-import WorkList			from '@/pages/WorkList/index.vue'
-import WorkListCreate	from '@/pages/WorkList/Create.vue'
+import WorkPage			from '@/pages/Projects/WorkPage.vue'
 
 // Routes
 const router = createRouter({
@@ -74,19 +67,6 @@ const router = createRouter({
 			component: ForgotPass,
 			meta: { requiresGuest: true }
 		},
-		// project
-		{
-			path: '/app/',
-			name: 'app',
-			component: App,
-			meta: { requiresAuth: true }
-		},
-		{
-			path: '/app/create/',
-			name: 'create',
-			component: Create,
-			meta: { requiresAuth: true }
-		},
 		// Page
 		{
 			path: "/page/",
@@ -95,28 +75,9 @@ const router = createRouter({
 			meta: { requiresAuth: true }
 		},
 		{
-			path: "/page/create",
-			name: 'PageCreate',
-			component: PageCreate,
-			meta: { requiresAuth: true }
-		},
-		{
 			path: "/page/:id",
-			name: 'PageEdit',
-			component: PageEdit,
-			meta: { requiresAuth: true }
-		},
-		// WorkList
-		{
-			path: '/worklist/',
-			name: 'WorkList',
-			component: WorkList,
-			meta: { requiresAuth: true }
-		},
-		{
-			path: '/worklist/create',
-			name: 'WorkListCreate',
-			component: WorkListCreate,
+			name: 'workPage',
+			component: WorkPage,
 			meta: { requiresAuth: true }
 		}
 	]

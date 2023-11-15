@@ -9,9 +9,9 @@ let storage							= multer.diskStorage({
 	filename: (req, file, cb)		=> { cb(null, file.fieldname + '_' + Date.now() + '_' + file.originalname) }
 });
 let upload							= multer({ storage: storage }).single('image');
-router.get("/:pageId",				isAuth, pageController.getPages);
+router.get("/:userId",				isAuth, pageController.getPages);
 router.get("/edit/:pageId",			isAuth, pageController.getPage);
-router.post("/",					isAuth, pageController.postPage);
+router.post("/",					isAuth, pageController.createPage);
 router.patch("/:pageId",			isAuth, pageController.putPage); 
 router.delete("/:pageId",			isAuth, pageController.deletePage);
 router.post("/images/",				upload, pageController.postImage);

@@ -50,7 +50,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr v-for="(member, index) in TeamObject.members" :key="index">
+						<!-- <tr v-for="(member, index) in TeamObject.members" :key="index">
 							<td class="d-flex align-items-center">
 								<img class="border rounded-circle me-2" width="40" height="40" src="https://static.vecteezy.com/system/resources/previews/008/442/086/non_2x/illustration-of-human-icon-user-symbol-icon-modern-design-on-blank-background-free-vector.jpg">
 								<div class="d-block">
@@ -67,7 +67,7 @@
 									</svg>
 								</button>
 							</td>
-						</tr>
+						</tr> -->
 					</tbody>
 				</table>
 			</div>
@@ -101,7 +101,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr v-for="(group, index) in TeamObject.groups" :key="index">
+						<!-- <tr v-for="(group, index) in TeamObject.groups" :key="index">
 							<td class="align-middle">{{ group.name }}</td>
 							<td class="align-middle">{{ group.projects }} Project{{ group.projects > 1 ? "s": '' }}</td>
 							<td class="align-middle">{{ group.members.length }}</td>
@@ -112,7 +112,7 @@
 									</svg>
 								</button>
 							</td>
-						</tr>
+						</tr> -->
 					</tbody>
 				</table>
 			</div>

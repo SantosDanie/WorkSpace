@@ -1,6 +1,9 @@
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
-import { OhVueIcon, addIcons } from "oh-vue-icons"
+import { createApp, ref }			from 'vue'
+import { createPinia }			from 'pinia'
+import { OhVueIcon, addIcons }	from "oh-vue-icons"
+import { authentication }		from '@/plugins/authentication'
+import App						from './App.vue'
+import router					from './router'
 import {
 	MdDragindicator,
 	HiTrash,
@@ -17,11 +20,13 @@ import {
 	BiHr,
 	BiQuote,
 	MdImageOutlined
-} from "oh-vue-icons/icons"
-import { authentication } from '@/plugins/authentication'
-import App from './App.vue'
-import router from './router'
+}								from "oh-vue-icons/icons"
+
 import './index.css'
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
+import './scss/styles.scss';
+import './index.css';
 
 addIcons(
 	MdDragindicator,
@@ -40,12 +45,6 @@ addIcons(
 	BiQuote,
 	MdImageOutlined
 )
-
-import 'bootstrap/dist/css/bootstrap.css'
-import 'bootstrap-vue/dist/bootstrap-vue.css'
-
-import './scss/styles.scss';
-import './index.css';
 
 const app = createApp(App)
 app.use(createPinia())

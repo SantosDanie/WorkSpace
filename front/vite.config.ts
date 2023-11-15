@@ -32,11 +32,9 @@ export default defineConfig(({ mode }) => {
 	} else {
 		return {
 			resolve:{
-				alias:{
-					'@' : path.resolve(__dirname, './src')
-				},
+				alias:{ '@' : path.resolve(__dirname, './src') },
 			},
-			plugins: [vue()],
+			plugins: [ vue() ],
 			test: {
 				globals: true,
 				exclude: [

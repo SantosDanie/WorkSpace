@@ -1,7 +1,7 @@
 <template>
 	<div class="flex">
 		<div class="sticky top-0 h-screen overflow-y-auto bg-neutral-50">
-			<Markdown :page="page" />
+			<!-- <Markdown :page="page" /> -->
 		</div>
 		<div class="shrink-0 px-24 w-100 mx-auto box-border">
 			<Lotion :page="page" :readonly="readonly" />
@@ -10,16 +10,16 @@
 </template>
 
 <script setup lang="ts">
-	import { ref } from 'vue'
-	import { BlockType } from '@/utils/types'
-	import Lotion from './Lotion.vue'
-	import Markdown from './Markdown.vue'
-	import { v4 as uuidv4 } from 'uuid'
+	import { ref }			from 'vue'
+	import { BlockType }	from '@/utils/types'
+	import Lotion			from './Lotion.vue'
+	import { v4 as uuidv4 }	from 'uuid'
+	// import Markdown from './Markdown.vue'
 
 	const readonly = ref(false)
 
 	const page = ref({
-		name: 'First Page - edited',
+		title: 'First Page - edited',
 		blocks: [{
 			id: uuidv4(),
 			type: BlockType.H1,

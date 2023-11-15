@@ -4,7 +4,7 @@ const Page	= require("../models/page");
 const User	= require("../models/User");
 
 const getPages = async (req, res, next) => {
-	const userId = req.params.pageId ? req.params.pageId : null;
+	const userId = req.params.userId ? req.params.userId : null;
 	try {
 		if (!userId) {
 			const err = new Error("User is not authenticated.");
@@ -62,17 +62,17 @@ const getPage = async (req, res, next) => {
 	}
 };
   
-const postPage = async (req, res, next) => {
-	const userId = req.body.userId;
-	const blocks = req.body.blocks;
-	const Title = req.body.title;
-	const PageType	= req.body.pageType;
+const createPage = async (req, res, next) => {
+	const userId	= req.body.userId;
+	const blocks	= req.body.blocks;
+	const Title		= req.body.name;
+	const settings	= req.body.settings;
 
 	const page = new Page({
-		blocks: null,
-		creator: userId || null,
 		title: Title,
-		pageType: PageType
+		creator: userId || null,
+		blocks: blocks || null,
+		settings: settings || null
 	});
 
 	try {
@@ -90,7 +90,6 @@ const postPage = async (req, res, next) => {
 };
   
 const putPage = async (req, res, next) => {
-	// const userId = req.userId;
 	const pageId = req.params.pageId;
 	const blocks = req.body.blocks;
 	const title = req.body.title;
@@ -198,10 +197,10 @@ const clearImage = (filePath) => {
 	fs.unlink(filePath, (err) => console.log(err));
 };
   
-exports.getPages = getPages;
-exports.getPage = getPage;
-exports.postPage = postPage;
-exports.putPage = putPage;
-exports.deletePage = deletePage;
-exports.postImage = postImage;
-exports.deleteImage = deleteImage;
+exports.getPages	= getPages;
+exports.getPage		= getPage;
+exports.createPage	= createPage;
+exports.putPage		= putPage;
+exports.deletePage	= deletePage;
+exports.postImage	= postImage;
+exports.deleteImage	= deleteImage;

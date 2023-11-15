@@ -27,7 +27,7 @@ export enum BlockType {
 	H6		= 'H6',
 	Divider = 'DIVIDER',
 	Quote	= 'QUOTE',
-	Image	= 'IMAGE',
+	// Image	= 'IMAGE',
 	// Columns2 = 'COLUMNS2',
 	// Columns3 = 'COLUMNS3',
 	// Columns4 = 'COLUMNS4',
@@ -54,7 +54,7 @@ export const BlockComponents = {
 	[BlockType.H6]:			HeadingBlock,
 	[BlockType.Divider]:	DividerBlock,
 	[BlockType.Quote]:		QuoteBlock,
-	[BlockType.Image]:		ImageBlock,
+	// [BlockType.Image]:		ImageBlock,
 	// [BlockType.Columns2]:	ColumnsBlocks,
 	// [BlockType.Columns3]:	ColumnsBlocks,
 	// [BlockType.Columns4]:	ColumnsBlocks,
@@ -125,13 +125,14 @@ export const availableBlockTypes = [
 		label: 'Quote',
 		blockType: BlockType.Quote,
 		canSplit: true,
-	}, {
-		type: 'Turn into',
-		icon: 'md-image-outlined',
-		label: 'Image',
-		blockType: BlockType.Image,
-		canSplit: true,
 	}
+	// , {
+	// 	type: 'Turn into',
+	// 	icon: 'md-image-outlined',
+	// 	label: 'Image',
+	// 	blockType: BlockType.Image,
+	// 	canSplit: true,
+	// }
 	// {
 	// 	type: 'Turn into',
 	// 	icon: 'bi-layout-three-columns',

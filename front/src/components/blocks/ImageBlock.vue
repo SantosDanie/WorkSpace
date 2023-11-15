@@ -1,31 +1,55 @@
 <template>
 	<div
 		ref="content"
-		class="imageblock"
+		class="py-1"
 		:key="props.block.type"
-		:block-type="props.block.type">
-		<div class="fileInput" :class="{'hasImage': props.block.details.value}">
-			<input type="file" @change="loadImage" accept="image/png, image/gif, image/jpeg, image/jpg">
-			<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-image" viewBox="0 0 16 16">
-				<path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
-				<path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12z"/>
-			</svg>
-			Add Image
+		:block-type="props.block.type"
+		@click="openModal = true">
+		<div class="dragDiv">Image png / jpeg / jpg / webp</div>
+		<div class="openModalImage" v-if="openModal == true">
+			<div class="container-modalImage">
+				<div class="head-modal d-flex flex-wrap justify-content-center align-items-center">
+					<button class="btn btn-primary btn-sm mx-1" @click="changeContent = 'url'">URL</button>
+					<button class="btn btn-primary btn-sm mx-1" @click="changeContent = 'uploaded'">Upload</button>
+					<button class="btn btn-primary btn-sm mx-1" @click="changeContent = 'gallery'">Gallery</button>
+				</div>
+				<hr>
+				<div class="content-modal" v-if="changeContent == 'url'">
+					<div class="image-url">
+						<div class="mb-3">
+							<label for="basic-url" class="form-label">URL</label>
+							<div class="input-group">
+								<span class="input-group-text" id="basic-addon3">URL</span>
+								<input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4">
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="content-modal" v-else-if="changeContent == 'uploaded'">
+					<div class="image-upload">
+						<input class="inputFile" type="file" @change="fileSelected" enctype="multipart/form-data" accept="image/png, image/gif, image/jpeg, image/jpg, image/webp">
+						Upload Image
+					</div>
+				</div>
+				<div class="content-modal" v-else-if="changeContent == 'gallery'">
+					<div class="image-gallery">
+						<span>there is no image</span>
+					</div>
+				</div>
+			</div>
 		</div>
-		<img :src="props.block.details.value">
-		<div class="imageSize" draggable="true" @dragstart="dividerDragStart" @drag="lrDividerDrag" :style="[`left:${width};`, lrDividerStyles]"></div>
 	</div>
 </template>
 
 <script setup lang="ts">
-	import { PropType, ref }	from "vue"
-	import { Block }			from "@/utils/types"
+	import { PropType, ref}	from "vue"
+	import { Block }		from "@/utils/types"
+	import { usePageStore }	from '@/stores/Page';
 
 	const content		= ref<HTMLBodyElement>()
-	const width			= ref<number>()
-	const right			= ref<number>()
-	const left			= ref<number>()
-	const lrDividerPos	= ref<number>()
+	const openModal		= ref<Boolean>(false)
+	const changeContent	= ref<string>('url')
+	const PageStore		= usePageStore();
 	const props			= defineProps({
 		block: {
 			type: Object as PropType<Block>,
@@ -37,91 +61,81 @@
 		},
 	});
 
-	setTimeout(()	=> {
-		const rect	= content.value.getBoundingClientRect();
-		left.value	= rect.left;
-		right.value	= rect.right - 5;
-		width.value	= (rect.width >= lrDividerPos.value) ? rect.width : lrDividerPos.value;
-	}, 50)
+	function fileSelected(evt: any) {
+		evt.preventDefault()
+		let url		= URL.createObjectURL(evt.target.files[0]);
+		let name	= evt.target.files[0].name;
+		let type	= evt.target.files[0].type;
 
-	async function loadImage(event: { target: { files: any[]; }; }) {
-		const item = event.target.files[0];
-		if(item) {
-			const url = URL.createObjectURL(item);
-			props.block.details = {
-				value: url,
-				name: item.name,
-				size: item.size,
-				type: item.type
-			}
-		}
+		let imageFile	= evt.target.files[0];
+		saveImage(imageFile);
 	}
-
-	// 
-	function dividerDragStart (e: { dataTransfer: { setDragImage: (arg0: HTMLImageElement, arg1: number, arg2: number) => void; }; }) {
-		e.dataTransfer.setDragImage(new Image, 0, 0);
-	}
-
-	function lrDividerStyles() {
-		if (lrDividerPos.value) {
-			return { left: convertWidth() + '%' };
-		}
-		return {};
-	}
-
-	function lrDividerDrag (e: { clientX: number; }) {
-		if (e.clientX >  left.value && e.clientX <  right.value) {
-			lrDividerPos.value = e.clientX - left.value;
-		}
-	}
-
-	function convertWidth() {
-		const rect	= content.value.getBoundingClientRect();
-		let newWidth = lrDividerPos.value / rect.width * 100;
-		return newWidth.toFixed(2);
+	
+	async function saveImage(fileImage: any) {
+		await PageStore.saveImage(fileImage)
+		.then((res: { imageUrl: any; }) => res.imageUrl)
+		.catch((err: any) => console.log(err));
 	}
 </script>
 
 <style lang="scss">
-	.imageblock {
+	.dragDiv {
+		border: 1px solid gray;
+		transition-duration: 300ms;
+		border-radius:  5px;
+		text-align: center;
+		cursor: pointer;
+		padding: 20px;
+		width: 100%;
 		position: relative;
+		&:hover { background-color: rgba(#000, 0.1); }
+	}
+
+	.openModalImage {
+		position: fixed;
 		top: 0;
 		left: 0;
-		margin-top: 5px;
-		.fileInput {
-			position: absolute;
-			top: 0;
-			left: 0;
-			height: 100%;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(#000000, 0.3);
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		padding: 15px;
+		z-index: 5;
+		.container-modalImage {
+			padding: 15px;
 			width: 100%;
-			input {
+			max-width: 650px;
+			background-color: white;
+			border-radius: 5px;
+		}
+
+		.content-modal {
+			.image-upload, .image-url, .image-gallery {
+				padding: 20px;
+				border: 3px dashed rgb(198, 198, 198);
+				border-radius: 5px;
+				text-align: center;
+				width: 100%;
+				max-height: 150px;
+				min-height: 200px;
+				position: relative;
+			}
+
+			.image-gallery {
+				border: 1px solid rgb(198, 198, 198);
+			}
+
+			.inputFile {
 				position: absolute;
 				top: 0;
 				left: 0;
-				height: 100%;
-				width: 100%;
 				opacity: 0;
+				width: 100%;
+				height: 100%;
 				cursor: pointer;
 			}
 		}
-
-		.hasImage {
-			padding: 10px;
-			color: rgb(197, 197, 197);
-			opacity: 0;
-			svg { fill: rgb(197, 197, 197); }
-		}
-		&:hover .hasImage { opacity: 1; }
-	}
-
-	.imageSize {
-		position: absolute;
-		// left: 10px;
-		width: 5px;
-		top: 2px;
-		height: calc(100% - 4px);
-		background-color: red;
-		border-radius: 50px;
-		cursor: col-resize;
 	}
 </style>
