@@ -14,6 +14,7 @@
 	import { ref, PropType }	from 'vue'
 	import { Block, BlockType }	from '@/utils/types'
 
+	const classElement	= ref<string>('')
 	const headingConfig	= ref([
 		{
 			element: `${[BlockType.H1]}`,
@@ -56,7 +57,6 @@
 			default: false,
 		},
 	})
-	const classElement	= ref<string>('')
 
 	const jsonStringify	= JSON.stringify(getObjetData(props.block.type))
 	const jsonParse		= JSON.parse(jsonStringify);

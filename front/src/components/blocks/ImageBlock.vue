@@ -1,12 +1,13 @@
 <template>
-	<div
-		ref="content"
+	<div>
+		<!-- ref="content"
 		class="py-1"
 		:key="props.block.type"
 		:block-type="props.block.type"
 		@click="openModal = true">
 		<div class="dragDiv">Image png / jpeg / jpg / webp</div>
-		<div class="openModalImage" v-if="openModal == true">
+		 <img :src="props.block.details.value">
+		<div class="openModalImage" v-if="openModal === true">
 			<div class="container-modalImage">
 				<div class="head-modal d-flex flex-wrap justify-content-center align-items-center">
 					<button class="btn btn-primary btn-sm mx-1" @click="changeContent = 'url'">URL</button>
@@ -33,49 +34,97 @@
 				</div>
 				<div class="content-modal" v-else-if="changeContent == 'gallery'">
 					<div class="image-gallery">
-						<span>there is no image</span>
+						<div
+							class="media"
+							v-for="media in medias"
+							:key="media"
+							:class="{'selected': mediaSelect == media._id}"
+							@click="selectImage(media._id); openModal = false;">
+							<img :src="getImageUrl(media.path)" :alt="media.title">
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		</div> -->
 	</div>
 </template>
 
 <script setup lang="ts">
-	import { PropType, ref}	from "vue"
-	import { Block }		from "@/utils/types"
-	import { usePageStore }	from '@/stores/Page';
+	// import { PropType, ref, computed, onMounted}	from "vue"
+	// import { Block }			from "@/utils/types"
+	// import { useMediaStore }	from '@/stores/Medias';
+	// import { useAuthStore } 	from '@/stores/auth';
 
-	const content		= ref<HTMLBodyElement>()
-	const openModal		= ref<Boolean>(false)
-	const changeContent	= ref<string>('url')
-	const PageStore		= usePageStore();
-	const props			= defineProps({
-		block: {
-			type: Object as PropType<Block>,
-			required: true,
-		},
-		readonly: {
-			type: Boolean,
-			default: false,
-		},
-	});
+	// const content		= ref<HTMLBodyElement>()
+	// const openModal		= ref<Boolean>(false)
+	// const changeContent	= ref<string>('url')
+	// const MageStore		= useMediaStore()
+	// const authStore		= useAuthStore();
+	// const UserId		= computed(() => authStore.user);
+	// const id			= UserId.value.id.toString()
+	// const medias		= ref();
+	// const mediaSelect	= ref();
+	// const props			= defineProps({
+	// 	block: {
+	// 		type: Object as PropType<Block>,
+	// 		required: true,
+	// 	},
+	// 	readonly: {
+	// 		type: Boolean,
+	// 		default: false,
+	// 	},
+	// });
 
-	function fileSelected(evt: any) {
-		evt.preventDefault()
-		let url		= URL.createObjectURL(evt.target.files[0]);
-		let name	= evt.target.files[0].name;
-		let type	= evt.target.files[0].type;
+	// // const emit
+	// function fileSelected(evt: any) {
+	// 	evt.preventDefault()
+	// 	let url		= URL.createObjectURL(evt.target.files[0]);
+	// 	let name	= evt.target.files[0].name;
+	// 	let type	= evt.target.files[0].type;
 
-		let imageFile	= evt.target.files[0];
-		saveImage(imageFile);
-	}
+	// 	let imageFile	= evt.target.files[0];
+	// 	let objectMedia = {
+	// 		title: name,
+	// 		description: '',
+	// 		userId: id,
+	// 		image: imageFile
+	// 	}
+	// 	saveImage(objectMedia);
+	// }
 	
-	async function saveImage(fileImage: any) {
-		await PageStore.saveImage(fileImage)
-		.then((res: { imageUrl: any; }) => res.imageUrl)
-		.catch((err: any) => console.log(err));
-	}
+	// async function saveImage(fileImage: any) {
+	// 	await MageStore.createMedia(fileImage)
+	// 	.then((res: { imageUrl: any; }) => {
+	// 		changeContent.value = 'gallery';
+	// 		mediaSelect.value = res.media._id;
+	// 		getImages();
+	// 	})
+	// 	.catch((err: any) => console.log(err));
+	// }
+
+	// onMounted(() => getImages())
+	// async function getImages() {
+	// 	await MageStore.getMedias(id)
+	// 	.then((res: { imageUrl: any; }) => medias.value = res)
+	// 	.catch((err: any) => console.log(err));
+	// }
+
+	// function getImageUrl(image: string) {
+	// 	const serverUrl = import.meta.env.VITE_API_URI;
+	// 	return `${serverUrl}${image}`;
+	// }
+
+	// function selectImage(imageId: string) {
+	// 	mediaSelect.value = medias.value.filter((item: { _id: string; }) => item._id = imageId);
+	// 	props.block.details.value = mediaSelect.value.path;
+	// }
+
+	// function onSet () {
+	// 	if (content.value && props.block.details.value) {
+	// 		content.value.innerText = '';
+	// 	}
+	// }
+	// defineExpose({ onSet })
 </script>
 
 <style lang="scss">
@@ -135,6 +184,30 @@
 				width: 100%;
 				height: 100%;
 				cursor: pointer;
+			}
+		}
+	}
+
+	.image-gallery {
+		display: flex;
+		padding: 15px !important;
+		max-height: 100% !important;
+		flex-wrap: wrap;
+		.media {
+			width: 93px;
+			height: 93px;
+			margin-right: 5px;
+			margin-bottom: 5px;
+			box-shadow:0 0 0px 1px #c0c0c0;
+			cursor: pointer;
+			img {
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+			}
+
+			&.selected{
+				box-shadow:inset 0 0 0px 1px #3f49cf;
 			}
 		}
 	}

@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, createWebHashHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
 import Home				from '@/pages/Home.vue'
@@ -83,7 +83,7 @@ const router = createRouter({
 	]
 })
 
-router.beforeResolve(async (to, from, next)=>{
+router.beforeResolve(async (to, from, next)=> {
 	const authStore = useAuthStore()
 
 	if (to.meta.requiresAuth && !authStore.isAuthenticated) {   
