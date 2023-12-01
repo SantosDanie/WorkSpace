@@ -13,11 +13,11 @@ const authenticationMiddleware	= require('./middleware/authentication')
 const app						= express()
 const PORT						= process.env.PORT || 10000;
 
-connectDB()										// Execute Connection
-app.use(credentials)							// Allow Credentials
-app.use(cors(corsOptions))						// Cors
-app.use(express.json())							// Application/json
-app.use(express.urlencoded({ extended: true }))	// Application.x-www-form-urlencoded
+connectDB()																// Execute Connection
+app.use(credentials)													// Allow Credentials
+app.use(cors(corsOptions))												// Cors
+app.use(express.json())													// Application/json
+app.use(express.urlencoded({ extended: true }))							// Application.x-www-form-urlencoded
 
 app.use(cookieParser())													// Middleware Cookies
 app.use(authenticationMiddleware)
@@ -26,10 +26,11 @@ app.use('/static',	express.static(path.join(__dirname, 'public')))		// Static Fi
 app.use(errorHandlerMiddleware)											// Default Error Handler
 
 // Routes
-app.use('/api/auth',	require('./routes/api/auth'))	// auth
-app.use('/api/project',	require('./routes/api/project'))// Project
-app.use('/api/page',	require('./routes/api/pages'))	// Pages
-app.use('/api/media',	require('./routes/api/media'))	// Media
+app.use('/api/auth',			require('./routes/api/auth'))			// auth
+app.use('/api/project',			require('./routes/api/project'))		// Project
+app.use('/api/page',			require('./routes/api/pages'))			// Pages
+app.use('/api/media',			require('./routes/api/media'))			// Media
+app.use('/api/notification',	require('./routes/api/notification'))	// Notification
 
 app.all('*', (req, res) => {
 	res.status(404)

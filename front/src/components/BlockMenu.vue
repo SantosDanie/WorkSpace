@@ -14,9 +14,7 @@
 					<!-- Search term -->
 					<div v-if="searchTerm" class="block-menu-search px-2 py-2 flex gap-2 w-full">
 						<v-icon name="hi-solid-search" class="w-4 shrink-0" />
-						<div class="truncate">
-							{{ searchTerm }}
-						</div>
+						<div class="truncate">{{ searchTerm }}</div>
 					</div>
 					<!-- Turn into another block like Text, Heading or Divider -->
 					<div class="px-2 py-2" v-if="options.filter(option => option.type === 'Turn into').length">
@@ -26,7 +24,8 @@
 							:class="[active === (i + options.filter(option => option.type !== 'Turn into').length) ? 'bg-neutral-100' : '']"
 							@click.stop="setBlockType(option.blockType);"
 							@mouseup.stop="() => {}"
-							@mouseover="active = (i + options.filter(option => option.type !== 'Turn into').length)">
+							@mouseover="active = (i + options.filter(option => option.type !== 'Turn into').length)"
+							:key="i">
 							<v-icon v-if="option.icon" :name="option.icon" class="w-5 h-5"/>
 							<span class="truncate">{{ option.label }}</span>
 						</div>
@@ -43,22 +42,26 @@
 	import { BlockType, availableBlockTypes }	from '@/utils/types'
 	import Tooltip								from './elements/Tooltip.vue'
 
-	const props = defineProps({
+	const props			= defineProps({
 		blockTypes: {
 			type: Object as PropType<null|(string|BlockType)[]>,
 			default: null,
 		},
 	})
-
-	const emit = defineEmits([
-		'setBlockType',
-		'clearSearch',
-	])
-
-	const open = ref(false)
-	let openedWithSlash = false
-	const container = ref<HTMLDivElement|null>(null)
-	const menu = ref<HTMLDivElement|null>(null)
+	const emit			= defineEmits(['setBlockType', 'clearSearch'])
+	const open			= ref(false)
+	let openedWithSlash	= false
+	const container		= ref<HTMLDivElement|null>(null)
+	const menu			= ref<HTMLDivElement|null>(null)
+	const active		= ref(0)
+	const searchTerm	= ref('')
+	const options		= computed(() => {
+		const options = searchTerm.value === ''
+			? availableBlockTypes
+			: fuzzySearch.search(searchTerm.value).map(result => result.item)
+		if (props.blockTypes) return options.filter(option => props.blockTypes?.includes(option.blockType))
+		else return options
+	})
 
 	watch(open, isOpen => {
 		if (!isOpen) {
@@ -67,7 +70,6 @@
 	})
 
 	document.addEventListener('click', (event:Event) => {
-		// Close menu on click outside of menu
 		if (!open.value) return
 		if (!(container.value && container.value.contains(event.target as Node))) {
 			open.value = false
@@ -75,14 +77,7 @@
 			active.value = 0
 		}
 	})
-
-	/*
-	Support keyboard navigation
-	*/
-	const active = ref(0)
-	const searchTerm = ref('')
-
-	document.addEventListener('keydown', (event:KeyboardEvent) => {
+	document.addEventListener('keydown',	(event:KeyboardEvent) => {
 		if (!open.value) return
 		if (['ArrowUp', 'ArrowDown'].includes(event.key)) {
 			// Support up/down navigation with keyboard
@@ -96,52 +91,34 @@
 				active.value = active.value + 1 <= options.value.length - 1 ? active.value + 1 : 0
 			}
 		} else if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-			// Left/right will exit menu
 			if (searchTerm.value.length === 0) open.value = false
 		} else if (event.key === 'Enter') {
-			// Enter selects menu option
 			event.preventDefault()
 			setBlockType(options.value[active.value].blockType)
 		} else if (event.key === 'Escape') {
-			// Escape closes menu
 			open.value = false
 			searchTerm.value = ''
 			active.value = 0
 		} else if (event.key.match(/^([a-zA-Z]|[0-9]| )$/)) {
-			// Alphanumeric searches menu
 			searchTerm.value += event.key
 			active.value = 0
 		} else if (event.key === 'Backspace') {
-			// Backspace closes menu if searchTerm is empty
 			if (searchTerm.value.length === 0) open.value = false
 			else searchTerm.value = searchTerm.value.slice(0, -1)
 			active.value = 0
 		}
 	})
-
-	document.addEventListener('keyup', (event:KeyboardEvent) => {
+	document.addEventListener('keyup',		(event:KeyboardEvent) => {
 		if (!open.value) return
 		if (event.key === 'Enter') {
-			// Enter selects menu option
 			event.preventDefault()
 			event.stopPropagation()
 		}
 	})
 
-	/*
-	Menu options
-	*/
-
+	/* Menu options */
 	const fuzzySearch = new Fuse(availableBlockTypes, {
 		keys: ['label']
-	})
-
-	const options = computed(() => {
-		const options = searchTerm.value === ''
-			? availableBlockTypes
-			: fuzzySearch.search(searchTerm.value).map(result => result.item)
-		if (props.blockTypes) return options.filter(option => props.blockTypes?.includes(option.blockType))
-		else return options
 	})
 
 	function setBlockType (blockType:BlockType|string) {
@@ -151,8 +128,5 @@
 		open.value = false
 	}
 
-	defineExpose({
-		open,
-		openedWithSlash,
-	})
+	defineExpose({open, openedWithSlash})
 </script>

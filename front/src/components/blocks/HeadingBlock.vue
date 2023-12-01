@@ -1,53 +1,17 @@
 <template>
-	<div
-		ref="content"
-		:key="props.block.type"
-		:contenteditable="!props.readonly"
-		:class="classElement"
-		@blur="props.block.details.value=content?.innerText"
-		@keydown="props.block.details.value=content?.innerText">
-		{{ props.block.details.value }}
-	</div>
+	<editor-content :editor="editor" v-if="editor"/>
 </template>
 
 <script setup lang="ts">
-	import { ref, PropType }	from 'vue'
-	import { Block, BlockType }	from '@/utils/types'
+	import { PropType }		from 'vue'
+	import { Block }					from '@/utils/types'
+	import { Editor, EditorContent }	from '@tiptap/vue-3'
+	import Document						from '@tiptap/extension-document'
+	import Heading						from '@tiptap/extension-heading'
+	import Paragraph					from '@tiptap/extension-paragraph'
+	import Text							from '@tiptap/extension-text'
 
-	const classElement	= ref<string>('')
-	const headingConfig	= ref([
-		{
-			element: `${[BlockType.H1]}`,
-			placeholder: 'Heading 1',
-			class: 'fw-bold h1 m-0',
-		},
-		{
-			element: `${[BlockType.H2]}`,
-			placeholder: 'Heading 2',
-			class: 'fw-bold h2 m-0',
-		},
-		{
-			element: `${[BlockType.H3]}`, 
-			placeholder: 'Heading 3',
-			class: 'fw-bold h3 m-0',
-		},
-		{
-			element: `${[BlockType.H4]}`,
-			placeholder: 'Heading 4',
-			class: 'fw-bold h4 m-0',
-		},
-		{
-			element: `${[BlockType.H5]}`, 
-			placeholder: 'Heading 5',
-			class: 'fw-bold h5 m-0',
-		},
-		{
-			element: `${[BlockType.H6]}`, 
-			placeholder: 'Heading 6',
-			class: 'fw-bold h6 m-0',
-		}
-	])
-	const props			= defineProps({
+	const props		= defineProps({
 		block: {
 			type: Object as PropType<Block>,
 			required: true,
@@ -57,26 +21,38 @@
 			default: false,
 		},
 	})
-
-	const jsonStringify	= JSON.stringify(getObjetData(props.block.type))
-	const jsonParse		= JSON.parse(jsonStringify);
-	classElement.value	= jsonParse[0].class;
-
-	const elementTag	= ref<string>(`<${props.block.type} class="${classElement.value}">${props.block.details.value == ''? '&#160;': props.block.details.value}</${props.block.type}>`)
-	const content		= ref<HTMLDivElement>()
-
-	function onSet () {
-		if (content.value && props.block.details.value) {
-			let jsonStringify	= JSON.stringify(getObjetData(props.block.type))
-			let jsonParse		= JSON.parse(jsonStringify);
-			classElement.value	= jsonParse[0].class;
-
-			content.value.innerText = props.block.details.value
+	let HeadingValue		= props.block.details.value;
+	for (let index = 1; index < 7; index++) {
+		if(props.block.type == `H${index}`) {
+			HeadingValue = `<h${index}>${props.block.details.value}</h${index}>`;
 		}
 	}
 
-	function getObjetData(keyString: string) {
-		return Object.values(headingConfig.value).filter((item) => item.element == keyString);
+	const editor	= new Editor({
+		extensions: [
+			Document,
+			Paragraph,
+			Text,
+			Heading.configure({ levels: [1, 2, 3, 4, 5, 6], }),
+		],
+		editorProps: { handleDrop: () => true },
+		content: HeadingValue,
+	})
+
+	function onSet () {
+		if(props.block.type == 'H1') {
+			editor.chain().setHeading({ level: 1 }).focus().run()
+		} else if (props.block.type == 'H2') {
+			editor.chain().setHeading({ level: 2 }).focus().run()
+		} else if (props.block.type == 'H3') {
+			editor.chain().setHeading({ level: 3 }).focus().run()
+		} else if (props.block.type == 'H4') {
+			editor.chain().setHeading({ level: 4 }).focus().run()
+		} else if (props.block.type == 'H5') {
+			editor.chain().setHeading({ level: 5 }).focus().run()
+		} else if (props.block.type == 'H6') {
+			editor.chain().setHeading({ level: 6 }).focus().run()
+		}
 	}
 
 	defineExpose({ onSet })

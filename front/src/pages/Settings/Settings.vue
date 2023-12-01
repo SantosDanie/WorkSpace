@@ -1,6 +1,8 @@
 <template>
 	<Dashboard>
-		<h1>settings</h1>
+		<div class="p-5">
+			<h1>settings</h1>
+		</div>
 	</Dashboard>
 </template>
 

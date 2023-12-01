@@ -1,76 +1,78 @@
 <template>
 	<Dashboard>
-		<div class="row pb-5 mb-3">
-			<div class="col-12 col-md-5">
-				<h4 class="fw-bold">Thumbnail</h4>
-				<p>The image is getting on <a href="gravatar.com">gravatar.com</a></p>
-				<div class="card w-fit">
-					<img width="100" :src="get_gravatar(user.email, 150)" class="img-thumbnail">
+		<div class="p-5">
+			<div class="row pb-5 mb-3">
+				<div class="col-12 col-md-5">
+					<h4 class="fw-bold">Thumbnail</h4>
+					<p>The image is getting on <a href="gravatar.com">gravatar.com</a></p>
+					<div class="card w-fit">
+						<img width="100" :src="get_gravatar(user.email, 150)" class="img-thumbnail">
+					</div>
 				</div>
 			</div>
-		</div>
-		<div class="row pb-5 mb-3">
-			<div class="col-12 col-md-5">
-				<h4 class="fw-bold">Profile Information</h4>
-				<p>Update your account's profile information.</p>
-				<p>the email cannot be changed</p>
-			</div>
-			<div class="col-12 col-md-7">
-				<div class="card p-3 bg-white">
-					<form>
-						<div class="row">
-							<div class="col-6">
-								<div class="mb-4">
-									<label for="name">Name</label>
-									<input type="text" class="form-control bg-light small" name="name" id="name" placeholder="Name" v-model="user.username">
+			<div class="row pb-5 mb-3">
+				<div class="col-12 col-md-5">
+					<h4 class="fw-bold">Profile Information</h4>
+					<p>Update your account's profile information.</p>
+					<p>the email cannot be changed</p>
+				</div>
+				<div class="col-12 col-md-7">
+					<div class="card p-3 bg-white">
+						<form>
+							<div class="row">
+								<div class="col-6">
+									<div class="mb-4">
+										<label for="name">Name</label>
+										<input type="text" class="form-control bg-light small" name="name" id="name" placeholder="Name" v-model="user.username">
+									</div>
+								</div>
+								<div class="col-6">
+									<div class="mb-4">
+										<label for="lname">Last Name</label>
+										<input type="text" class="form-control bg-light small" name="lname" id="lname" placeholder="Last Name" v-model="user.last_name">
+									</div>
 								</div>
 							</div>
-							<div class="col-6">
-								<div class="mb-4">
-									<label for="lname">Last Name</label>
-									<input type="text" class="form-control bg-light small" name="lname" id="lname" placeholder="Last Name" v-model="user.last_name">
-								</div>
+							<div class="mb-4">
+								<label for="email">Email</label>
+								<input type="text" class="form-control bg-white border-0 small" id="email" placeholder="Email" v-model="user.email" disabled>
 							</div>
-						</div>
-						<div class="mb-4">
-							<label for="email">Email</label>
-							<input type="text" class="form-control bg-white border-0 small" id="email" placeholder="Email" v-model="user.email" disabled>
-						</div>
-						<input type="submit" value="Save" class="btn btn-primary btn-sm">
-					</form>
+							<input type="submit" value="Save" class="btn btn-primary btn-sm">
+						</form>
+					</div>
 				</div>
 			</div>
-		</div>
-		<div class="row pb-5 mb-3">
-			<div class="col-12 col-md-5">
-				<h4 class="fw-bold">Update Password</h4>
-				<p>Ensure your account is using a long, random password to stay secure.</p>
-			</div>
-			<div class="col-12 col-md-7">
-				<div class="card p-3 bg-white">
-					<form>
-						<div class="mb-4">
-							<label for="pass">New Password</label>
-							<input type="password" class="form-control bg-light small" name="pass" id="pass" placeholder="******">
-						</div>
-						<div class="mb-4">
-							<label for="rPass">Confirm Password</label>
-							<input type="password" class="form-control bg-light small" name="rpass" id="rPass" placeholder="******">
-						</div>
-						<input type="submit" value="Save" class="btn btn-primary btn-sm">
-					</form>
+			<div class="row pb-5 mb-3">
+				<div class="col-12 col-md-5">
+					<h4 class="fw-bold">Update Password</h4>
+					<p>Ensure your account is using a long, random password to stay secure.</p>
+				</div>
+				<div class="col-12 col-md-7">
+					<div class="card p-3 bg-white">
+						<form>
+							<div class="mb-4">
+								<label for="pass">New Password</label>
+								<input type="password" class="form-control bg-light small" name="pass" id="pass" placeholder="******">
+							</div>
+							<div class="mb-4">
+								<label for="rPass">Confirm Password</label>
+								<input type="password" class="form-control bg-light small" name="rpass" id="rPass" placeholder="******">
+							</div>
+							<input type="submit" value="Save" class="btn btn-primary btn-sm">
+						</form>
+					</div>
 				</div>
 			</div>
-		</div>
-		<div class="row pb-5">
-			<div class="col-12 col-md-5">
-				<h4 class="fw-bold">Delete Account</h4>
-				<p>Permanently delete your account.</p>
-			</div>
-			<div class="col-12 col-md-7">
-				<div class="card p-3 bg-white">
-					<p>Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.</p>
-					<button class="btn btn-danger btn-sm w-fit">Delete Account</button>
+			<div class="row pb-5">
+				<div class="col-12 col-md-5">
+					<h4 class="fw-bold">Delete Account</h4>
+					<p>Permanently delete your account.</p>
+				</div>
+				<div class="col-12 col-md-7">
+					<div class="card p-3 bg-white">
+						<p>Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.</p>
+						<button class="btn btn-danger btn-sm w-fit">Delete Account</button>
+					</div>
 				</div>
 			</div>
 		</div>

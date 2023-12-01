@@ -3,7 +3,6 @@ import DividerBlock		from '@/components/blocks/DividerBlock.vue'
 import HeadingBlock		from '@/components/blocks/HeadingBlock.vue'
 import QuoteBlock		from '@/components/blocks/QuoteBlock.vue'
 import ImageBlock		from '@/components/blocks/ImageBlock.vue'
-// import ColumnsBlocks	from '@/components/blocks/ColumnsBlock.vue'
 
 export interface Block {
 	id: string,
@@ -28,9 +27,6 @@ export enum BlockType {
 	Divider = 'DIVIDER',
 	Quote	= 'QUOTE',
 	Image	= 'IMAGE',
-	// Columns2 = 'COLUMNS2',
-	// Columns3 = 'COLUMNS3',
-	// Columns4 = 'COLUMNS4',
 }
 
 export interface Details {
@@ -55,12 +51,19 @@ export const BlockComponents = {
 	[BlockType.Divider]:	DividerBlock,
 	[BlockType.Quote]:		QuoteBlock,
 	[BlockType.Image]:		ImageBlock,
-	// [BlockType.Columns2]:	ColumnsBlocks,
-	// [BlockType.Columns3]:	ColumnsBlocks,
-	// [BlockType.Columns4]:	ColumnsBlocks,
 }
 
-export const textBlockMap = [BlockType.Text, BlockType.Quote]
+export const textBlockMap = [
+	BlockType.Text,
+	BlockType.H1,
+	BlockType.H2,
+	BlockType.H3,
+	BlockType.H4,
+	BlockType.H5,
+	BlockType.H6,
+	BlockType.Text,
+	BlockType.Quote,
+]
 
 export const isTextBlock = (type: string) => {
 	return textBlockMap.some(textBlock => textBlock === type)
@@ -91,29 +94,25 @@ export const availableBlockTypes = [
 		label: 'Heading 3',
 		blockType: BlockType.H3,
 		canSplit: true,
-	},
-	{
+	}, {
 		type: 'Turn into',
 		icon: 'oi-heading',
 		label: 'Heading 4',
 		blockType: BlockType.H4,
 		canSplit: true,
-	}, 
-	{
+	}, {
 		type: 'Turn into',
 		icon: 'oi-heading',
 		label: 'Heading 5',
 		blockType: BlockType.H5,
 		canSplit: true,
-	},
-	 {
+	}, {
 		type: 'Turn into',
 		icon: 'oi-heading',
 		label: 'Heading 6',
 		blockType: BlockType.H6,
 		canSplit: true,
-	},
-	{
+	}, {
 		type: 'Turn into',
 		icon: 'bi-hr',
 		label: 'Divider',
@@ -125,31 +124,17 @@ export const availableBlockTypes = [
 		label: 'Quote',
 		blockType: BlockType.Quote,
 		canSplit: true,
+	}, {
+		type: 'Turn into',
+		icon: 'md-image-outlined',
+		label: 'Image',
+		blockType: BlockType.Image,
+		canSplit: true,
 	}
-	// , {
-	// 	type: 'Turn into',
-	// 	icon: 'md-image-outlined',
-	// 	label: 'Image',
-	// 	blockType: BlockType.Image,
-	// 	canSplit: true,
-	// }
-	// {
-	// 	type: 'Turn into',
-	// 	icon: 'bi-layout-three-columns',
-	// 	label: 'Column 2',
-	// 	blockType: BlockType.Columns2,
-	// 	canSplit: true,
-	// }, {
-	// 	type: 'Turn into',
-	// 	icon: 'bi-layout-three-columns',
-	// 	label: 'Column 3',
-	// 	blockType: BlockType.Columns3,
-	// 	canSplit: true,
-	// }, {
-	// 	type: 'Turn into',
-	// 	icon: 'bi-layout-three-columns',
-	// 	label: 'Column 4',
-	// 	blockType: BlockType.Columns4,
-	// 	canSplit: true,
-	// }
-] as { type:string, icon:string, label:string, blockType:BlockType|string, canSplit:boolean }[]
+] as {
+	type:string,
+	icon:string,
+	label:string,
+	blockType:BlockType|string,
+	canSplit:boolean
+}[]

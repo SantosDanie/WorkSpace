@@ -48,15 +48,6 @@ export const usePageStore = defineStore('page', {
 	},
 
 	actions:{
-		// async attempt(){
-		// 	try {
-		// 		await this.getPages()
-		// 	} catch (error) {
-		// 		return
-		// 	}
-		// 	return
-		// },
-	  
 		async createPage(payload: CreatePageData) {
 			try {
 				const { data } = await useApi().post(`/api/page`, payload, config);

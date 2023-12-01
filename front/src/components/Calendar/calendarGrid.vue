@@ -86,21 +86,6 @@
 		let dateActivities	= new Date(y, m, d);
 		emit('viewActivities', dateActivities)
 	}
-
-	// function hasActivities() {
-	// 	// let d = day;
-	// 	// let m = props.calendar.month;
-	// 	// let y = props.calendar.year;
-	// 	if(props.dayActivities !== undefined) {
-	// 		let jsonData = JSON.stringify(props.dayActivities);
-	// 		let newData = JSON.parse(jsonData);
-	// 		console.log(newData);
-	// 	}
-	// }
-	
-	// function getObjetData() {
-	// 	props
-	// }
 </script>
 
 <style lang="scss">

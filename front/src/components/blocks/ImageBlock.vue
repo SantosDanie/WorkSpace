@@ -1,32 +1,21 @@
 <template>
-	<div>
-		<!-- ref="content"
+	<div
+		ref="content"
 		class="py-1"
 		:key="props.block.type"
-		:block-type="props.block.type"
-		@click="openModal = true">
-		<div class="dragDiv">Image png / jpeg / jpg / webp</div>
-		 <img :src="props.block.details.value">
+		:block-type="props.block.type">
+		<div class="dragDiv" @click="openModal=true" v-if="props.block.details.value == ''">Image png / jpeg / jpg / webp</div>
+		<img v-else class="image-block" :src="getImageUrl(props.block.details.value || mediaSelect)" @click="openModal=true">
 		<div class="openModalImage" v-if="openModal === true">
 			<div class="container-modalImage">
 				<div class="head-modal d-flex flex-wrap justify-content-center align-items-center">
-					<button class="btn btn-primary btn-sm mx-1" @click="changeContent = 'url'">URL</button>
 					<button class="btn btn-primary btn-sm mx-1" @click="changeContent = 'uploaded'">Upload</button>
 					<button class="btn btn-primary btn-sm mx-1" @click="changeContent = 'gallery'">Gallery</button>
+
+					<button class="btn btn-sm btn-secondary ml-auto" @click="openModal=false">x</button>
 				</div>
 				<hr>
-				<div class="content-modal" v-if="changeContent == 'url'">
-					<div class="image-url">
-						<div class="mb-3">
-							<label for="basic-url" class="form-label">URL</label>
-							<div class="input-group">
-								<span class="input-group-text" id="basic-addon3">URL</span>
-								<input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4">
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="content-modal" v-else-if="changeContent == 'uploaded'">
+				<div class="content-modal" v-if="changeContent == 'uploaded'">
 					<div class="image-upload">
 						<input class="inputFile" type="file" @change="fileSelected" enctype="multipart/form-data" accept="image/png, image/gif, image/jpeg, image/jpg, image/webp">
 						Upload Image
@@ -39,92 +28,105 @@
 							v-for="media in medias"
 							:key="media"
 							:class="{'selected': mediaSelect == media._id}"
-							@click="selectImage(media._id); openModal = false;">
+							@click="selectImage(media._id)">
 							<img :src="getImageUrl(media.path)" :alt="media.title">
 						</div>
 					</div>
 				</div>
 			</div>
-		</div> -->
+		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
-	// import { PropType, ref, computed, onMounted}	from "vue"
-	// import { Block }			from "@/utils/types"
-	// import { useMediaStore }	from '@/stores/Medias';
-	// import { useAuthStore } 	from '@/stores/auth';
+	import { PropType, ref, computed, onMounted} from "vue"
+	import { Block }			from "@/utils/types"
+	import { useMediaStore }	from '@/stores/Medias';
+	import { useAuthStore }		from '@/stores/auth';
 
-	// const content		= ref<HTMLBodyElement>()
-	// const openModal		= ref<Boolean>(false)
-	// const changeContent	= ref<string>('url')
-	// const MageStore		= useMediaStore()
-	// const authStore		= useAuthStore();
-	// const UserId		= computed(() => authStore.user);
-	// const id			= UserId.value.id.toString()
-	// const medias		= ref();
-	// const mediaSelect	= ref();
-	// const props			= defineProps({
-	// 	block: {
-	// 		type: Object as PropType<Block>,
-	// 		required: true,
-	// 	},
-	// 	readonly: {
-	// 		type: Boolean,
-	// 		default: false,
-	// 	},
-	// });
+	const content		= ref<HTMLBodyElement>()
+	const openModal		= ref<Boolean>(false)
+	const changeContent	= ref<string>('uploaded')
+	const MageStore		= useMediaStore()
+	const authStore		= useAuthStore();
+	const UserId		= computed(() => authStore.user);
+	const id			= UserId.value.id.toString()
+	const medias		= ref();
+	const mediaSelect	= ref();
+	const props			= defineProps({
+		block: {
+			type: Object as PropType<Block>,
+			required: true,
+		},
+		readonly: {
+			type: Boolean,
+			default: false,
+		},
+	});
+	onMounted(()		=> getImages())
+	checkImage(props.block.details.value || '', () => {
+		console.log("good");
+	}, () => { 
+		props.block.details.value = '';
+	});
 
-	// // const emit
-	// function fileSelected(evt: any) {
-	// 	evt.preventDefault()
-	// 	let url		= URL.createObjectURL(evt.target.files[0]);
-	// 	let name	= evt.target.files[0].name;
-	// 	let type	= evt.target.files[0].type;
+	// const emit
+	function fileSelected(evt: any) {
+		evt.preventDefault()
+		let url		= URL.createObjectURL(evt.target.files[0]);
+		let name	= evt.target.files[0].name;
+		let type	= evt.target.files[0].type;
 
-	// 	let imageFile	= evt.target.files[0];
-	// 	let objectMedia = {
-	// 		title: name,
-	// 		description: '',
-	// 		userId: id,
-	// 		image: imageFile
-	// 	}
-	// 	saveImage(objectMedia);
-	// }
-	
-	// async function saveImage(fileImage: any) {
-	// 	await MageStore.createMedia(fileImage)
-	// 	.then((res: { imageUrl: any; }) => {
-	// 		changeContent.value = 'gallery';
-	// 		mediaSelect.value = res.media._id;
-	// 		getImages();
-	// 	})
-	// 	.catch((err: any) => console.log(err));
-	// }
+		let imageFile	= evt.target.files[0];
+		let objectMedia = {
+			title: name,
+			description: '',
+			userId: id,
+			image: imageFile
+		}
+		saveImage(objectMedia);
+	}
 
-	// onMounted(() => getImages())
-	// async function getImages() {
-	// 	await MageStore.getMedias(id)
-	// 	.then((res: { imageUrl: any; }) => medias.value = res)
-	// 	.catch((err: any) => console.log(err));
-	// }
+	async function saveImage(fileImage: any) {
+		await MageStore.createMedia(fileImage)
+		.then((res: {media: any; imageUrl: any; }) => {
+			changeContent.value = 'gallery';
+			mediaSelect.value = res.media._id;
+			getImages();
+		})
+		.catch((err: any) => console.log(err));
+	}
 
-	// function getImageUrl(image: string) {
-	// 	const serverUrl = import.meta.env.VITE_API_URI;
-	// 	return `${serverUrl}${image}`;
-	// }
+	async function getImages() {
+		await MageStore.getMedias(id)
+		.then((res: { imageUrl: any; }) => medias.value = res)
+		.catch((err: any) => console.log(err));
+	}
 
-	// function selectImage(imageId: string) {
-	// 	mediaSelect.value = medias.value.filter((item: { _id: string; }) => item._id = imageId);
-	// 	props.block.details.value = mediaSelect.value.path;
-	// }
+	function getImageUrl(image: string) {
+		const serverUrl = import.meta.env.VITE_API_URI;
+		return `${serverUrl}/${image}`;
+	}
 
-	// function onSet () {
-	// 	if (content.value && props.block.details.value) {
-	// 		content.value.innerText = '';
-	// 	}
-	// }
-	// defineExpose({ onSet })
+	function selectImage(imageId: string) {
+		openModal.value = false;
+		medias.value.forEach((media: {path: any; _id: string; }) => {
+			if(media._id == imageId) mediaSelect.value = media.path;
+		});
+		props.block.details.value = mediaSelect.value
+	}
+
+	function checkImage(
+			imageSrc: string,
+			good: { (): void; (this: GlobalEventHandlers, ev: Event): any; },
+			bad: OnErrorEventHandlerNonNull
+		) {
+		let src = `${import.meta.env.VITE_API_URI}/${imageSrc}`;
+        let img = new Image();
+        img.onload = good; 
+        img.onerror = bad;
+        img.src = src;
+    }
 </script>
 
 <style lang="scss">
@@ -210,5 +212,11 @@
 				box-shadow:inset 0 0 0px 1px #3f49cf;
 			}
 		}
+	}
+
+	.image-block{
+		cursor: pointer;
+		transition: 300ms;
+		&:hover { box-shadow: 0 0 0 2px #9d9d9d; }
 	}
 </style>

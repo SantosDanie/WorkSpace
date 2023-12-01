@@ -1,5 +1,28 @@
 <template>
-	<div class="lotion w-100 mx-auto my-5 font-sans text-base" v-if="props.page" ref="editor">
+	<div class="editor-page" v-if="props.page" ref="editor" id="editor">
+		<div class="popoverTextBlock" :style="popoverPosition">
+			<ul class="text-sm">
+				<li class="fw-bold"><span>B</span></li>
+				<li class="fst-italic"><span>I</span></li>
+				<!-- <li @click="createComment"><span>Comment</span></li> -->
+			</ul>
+		</div>
+		<div class="commentsBlock" :style="popoverComments">
+			<div class="create-comment">
+				<div class="comment-head">
+					<p class="mb-0 fw-bold text-sm">Create Comment</p>
+				</div>
+				<div class="comment-body border">
+					<textarea class="p-1" style="width: 250px; min-height: 100px;">Lorem ipsum dolor sit amet consectetur adipisicing elit. </textarea>
+				</div>
+				<div class="comment-footer mt-1">
+					<button class="btn btn-sm btn-primary">Add</button>
+				</div>
+			</div>
+			<div class="comment"></div>
+			<div class="comment-replies"></div>
+		</div>
+
 		<h1
 			id="title"
 			ref="title"
@@ -8,17 +31,11 @@
 			@keydown.enter.prevent="splitTitle"
 			@keydown.down="blockElements[0]?.moveToFirstLine(); scrollIntoView();"
 			@blur="props.page.title=($event.target as HTMLElement).innerText.replace('\n', '')"
-			class="focus:outline-none focus-visible:outline-none text-5xl font-bold mb-12"
+			class="focus:outline-none focus-visible:outline-none text-5xl font-bold mb-4"
 			:class="props.page.title ? '' : 'empty'">
 			{{ props.page.title || '' }}
 		</h1>
-		<draggable
-			id="blocks"
-			tag="div"
-			:list="props.page.blocks"
-			handle=".handle"
-			v-bind="dragOptions"
-			class="space-y-2 pb-4 ml-editor">
+		<draggable id="blocks" tag="div" :list="props.page.blocks" handle=".handle" v-bind="dragOptions" class="ml-editor">
 			<transition-group type="transition">
 				<BlockComponent
 					:block="block" v-for="block, i in props.page.blocks"
@@ -54,10 +71,14 @@
 	import { htmlToMarkdown }					from '@/utils/utils'
 	import BlockComponent						from './Block.vue'
 
-	const props			= defineProps({
+	const props				= defineProps({
 		page: {
 			type: Object as PropType<{ title:string, blocks:Block[] }>,
 			required: true,
+		},
+		comment: {
+			type: Object,
+			required: false,
 		},
 		blockTypes: {
 			type: Object as PropType<null|(string|BlockType)[]>,
@@ -80,85 +101,87 @@
 			type: Function as PropType<(block:Block) => void>,
 		},
 	})
-	const editor		= ref<HTMLDivElement|null>(null)
-	const blockElements	= ref<typeof BlockComponent[]>([])
-	const title			= ref<HTMLDivElement|null>(null)
-	const dragOptions	= {
+	const editor			= ref<HTMLDivElement|null>(null)
+	const blockElements		= ref<typeof BlockComponent[]>([])
+	const title				= ref<HTMLDivElement|null>(null)
+	const popoverPosition	= ref('display:none;');
+	const popoverComments	= ref('display:none;');
+	const dragOptions		= {
 		animation: 150,
 		group: 'blocks',
 		disabled: false,
 		ghostClass: 'lotion-ghost',
 	}
 
-	document.addEventListener('mouseup', (event:MouseEvent) => {
-		// Automatically focus on nearest block on click
-		const blocks = document.getElementById('blocks')
-		const title = document.getElementById('title')
-		const editorRect = editor.value?.getClientRects()[0]
-		if (!blocks || !title || !editorRect) {
-			return
-		}
-
-		// Check that click is outside Editor
-		if ((event.clientX < ((editorRect as DOMRect).left || -1)) || (event.clientX > (editorRect?.right || window.innerWidth))) {
-			// Focus on title
-			const titleRect = title?.getClientRects()[0]
-			if (event.clientY > (titleRect?.top || window.innerHeight) && event.clientY < (titleRect?.bottom || 0)) {
-				// Check if click is on left or right side
-				const rect = title?.getClientRects()[0]
-				let moveToStart = true
-				if (event.x > (rect as DOMRect).right) moveToStart = false 
-				const selection = window.getSelection()
-				const range = document.createRange()
-				range.selectNodeContents(title as Node)
-				range.collapse(moveToStart)
-				selection?.removeAllRanges()
-				selection?.addRange(range)
-				return
-			}
-			// or nearest block
-			const blockRects = Array.from(blocks?.children as HTMLCollection)
-			const block = blockRects.find(child => {
-				const rect = child.getClientRects()[0]
-				return event.clientY > rect.top && event.clientY < rect.bottom
-			})
-			const blockIdx = blockRects.findIndex(child => {
-				const rect = child.getClientRects()[0]
-				return event.clientY > rect.top && event.clientY < rect.bottom
-			})
-			if (block) {
-				// Check if click is on left or right side
-				const rect = block.getClientRects()[0]
-				if (event.x < rect.left) {
-					// Move to start of block
-					blockElements.value[blockIdx].moveToStart()
+	document.addEventListener('mouseup', (event) => {
+		const blocks		= document.getElementById('blocks')
+		const title			= document.getElementById('title')
+		const editorDOM		= document.getElementById('editor')
+		const editorRect	= editor.value?.getClientRects()[0]
+		if (!blocks || !title || !editorRect) { return }
+		if(editorDOM != null && editorDOM.contains(event.target as HTMLDivElement)) {
+			const lastBlockRect = blocks?.lastElementChild?.getClientRects()[0]
+			if (!lastBlockRect) return
+			if(	event.clientX > (lastBlockRect as DOMRect).left &&
+				event.clientX < (lastBlockRect as DOMRect).right && 
+				event.clientY > (lastBlockRect as DOMRect).bottom &&
+				blocks.contains(event.target as HTMLDivElement) == false) {
+				const lastBlock = props.page.blocks[props.page.blocks.length-1]
+				const lastBlockComponent = blockElements.value[props.page.blocks.length-1]
+				if (lastBlock.type === BlockType.Text && lastBlockComponent.getTextContent() === '') {
+					setTimeout(lastBlockComponent.moveToEnd)
 				} else {
-					// Move to end of block
-					blockElements.value[blockIdx].moveToEnd()
+					insertBlock(props.page.blocks.length-1)
 				}
-				return
 			}
 		}
-		
-		// If cursor is between Submit button and last block, insert block there 
-		const lastBlockRect = blocks?.lastElementChild?.getClientRects()[0]
-		if (!lastBlockRect) return
-		if (event.clientX > (lastBlockRect as DOMRect).left && event.clientX < (lastBlockRect as DOMRect).right && event.clientY > (lastBlockRect as DOMRect).bottom) {
-			const lastBlock = props.page.blocks[props.page.blocks.length-1]
-			const lastBlockComponent = blockElements.value[props.page.blocks.length-1]
-			if (lastBlock.type === BlockType.Text && lastBlockComponent.getTextContent() === '') {
-				// If last block is empty Text, focus on last block
-				setTimeout(lastBlockComponent.moveToEnd)
-			} else {
-				// Otherwise add new empty Text block
-				insertBlock(props.page.blocks.length-1)
-			}
-		}
+
+		// let text = getSelectedText();
+		// if(text !== '' && text !== ' ' && blocks.contains(event.target as HTMLDivElement) == true) {
+		// 	popoverPosition.value =		`top: ${getSelectedPosition().y-45}px;`;
+		// 	popoverPosition.value +=	`left: ${getSelectedPosition().x-40}px;`;
+		// 	popoverPosition.value +=	`display: block;`;
+			
+		// 	popoverComments.value =		`top: ${getSelectedPosition().y+20}px;`;
+		// 	popoverComments.value +=	`left: ${getSelectedPosition().x-40}px;`;
+		// 	popoverComments.value +=	`display: none;`;
+
+		// } else {
+		// 	popoverPosition.value =		`top: 0px;`;
+		// 	popoverPosition.value +=	`left: 0px;`;
+		// 	popoverPosition.value +=	`display: none;`;
+		// }
+
+		// const commentModal = document.querySelector('commentsBlock');
+		// if(commentModal != null && commentModal.contains(event.target as  HTMLDivElement)) {
+		// 	popoverComments.value +=	`top: 0;`;
+		// 	popoverComments.value +=	`left: 0;`;
+		// 	popoverComments.value +=	`display: none;`;
+		// }
 	})
 
-	onBeforeUpdate(() => {
-		blockElements.value = []
-	})
+	// function createComment() {
+	// 	popoverComments.value +=	`display: block;`;
+	// }
+
+	// function getSelectedText() {
+	// 	if (window.getSelection) {
+	// 		return window.getSelection().toString();
+	// 	} else if (document.selection) {
+	// 		return document.selection.createRange().text;
+	// 	}
+	// 	return '';
+	// }
+
+	// function getSelectedPosition() {
+	// 	let s		= window.getSelection();
+	// 	let oRange	= s.getRangeAt(0);
+	// 	let oRect	= oRange.getBoundingClientRect();
+
+	// 	return oRect
+	// }
+
+	onBeforeUpdate(() => { blockElements.value = [] })
 
 	function scrollIntoView () {
 		const selection = window.getSelection()
@@ -224,7 +247,7 @@
 		props.page.blocks[blockIdx].type = type
 		if (type === BlockType.Divider) {
 			setTimeout(() => {
-				props.page.blocks[blockIdx].details = {}
+				props.page.blocks[blockIdx].details = {value: ''}
 				insertBlock(blockIdx)
 			})
 		} else setTimeout(() => {
@@ -237,9 +260,25 @@
 	}
 
 	function merge (blockIdx: number) {
-		if(blockIdx > 0 || [BlockType.H1, BlockType.H2, BlockType.H3, BlockType.H4, BlockType.H5, BlockType.H6, BlockType.Quote].includes(props.page.blocks[blockIdx].type)) {
+		if(blockIdx > 0 || [
+			BlockType.H1,
+			BlockType.H2,
+			BlockType.H3,
+			BlockType.H4,
+			BlockType.H5,
+			BlockType.H6,
+			BlockType.Quote,
+		].includes(props.page.blocks[blockIdx].type)) {
 			if (props.onDeleteBlock) props.onDeleteBlock(props.page.blocks[blockIdx])
-			if([BlockType.H1, BlockType.H2, BlockType.H3, BlockType.H4, BlockType.H5, BlockType.H6, BlockType.Quote].includes(props.page.blocks[blockIdx].type)){
+			if([
+				BlockType.H1,
+				BlockType.H2,
+				BlockType.H3,
+				BlockType.H4,
+				BlockType.H5,
+				BlockType.H6,
+				BlockType.Quote,
+			].includes(props.page.blocks[blockIdx].type)){
 				const prevBlockContent = blockElements.value[blockIdx].getTextContent()    
 				setBlockType(blockIdx, BlockType.Text)
 				props.page.blocks[blockIdx].details.value = prevBlockContent
@@ -315,45 +354,52 @@
 		props.page.title = titleString.slice(0, caretPos)
 		props.page.blocks[0].details.value = titleString.slice(caretPos)
 	}
-
-	// document.addEventListener('paste', (event) => {
-	// 	const clipboardItems = event.clipboardData.items;
-	// 	const items = [].slice.call(clipboardItems).filter((item) => {
-	// 		return item.type.indexOf('image') !== -1;
-	// 	});
-
-	// 	if (items.length === 0) {
-	// 		return;
-	// 	}
-
-	// 	const item = items[0];
-	// 	const blob = item.getAsFile();
-
-	// 	const imageUrl = URL.createObjectURL(blob);
-
-	// 	const newBlock = {
-	// 		id: uuidv4(),
-	// 		type: BlockType.Image,
-	// 		details: {
-	// 			value: imageUrl,
-	// 			type: blob.type,
-	// 			name: blob.name,
-	// 			size: blob.size
-	// 		}
-	// 	}
-	// 	insertNewBlock(props.page.blocks.length-1, newBlock);
-	// });
-
-	// function insertNewBlock (blockIdx: number, block: object) {
-	// 	props.page.blocks.splice(blockIdx + 1, 0, block)
-	// 	if (props.onCreateBlock) props.onCreateBlock(props.page.blocks[blockIdx+1])
-	// 	setTimeout(() => {
-	// 		blockElements.value[blockIdx+1].moveToStart()
-	// 		scrollIntoView()
-	// 	})
-	// }
 </script>
 
 <style lang="scss">
-	.ml-editor{ margin-left: -80px; }
+	.editor-page {
+		min-height: calc(100vh - 34px);
+		padding: 30px 70px;
+		padding-bottom: 55px;
+		p { margin-bottom: 0; }
+		*:focus-visible { outline: 0 ; }
+		h1, h2, h3, h4, h5, h6 { margin-bottom: 0; }
+	}
+
+	.popoverTextBlock {
+		position: fixed;
+		box-shadow: 0 0 2px 0px gray;
+		border: 1px solid #b6b6b6;
+		padding: 5px;
+		border-radius: 3px;
+		background-color: white;
+		z-index: 2;
+		ul {
+			padding: 0;
+			margin: 0;
+			display: flex;
+			li {
+				display: block;
+				margin-left: 2.5px;
+				margin-right: 2.5px;
+				padding: 5px 10px;
+				height: fit-content;
+				border-radius: 5px;
+				color: #2e2e2e;
+				cursor: pointer;
+				&:hover { background-color: rgba(#003cff, 0.15); }
+				&.selected { background-color: rgba(#003cff, 0.15); }
+			}
+		}
+	}
+
+	.commentsBlock {
+		position: fixed;
+		// right:15px;
+		border:1px solid gray;
+		background-color: #fff;
+		padding: 10px 15px;
+		z-index: 5;
+		border-radius: 5px;
+	}
 </style>

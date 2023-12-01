@@ -7,8 +7,8 @@
 
 <script setup lang="ts">
 	import { computed, watch }					from 'vue'
-	import { useEditor, EditorContent }			from '@tiptap/vue-3'
 	import { markdownToHtml, htmlToMarkdown }	from '@/utils/utils'
+	import { useEditor, EditorContent }			from '@tiptap/vue-3'
 	import Document								from '@tiptap/extension-document'
 	import Paragraph							from '@tiptap/extension-paragraph'
 	import Text									from '@tiptap/extension-text'
@@ -42,7 +42,6 @@
 		},
 	})
 
-	// Removing default behavior for drop event
 	const editor = useEditor({
 		extensions: [
 			Document,
@@ -55,13 +54,9 @@
 			Heading.configure({levels: [1, 2, 3, 4, 5, 6]}),
 			Placeholder.configure({ placeholder: 'Type \'/\' for a menu' })
 		],
-		editorProps: { 
-			handleDrop: () => true,
-		},
+		editorProps: { handleDrop: () => true },
 		content: value.value,
-		onUpdate: () => {
-			value.value = htmlToMarkdown(editor.value?.getHTML() || '')
-		},
+		onUpdate: () => { value.value = htmlToMarkdown(editor.value?.getHTML() || '') },
 	})
 
 	watch(() => props.modelValue, value => {

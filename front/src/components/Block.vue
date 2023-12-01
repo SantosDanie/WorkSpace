@@ -1,6 +1,6 @@
 <template>
 	<div class="group flex w-full rounded m-0">
-		<div class="menu-tooltip h-full pl-4 pr-2 text-center cursor-pointer transition-all duration-150 text-neutral-300 flex"
+		<div class="menu-tooltip"
 			:class="{
 				'pHeading-1': block.type === BlockType.H1,
 				'pHeading-2': block.type === BlockType.H2,
@@ -9,20 +9,21 @@
 				'pHeading-5': block.type === BlockType.H5,
 				'pHeading-6': block.type === BlockType.H6,
 			}">
+
 			<Tooltip value="<span class='text-neutral-400'><span class='text-white'>Click</span> to add block below</span>">
-				<v-icon name="hi-plus" @click="emit('newBlock')"
-					class="w-6 h-6 hover:bg-neutral-100 hover:text-neutral-400 p-0.5 rounded group-hover:opacity-100 opacity-0" />
+				<v-icon name="hi-plus" @click="emit('newBlock')" class="w-6 h-6 hover:bg-neutral-100 hover:text-neutral-400 p-0.5 rounded group-hover:opacity-100 opacity-0" />
 			</Tooltip>
 			<BlockMenu ref="menu" @setBlockType="setBlockType" :blockTypes="props.block.details.blockTypes || props.blockTypes"/>
 		</div>
 		<div class="w-full relative" :class="{ 'px-0': block.type !== BlockType.Divider }">
 			<component
-			ref="content"
-			:is="BlockComponents[props.block.type]"
-			:block="block"
-			:readonly="props.readonly"
-			@keydown="keyDownHandler"
-			@keyup="parseMarkdown"/>
+				ref="content"
+				:is="BlockComponents[props.block.type]"
+				:block="block"
+				:readonly="props.readonly"
+				:id="`block-id-${props.block.id}`"
+				@keydown="keyDownHandler"
+				@keyup="parseMarkdown"/>
 		</div>
 	</div>
 </template>
@@ -38,7 +39,9 @@
 	import BlockMenu			from './BlockMenu.vue'
 	import Tooltip				from './elements/Tooltip.vue'
 
-	const props = defineProps({
+	const content	= ref<any>(null)
+	const menu		= ref<typeof BlockMenu|null>(null)
+	const props		= defineProps({
 		block: {
 			type: Object as PropType<Block>,
 			default: {
@@ -57,8 +60,7 @@
 			default: false,
 		},
 	})
-
-	const emit = defineEmits([
+	const emit		= defineEmits([
 		'deleteBlock',
 		'newBlock',
 		'moveToPrevChar',
@@ -173,9 +175,6 @@
 			BlockType.H6,
 		].includes(props.block.type)
 	}
-
-	const content	= ref<any>(null)
-	const menu		= ref<typeof BlockMenu|null>(null)
 
 	function atFirstChar () {
 		const startCoord = getStartCoordinates()
@@ -382,9 +381,10 @@
 	}
 
 	function setCaretPos (caretPos:number) {
-		const innerContent = getInnerContent()
+		const innerContent = getInnerContent();
 		if (innerContent) {
-		if (isTextBlock(props.block.type)) {
+			// console.log(isTextBlock(props.block.type));
+			if (isTextBlock(props.block.type)) {
 				let offsetNode, offset = 0
 				const numNodes = (content.value as any).$el.firstChild.firstChild.childNodes.length
 				for (const [i, node] of (content.value as any).$el.firstChild.firstChild.childNodes.entries()) {
@@ -404,6 +404,7 @@
 			} else {
 				const selection = window.getSelection()
 				const range = document.createRange()
+				// console.log('false ' + range);
 				range.setStart(innerContent, caretPos)
 				range.setEnd(innerContent, caretPos)
 				selection?.removeAllRanges()
@@ -529,11 +530,20 @@
 </script>
 
 <style lang="scss">
-	.menu-tooltip	{	margin-top: 5px; }
+	.menu-tooltip	{ margin-top: 5px; }
 	.pHeading-1		{ padding-top: 5px; }
 	.pHeading-2		{ padding-top: 3px; }
 	.pHeading-3		{ padding-top: 1px; }
 	.pHeading-4		{ margin-top: 2px; }
 	.pHeading-5		{ margin-top: 0px; }
 	.pHeading-6		{ margin-top: -3px; }
+	.menu-tooltip {
+		display: flex;
+		height: fit-content;
+		position: absolute;
+		z-index: 5;
+		right: calc(100% + 1px);
+		.handle, .group-tooltip { cursor: pointer; }
+	}
+	.group { position: relative; }
 </style>

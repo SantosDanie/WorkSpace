@@ -6,7 +6,7 @@ const origins = [
   'http://localhost:5174',
   'http://127.0.0.1:5173',
   'https://workspaceapp-15e6ae.netlify.app',
-  'https://workspace-v-2.netlify.app/'
+  'https://workspace-v-2.netlify.app'
 ]
 
 module.exports = origins

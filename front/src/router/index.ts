@@ -6,6 +6,8 @@ import Settings			from '@/pages/Settings/Settings.vue'
 import Profile			from '@/pages/Settings/Profile.vue'
 import PageTeam			from '@/pages/Settings/Team.vue'
 import Calendar			from '@/pages/Settings/Calendar.vue'
+import Medias			from '@/pages/Settings/Medias.vue'
+import ActivityLog		from '@/pages/Settings/ActivityLog.vue'
 
 import Login 			from '@/pages/Logs/Login.vue'
 import Register 		from '@/pages/Logs/Register.vue'
@@ -13,6 +15,7 @@ import ForgotPass 		from '@/pages/Logs/forgot-pass.vue'
 
 import Page				from '@/pages/Projects/index.vue'
 import WorkPage			from '@/pages/Projects/WorkPage.vue'
+import setPage			from '@/pages/Projects/SettingsSpace.vue'
 
 // Routes
 const router = createRouter({
@@ -48,6 +51,18 @@ const router = createRouter({
 			component: Calendar,
 			meta: { requiresAuth: true }
 		},
+		{
+			path: '/medias/',
+			name: 'medias',
+			component: Medias,
+			meta: { requiresAuth: true}
+		},
+		{
+			path: '/activity-log/',
+			name: 'activityLog',
+			component: ActivityLog,
+			meta: { requiresAuth: true }
+		},
 		// Register
 		{
 			path: '/register/',
@@ -78,6 +93,12 @@ const router = createRouter({
 			path: "/page/:id",
 			name: 'workPage',
 			component: WorkPage,
+			meta: { requiresAuth: true }
+		},
+		{
+			path: "/settings/:id",
+			name:  'settingsPage',
+			component: setPage,
 			meta: { requiresAuth: true }
 		}
 	]

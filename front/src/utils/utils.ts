@@ -23,9 +23,6 @@ export function markdownToHtml (mdString:string) {
 	.replace(/\*(.*?)\*/g, '<em>$1</em>')
 	.replaceAll('\\<em>\\</em>', '*')
 	.trim()
-	// .replace(/(?<!\\)\*(?<!\\)\*(.*?)(?<!\\)\*(?<!\\)\*/g, '<strong>$1</strong>')
-	// .replace(/(?<!\\)\*(.*?)(?<!\\)\*/g, '<em>$1</em>')
-	// .replace(/\\\*/g, '*')
 }
 
 export function htmlToMarkdown (htmlString:string) {

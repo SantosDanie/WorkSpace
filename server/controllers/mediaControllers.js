@@ -57,6 +57,7 @@ async function deleteMedia(req, res) {
 	const id = req.params.id
 	try {
 		const post = await Topic.findByIdAndDelete(id)
+		clearImage(post.path)
 		res.status(200).json({ message: "Topic deleted successfully."})
 	} catch (err) {
 		res.status(404).json({ message: err.message })
