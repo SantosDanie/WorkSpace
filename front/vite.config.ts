@@ -8,9 +8,7 @@ export default defineConfig(({ mode }) => {
 	if (mode === 'library') {
 		return {
 			resolve:{
-				alias:{
-					'@' : path.resolve(__dirname, './src')
-				},
+				alias:{'@':path.resolve(__dirname, './src')},
 			},
 			plugins: [vue()],
 			build: {
@@ -31,9 +29,7 @@ export default defineConfig(({ mode }) => {
 		}
 	} else {
 		return {
-			resolve:{
-				alias:{ '@' : path.resolve(__dirname, './src') },
-			},
+			resolve:{alias:{ '@' : path.resolve(__dirname, './src') }},
 			plugins: [ vue() ],
 			test: {
 				globals: true,
@@ -47,7 +43,7 @@ export default defineConfig(({ mode }) => {
 				],
 				environment: 'happy-dom',
 			},
-			build: {chunkSizeWarningLimit: 1500,}
+			build: { chunkSizeWarningLimit: 1500, }
 		}
 	}
 })

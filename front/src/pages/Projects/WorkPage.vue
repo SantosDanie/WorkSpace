@@ -53,7 +53,7 @@
 	import { usePageStore }		from '@/stores/Page'
 	import { BlockType }		from '@/utils/types'
 	import { v4 as uuidv4 }		from 'uuid'
-	import { useRoute }			from 'vue-router';
+	import { useRoute }			from 'vue-router'
 
 	const readonly			= ref(false)
 	const isSettingsOpen	= ref(false)

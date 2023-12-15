@@ -1,11 +1,11 @@
 <template>
 	<div
 		ref="content"
-		class="py-1"
+		class="blockImage"
 		:key="props.block.type"
 		:block-type="props.block.type">
-		<div class="dragDiv" @click="openModal=true" v-if="props.block.details.value == ''">Image png / jpeg / jpg / webp</div>
-		<img v-else class="image-block" :src="getImageUrl(props.block.details.value || mediaSelect)" @click="openModal=true">
+		<div class="dragDiv" @click="openModal=true" :class="{'hasImage': props.block.details.value !== ''}">Image png / jpeg / jpg / webp</div>
+		<img class="image-block" v-if="props.block.details.value != ''" :src="getImageUrl(props.block.details.value || mediaSelect)">
 		<div class="openModalImage" v-if="openModal === true">
 			<div class="container-modalImage">
 				<div class="head-modal d-flex flex-wrap justify-content-center align-items-center">
@@ -214,9 +214,19 @@
 		}
 	}
 
-	.image-block{
-		cursor: pointer;
-		transition: 300ms;
-		&:hover { box-shadow: 0 0 0 2px #9d9d9d; }
+	.blockImage {
+		position: relative;
+		margin: 5px 0;
+		.hasImage {
+			position: absolute;
+			top: 10px;
+			left: 15px;
+			width: fit-content;
+			opacity: 0;
+			padding: 10px;
+		}
+		&:hover .hasImage { opacity: 1; }
 	}
+
+	.image-block { transition: 300ms; }
 </style>

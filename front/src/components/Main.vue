@@ -14,7 +14,6 @@
 	import { BlockType }	from '@/utils/types'
 	import Lotion			from './Lotion.vue'
 	import { v4 as uuidv4 }	from 'uuid'
-	// import Markdown from './Markdown.vue'
 
 	const readonly = ref(false)
 

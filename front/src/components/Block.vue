@@ -30,14 +30,9 @@
 
 <script setup lang="ts">
 	import { ref, PropType }	from 'vue'
-	import {
-		Block,
-		BlockType,
-		BlockComponents, 
-		isTextBlock
-	}							from '@/utils/types'
-	import BlockMenu			from './BlockMenu.vue'
-	import Tooltip				from './elements/Tooltip.vue'
+	import { Block, BlockType, BlockComponents, isTextBlock } from '@/utils/types'
+	import BlockMenu			from '@/components/BlockMenu.vue'
+	import Tooltip				from '@/components/elements/Tooltip.vue'
 
 	const content	= ref<any>(null)
 	const menu		= ref<typeof BlockMenu|null>(null)
@@ -70,6 +65,7 @@
 		'merge',
 		'split',
 		'setBlockType',
+		'setNewBlockType'
 	])
 
 	function getFirstChild () {
@@ -123,7 +119,6 @@
 			if (menu.value?.open) {
 				event.preventDefault()
 			}
-			// If at first line, move to previous block
 			else if (atFirstLine()) {
 				event.preventDefault()
 				emit('moveToPrevLine')
@@ -132,19 +127,16 @@
 			if (menu.value?.open) {
 				event.preventDefault()
 			}
-			// If at last line, move to next block
 			else if (atLastLine()) {
 				event.preventDefault()
 				emit('moveToNextLine')
 			}
 		} else if (event.key === 'ArrowLeft') {
-			// If at first character, move to previous block
 			if (atFirstChar()) {
 				event.preventDefault()
 				emit('moveToPrevChar')
 			}
 		} else if (event.key === 'ArrowRight') {
-			// If at last character, move to next block
 			if (atLastChar()) {
 				event.preventDefault()
 				emit('moveToNextChar')
@@ -157,7 +149,12 @@
 			}
 		} else if (event.key === 'Enter') {
 			event.preventDefault()
-			if (!(menu.value && menu.value.open) && !props.readonly) {
+			if(
+				props.block.type == BlockType.CheckText ||
+				props.block.type == BlockType.NumList
+			) {
+				emit('setNewBlockType', props.block.type)
+			} else if (!(menu.value && menu.value.open) && !props.readonly) {
 				emit('split')
 			}
 		}
@@ -383,7 +380,6 @@
 	function setCaretPos (caretPos:number) {
 		const innerContent = getInnerContent();
 		if (innerContent) {
-			// console.log(isTextBlock(props.block.type));
 			if (isTextBlock(props.block.type)) {
 				let offsetNode, offset = 0
 				const numNodes = (content.value as any).$el.firstChild.firstChild.childNodes.length
@@ -404,7 +400,6 @@
 			} else {
 				const selection = window.getSelection()
 				const range = document.createRange()
-				// console.log('false ' + range);
 				range.setStart(innerContent, caretPos)
 				range.setEnd(innerContent, caretPos)
 				selection?.removeAllRanges()
@@ -528,22 +523,3 @@
 		setCaretPos,
 	})
 </script>
-
-<style lang="scss">
-	.menu-tooltip	{ margin-top: 5px; }
-	.pHeading-1		{ padding-top: 5px; }
-	.pHeading-2		{ padding-top: 3px; }
-	.pHeading-3		{ padding-top: 1px; }
-	.pHeading-4		{ margin-top: 2px; }
-	.pHeading-5		{ margin-top: 0px; }
-	.pHeading-6		{ margin-top: -3px; }
-	.menu-tooltip {
-		display: flex;
-		height: fit-content;
-		position: absolute;
-		z-index: 5;
-		right: calc(100% + 1px);
-		.handle, .group-tooltip { cursor: pointer; }
-	}
-	.group { position: relative; }
-</style>

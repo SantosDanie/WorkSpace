@@ -1,28 +1,6 @@
 <template>
 	<div class="editor-page" v-if="props.page" ref="editor" id="editor">
-		<div class="popoverTextBlock" :style="popoverPosition">
-			<ul class="text-sm">
-				<li class="fw-bold"><span>B</span></li>
-				<li class="fst-italic"><span>I</span></li>
-				<!-- <li @click="createComment"><span>Comment</span></li> -->
-			</ul>
-		</div>
-		<div class="commentsBlock" :style="popoverComments">
-			<div class="create-comment">
-				<div class="comment-head">
-					<p class="mb-0 fw-bold text-sm">Create Comment</p>
-				</div>
-				<div class="comment-body border">
-					<textarea class="p-1" style="width: 250px; min-height: 100px;">Lorem ipsum dolor sit amet consectetur adipisicing elit. </textarea>
-				</div>
-				<div class="comment-footer mt-1">
-					<button class="btn btn-sm btn-primary">Add</button>
-				</div>
-			</div>
-			<div class="comment"></div>
-			<div class="comment-replies"></div>
-		</div>
-
+		<!-- <Toolbar :toolbar="toolbarData" @toolbar="toolbar => btnToolbar(toolbar)"/> -->
 		<h1
 			id="title"
 			ref="title"
@@ -52,6 +30,7 @@
 					@merge="merge(i)"
 					@split="split(i)"
 					@setBlockType="type => setBlockType(i, type)"
+					@setNewBlockType="type => setNewBlockType(i, type)"
 				/>
 			</transition-group>
 		</draggable>
@@ -59,17 +38,13 @@
 </template>
 
 <script setup lang="ts">
-	import { ref, onBeforeUpdate, PropType }	from 'vue'
-	import { VueDraggableNext as draggable }	from 'vue-draggable-next'
-	import { v4 as uuidv4 }						from 'uuid'
-	import {
-		Block,
-		BlockType,
-		isTextBlock,
-		availableBlockTypes
-	}											from '@/utils/types'
-	import { htmlToMarkdown }					from '@/utils/utils'
-	import BlockComponent						from './Block.vue'
+	import { ref, onBeforeUpdate, PropType, onMounted, computed }	from 'vue'
+	import { v4 as uuidv4 }											from 'uuid'
+	import { VueDraggableNext as draggable }						from 'vue-draggable-next'
+	import { Block, BlockType, isTextBlock, availableBlockTypes }	from '@/utils/types'
+	import { htmlToMarkdown }										from '@/utils/utils'
+	import BlockComponent											from '@/components/Block.vue'
+	// import Toolbar													from '@/components/elements/Toolbar.vue'
 
 	const props				= defineProps({
 		page: {
@@ -106,6 +81,7 @@
 	const title				= ref<HTMLDivElement|null>(null)
 	const popoverPosition	= ref('display:none;');
 	const popoverComments	= ref('display:none;');
+	const toolbarData		= ref('')
 	const dragOptions		= {
 		animation: 150,
 		group: 'blocks',
@@ -135,51 +111,7 @@
 				}
 			}
 		}
-
-		// let text = getSelectedText();
-		// if(text !== '' && text !== ' ' && blocks.contains(event.target as HTMLDivElement) == true) {
-		// 	popoverPosition.value =		`top: ${getSelectedPosition().y-45}px;`;
-		// 	popoverPosition.value +=	`left: ${getSelectedPosition().x-40}px;`;
-		// 	popoverPosition.value +=	`display: block;`;
-			
-		// 	popoverComments.value =		`top: ${getSelectedPosition().y+20}px;`;
-		// 	popoverComments.value +=	`left: ${getSelectedPosition().x-40}px;`;
-		// 	popoverComments.value +=	`display: none;`;
-
-		// } else {
-		// 	popoverPosition.value =		`top: 0px;`;
-		// 	popoverPosition.value +=	`left: 0px;`;
-		// 	popoverPosition.value +=	`display: none;`;
-		// }
-
-		// const commentModal = document.querySelector('commentsBlock');
-		// if(commentModal != null && commentModal.contains(event.target as  HTMLDivElement)) {
-		// 	popoverComments.value +=	`top: 0;`;
-		// 	popoverComments.value +=	`left: 0;`;
-		// 	popoverComments.value +=	`display: none;`;
-		// }
 	})
-
-	// function createComment() {
-	// 	popoverComments.value +=	`display: block;`;
-	// }
-
-	// function getSelectedText() {
-	// 	if (window.getSelection) {
-	// 		return window.getSelection().toString();
-	// 	} else if (document.selection) {
-	// 		return document.selection.createRange().text;
-	// 	}
-	// 	return '';
-	// }
-
-	// function getSelectedPosition() {
-	// 	let s		= window.getSelection();
-	// 	let oRange	= s.getRangeAt(0);
-	// 	let oRect	= oRange.getBoundingClientRect();
-
-	// 	return oRect
-	// }
 
 	onBeforeUpdate(() => { blockElements.value = [] })
 
@@ -278,6 +210,8 @@
 				BlockType.H5,
 				BlockType.H6,
 				BlockType.Quote,
+				BlockType.CheckText,
+				BlockType.NumList,
 			].includes(props.page.blocks[blockIdx].type)){
 				const prevBlockContent = blockElements.value[blockIdx].getTextContent()    
 				setBlockType(blockIdx, BlockType.Text)
@@ -295,13 +229,25 @@
 		if (isTextBlock(props.page.blocks[prefixBlockIdx].type)) {
 			const prevBlockContentLength = blockElements.value[prefixBlockIdx].getTextContent().length
 			let suffix = (props.page.blocks[suffixBlockIdx] as any).details.value
-			if ([BlockType.H1, BlockType.H2, BlockType.H3,BlockType.Quote].includes(props.page.blocks[suffixBlockIdx].type)) suffix = blockElements.value[suffixBlockIdx].getTextContent()
+			if ([
+				BlockType.H1,
+				BlockType.H2,
+				BlockType.H3,
+				BlockType.Quote
+			].includes(props.page.blocks[suffixBlockIdx].type)) suffix = blockElements.value[suffixBlockIdx].getTextContent()
 			props.page.blocks[prefixBlockIdx].details.value = (props.page.blocks[prefixBlockIdx] as any).details.value + suffix
 			props.page.blocks.splice(suffixBlockIdx, 1)
 			setTimeout(() => {
 				blockElements.value[prefixBlockIdx].setCaretPos(prevBlockContentLength)
 			})
-		} else if ([BlockType.H1, BlockType.H2, BlockType.H3, BlockType.H4, BlockType.H5, BlockType.H6].includes(props.page.blocks[prefixBlockIdx].type)) {
+		} else if ([
+				BlockType.H1,
+				BlockType.H2,
+				BlockType.H3,
+				BlockType.H4,
+				BlockType.H5,
+				BlockType.H6
+			].includes(props.page.blocks[prefixBlockIdx].type)) {
 			const prevBlockContentLength = (props.page.blocks[prefixBlockIdx] as any).details.value.length
 			props.page.blocks[prefixBlockIdx].details.value += blockElements.value[suffixBlockIdx].getTextContent()
 			props.page.blocks.splice(suffixBlockIdx, 1)
@@ -354,6 +300,27 @@
 		props.page.title = titleString.slice(0, caretPos)
 		props.page.blocks[0].details.value = titleString.slice(caretPos)
 	}
+
+	function setNewBlockType(blockIdx: number, type: BlockType) {
+		if (props.onUnsetAll) props.onUnsetAll(props.page.blocks[blockIdx])
+		if (blockElements.value[blockIdx].content.onUnset) { blockElements.value[blockIdx].content.onUnset() }
+
+		const newBlock = {
+			id: uuidv4(),
+			type: type,
+			details: {
+				value: '',
+			}
+		}
+
+		props.page.blocks.splice(blockIdx+1, 0, newBlock)
+		if (props.onCreateBlock) props.onCreateBlock(props.page.blocks[blockIdx+1])
+		setTimeout(() => { blockElements.value[blockIdx+1].setCaretPos() })
+	}
+
+	function btnToolbar(btn: string) {
+		console.log(btn)
+	}
 </script>
 
 <style lang="scss">
@@ -373,7 +340,7 @@
 		padding: 5px;
 		border-radius: 3px;
 		background-color: white;
-		z-index: 2;
+		z-index: 6;
 		ul {
 			padding: 0;
 			margin: 0;

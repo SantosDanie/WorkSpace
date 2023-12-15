@@ -1,4 +1,3 @@
-<!-- Adapted from https://tiptap.dev/installation/vue3 -->
 <template>
 	<editor-content :editor="editor" spellcheck="false"
 	@keyup.enter.capture.prevent="() => {}"
@@ -18,6 +17,8 @@
 	import Placeholder							from '@tiptap/extension-placeholder'
 	import Link									from '@tiptap/extension-link'
 	import Heading								from '@tiptap/extension-heading'
+	import TextStyle							from '@tiptap/extension-text-style'
+	import { Color }							from '@tiptap/extension-color'
 
 	const props = defineProps({
 		modelValue: {
@@ -51,6 +52,8 @@
 			Italic,
 			History,
 			Link,
+			TextStyle,
+			Color,
 			Heading.configure({levels: [1, 2, 3, 4, 5, 6]}),
 			Placeholder.configure({ placeholder: 'Type \'/\' for a menu' })
 		],

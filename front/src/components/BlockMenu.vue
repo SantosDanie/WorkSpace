@@ -40,7 +40,7 @@
 	import { ref, computed, watch, PropType }	from 'vue'
 	import Fuse									from 'fuse.js'
 	import { BlockType, availableBlockTypes }	from '@/utils/types'
-	import Tooltip								from './elements/Tooltip.vue'
+	import Tooltip								from '@/components/elements/Tooltip.vue'
 
 	const props			= defineProps({
 		blockTypes: {

@@ -16,22 +16,36 @@ export function registerBlock(
 	})
 }
 
-export function markdownToHtml (mdString:string) {
+export function markdownToHtml(mdString:string) {
 	return mdString
-	.replace(/\\\*/g, '\\*\\*')
-	.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-	.replace(/\*(.*?)\*/g, '<em>$1</em>')
-	.replaceAll('\\<em>\\</em>', '*')
+	.replace(/\\\*/g,				'\\*\\*')
+	.replace(/\*\*(.*?)\*\*/g,		'<strong>$1</strong>')
+	.replace(/\*(.*?)\*/g,			'<em>$1</em>')
+	.replaceAll('\\<em>\\</em>',	'*')
 	.trim()
 }
 
 export function htmlToMarkdown (htmlString:string) {
 	return htmlString
-	.replaceAll('<p>', '')
-	.replaceAll('</p>', '')
-	.replaceAll('<strong>', '**')
-	.replaceAll('</strong>', '**')
-	.replaceAll('<em>', '*')
-	.replaceAll('</em>', '*')
-	.replaceAll(/\<br.*?\>/g, '')
+	.replaceAll('<p>',		'')
+	.replaceAll('</p>',		'')
+	.replaceAll('<h1>',		'')
+	.replaceAll('</h1>',	'')
+	.replaceAll('<h2>',		'')
+	.replaceAll('</h2>',	'')
+	.replaceAll('<h3>',		'')
+	.replaceAll('</h3>',	'')
+	.replaceAll('<h4>',		'')
+	.replaceAll('</h4>',	'')
+	.replaceAll('<h5>',		'')
+	.replaceAll('</h5>',	'')
+	.replaceAll('<h6>',		'')
+	.replaceAll('</h6>',	'')
+	.replaceAll('<script>',	'')
+	.replaceAll('</script>',	'')
+	.replaceAll('<strong>',		'**')
+	.replaceAll('</strong>', 	'**')
+	.replaceAll('<em>',			'*')
+	.replaceAll('</em>',		'*')
+	.replaceAll(/\<br.*?\>/g,	'')
 }

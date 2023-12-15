@@ -1,4 +1,4 @@
-import { createApp, ref }			from 'vue'
+import { createApp }			from 'vue'
 import { createPinia }			from 'pinia'
 import { OhVueIcon, addIcons }	from "oh-vue-icons"
 import { authentication }		from '@/plugins/authentication'
@@ -19,7 +19,12 @@ import {
 	BiLayoutThreeColumns,
 	BiHr,
 	BiQuote,
-	MdImageOutlined
+	MdImageOutlined,
+	CoShortText,
+	IoCheckboxOutline,
+	CoListNumbered,
+	ViFileTypeTextile,
+	CoViewColumn
 }								from "oh-vue-icons/icons"
 
 import './index.css'
@@ -43,7 +48,12 @@ addIcons(
 	BiLayoutThreeColumns,
 	BiHr,
 	BiQuote,
-	MdImageOutlined
+	MdImageOutlined,
+	CoShortText,
+	IoCheckboxOutline,
+	CoListNumbered,
+	ViFileTypeTextile,
+	CoViewColumn
 )
 
 const app = createApp(App)

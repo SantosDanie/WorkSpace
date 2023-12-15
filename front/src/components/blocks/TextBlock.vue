@@ -1,13 +1,13 @@
 <template>
-	<Editor v-if="!props.readonly" v-model="props.block.details.value" class="py-1.5" />
-	<div v-else v-html="markdownToHtml(props.block.details.value as string)" class="py-1.5"></div>
+	<Editor v-if="!props.readonly" v-model="props.block.details.value" class="content-block"/>
+	<div v-else v-html="markdownToHtml(props.block.details.value as string)" class="content-block"></div>
 </template>
 
 <script setup lang="ts">
 	import { PropType }			from 'vue'
 	import { Block }			from '@/utils/types'
 	import { markdownToHtml }	from '@/utils/utils'
-	import Editor				from '../elements/Editor.vue'
+	import Editor				from '@/components/elements/Editor.vue'
 
 	const props = defineProps({
 		block: {
