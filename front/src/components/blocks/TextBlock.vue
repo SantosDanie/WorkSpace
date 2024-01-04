@@ -9,14 +9,8 @@
 	import { markdownToHtml }	from '@/utils/utils'
 	import Editor				from '@/components/elements/Editor.vue'
 
-	const props = defineProps({
-		block: {
-			type: Object as PropType<Block>,
-			required: true,
-		},
-		readonly: {
-			type: Boolean,
-			default: false,
-		},
+	const props		= defineProps({
+		block:		{ type: Object as PropType<Block>, required: true },
+		readonly:	{ type: Boolean, default: false },
 	})
 </script>

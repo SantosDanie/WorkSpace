@@ -25,8 +25,11 @@
 			type: String,
 			default: '',
 		},
+		idBlock: {
+			type: String,
+			default: ''
+		}
 	})
-
 	const emit = defineEmits(['update:modelValue'])
 
 	const value = computed({

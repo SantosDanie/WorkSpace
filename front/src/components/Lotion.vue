@@ -1,6 +1,6 @@
 <template>
 	<div class="editor-page" v-if="props.page" ref="editor" id="editor">
-		<!-- <Toolbar :toolbar="toolbarData" @toolbar="toolbar => btnToolbar(toolbar)"/> -->
+		<Toolbar :toolbar="toolbarData" @toolbar="toolbar => btnToolbar(toolbar)"/>
 		<h1
 			id="title"
 			ref="title"
@@ -38,13 +38,13 @@
 </template>
 
 <script setup lang="ts">
-	import { ref, onBeforeUpdate, PropType, onMounted, computed }	from 'vue'
+	import { ref, onBeforeUpdate, PropType }						from 'vue'
 	import { v4 as uuidv4 }											from 'uuid'
 	import { VueDraggableNext as draggable }						from 'vue-draggable-next'
 	import { Block, BlockType, isTextBlock, availableBlockTypes }	from '@/utils/types'
 	import { htmlToMarkdown }										from '@/utils/utils'
 	import BlockComponent											from '@/components/Block.vue'
-	// import Toolbar													from '@/components/elements/Toolbar.vue'
+	import Toolbar													from '@/components/elements/Toolbar.vue'
 
 	const props				= defineProps({
 		page: {
@@ -79,9 +79,6 @@
 	const editor			= ref<HTMLDivElement|null>(null)
 	const blockElements		= ref<typeof BlockComponent[]>([])
 	const title				= ref<HTMLDivElement|null>(null)
-	const popoverPosition	= ref('display:none;');
-	const popoverComments	= ref('display:none;');
-	const toolbarData		= ref('')
 	const dragOptions		= {
 		animation: 150,
 		group: 'blocks',
@@ -317,10 +314,6 @@
 		if (props.onCreateBlock) props.onCreateBlock(props.page.blocks[blockIdx+1])
 		setTimeout(() => { blockElements.value[blockIdx+1].setCaretPos() })
 	}
-
-	function btnToolbar(btn: string) {
-		console.log(btn)
-	}
 </script>
 
 <style lang="scss">
@@ -331,42 +324,5 @@
 		p { margin-bottom: 0; }
 		*:focus-visible { outline: 0 ; }
 		h1, h2, h3, h4, h5, h6 { margin-bottom: 0; }
-	}
-
-	.popoverTextBlock {
-		position: fixed;
-		box-shadow: 0 0 2px 0px gray;
-		border: 1px solid #b6b6b6;
-		padding: 5px;
-		border-radius: 3px;
-		background-color: white;
-		z-index: 6;
-		ul {
-			padding: 0;
-			margin: 0;
-			display: flex;
-			li {
-				display: block;
-				margin-left: 2.5px;
-				margin-right: 2.5px;
-				padding: 5px 10px;
-				height: fit-content;
-				border-radius: 5px;
-				color: #2e2e2e;
-				cursor: pointer;
-				&:hover { background-color: rgba(#003cff, 0.15); }
-				&.selected { background-color: rgba(#003cff, 0.15); }
-			}
-		}
-	}
-
-	.commentsBlock {
-		position: fixed;
-		// right:15px;
-		border:1px solid gray;
-		background-color: #fff;
-		padding: 10px 15px;
-		z-index: 5;
-		border-radius: 5px;
 	}
 </style>

@@ -4,19 +4,13 @@
 </template>
 
 <script setup lang="ts">
-	import { PropType }			from "vue";
+	import { PropType }			from "vue"
 	import { Block }			from "@/utils/types"
 	import { markdownToHtml }	from '@/utils/utils'
 	import Editor				from "@/components/elements/Editor.vue"
 
-	const props = defineProps({
-		block: {
-			type: Object as PropType<Block>,
-			required: true,
-		},
-		readonly: {
-			type: Boolean,
-			default: false,
-		},
+	const props		= defineProps({
+		block:		{ type: Object as PropType<Block>, required: true },
+		readonly:	{ type: Boolean, default: false }
 	});
 </script>

@@ -14,14 +14,8 @@
 
 	const numberBlock = ref<Number>(1);
 	const props = defineProps({
-		block: {
-			type: Object as PropType<BlockNumList>,
-			required: true,
-		},
-		readonly: {
-			type: Boolean,
-			default: false,
-		},
+		block:		{ type: Object as PropType<BlockNumList>, required: true },
+		readonly:	{ type: Boolean, default: false },
 	});
 
 	onMounted(() => {
