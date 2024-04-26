@@ -34,17 +34,12 @@ export interface SaveImagePage {
 	old_image: string
 }
 
-const config = {
-	headers: { 'Content-Type': 'application/json'},
-};
-
-const configImage = { headers: { 'Content-Type': 'multipart/form-data'} };
+const config		= { headers: { 'Content-Type': 'application/json'} };
+const configImage	= { headers: { 'Content-Type': 'multipart/form-data'} };
 
 export const usePageStore = defineStore('page', {
 	state: (): State => {
-		return {
-			page: {} as Page,
-		}
+		return { page: {} as Page }
 	},
 
 	actions:{

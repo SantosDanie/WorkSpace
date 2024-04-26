@@ -1,7 +1,7 @@
 import { defineStore }			from "pinia"
 import {useApi, useApiPrivate}	from "@/composables/useApi"
 
-export interface User{
+export interface User {
 	id: number,
 	username: string,
 	email: string,
@@ -10,7 +10,7 @@ export interface User{
 	full_name?: string
 }
 
-export interface State{
+export interface State {
 	user: User,
 	accessToken: string,
 	authReady: boolean
@@ -45,7 +45,7 @@ export const useAuthStore = defineStore('auth', {
 	},
 
 	actions:{
-		async attempt(){
+		async attempt() {
 			try {
 				await this.refresh()
 				await this.getUser()
@@ -55,7 +55,7 @@ export const useAuthStore = defineStore('auth', {
 			return
 		},
 
-		async login(payload: LoginData){
+		async login(payload: LoginData) {
 			try {
 				const {data} = await useApi().post(`/api/auth/login`, payload);
 				this.accessToken = data.access_token
@@ -66,7 +66,7 @@ export const useAuthStore = defineStore('auth', {
 			}
 		},
 
-		async register(payload: RegisterData){
+		async register(payload: RegisterData) {
 			try {
 				const {data} = await useApi().post(`/api/auth/register`, payload);
 				return data
@@ -75,7 +75,7 @@ export const useAuthStore = defineStore('auth', {
 			}
 		},
 
-		async getUser(){
+		async getUser() {
 			try {
 				const {data} = await useApiPrivate().get(`/api/auth/user`);
 				this.user = data
@@ -85,7 +85,7 @@ export const useAuthStore = defineStore('auth', {
 			}
 		},
 
-		async logout(){
+		async logout() {
 			try {
 				const {data} = await useApiPrivate().post(`/api/auth/logout`);
 				this.accessToken = ""
@@ -96,7 +96,7 @@ export const useAuthStore = defineStore('auth', {
 			}
 		},
 
-		async refresh(){
+		async refresh() {
 			try {
 				const { data } = await useApi().post(`/api/auth/refresh`);
 				this.accessToken = data.access_token

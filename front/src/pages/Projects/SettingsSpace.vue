@@ -1,186 +1,189 @@
 <template>
 	<Dashboard>
-		<div class="row p-5">
-			<div class="col-2">
-				<h3 class="fw-bold mb-4">Settings</h3>
-				<ul class="p-0 m-0">
-					<li class="mb-2 d-flex align-items-center btn-settings" :class="{'btn-active-settings': scrollSpyVar=='notification-settings' && isHelpOpen==false}" @click="scrollSpy('notification-settings')">
-						<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><path d="M224 0c-17.7 0-32 14.3-32 32V51.2C119 66 64 130.6 64 208v18.8c0 47-17.3 92.4-48.5 127.6l-7.4 8.3c-8.4 9.4-10.4 22.9-5.3 34.4S19.4 416 32 416H416c12.6 0 24-7.4 29.2-18.9s3.1-25-5.3-34.4l-7.4-8.3C401.3 319.2 384 273.9 384 226.8V208c0-77.4-55-142-128-156.8V32c0-17.7-14.3-32-32-32zm45.3 493.3c12-12 18.7-28.3 18.7-45.3H224 160c0 17 6.7 33.3 18.7 45.3s28.3 18.7 45.3 18.7s33.3-6.7 45.3-18.7z"/></svg>
-						<p class="mb-0 ml-2">Notification</p>
-					</li>
-					<li class="mb-2 d-flex align-items-center btn-settings" :class="{'btn-active-settings': scrollSpyVar=='shared-settings' && isHelpOpen==false}" @click="scrollSpy('shared-settings')">
-						<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 640 512"><path d="M144 0a80 80 0 1 1 0 160A80 80 0 1 1 144 0zM512 0a80 80 0 1 1 0 160A80 80 0 1 1 512 0zM0 298.7C0 239.8 47.8 192 106.7 192h42.7c15.9 0 31 3.5 44.6 9.7c-1.3 7.2-1.9 14.7-1.9 22.3c0 38.2 16.8 72.5 43.3 96c-.2 0-.4 0-.7 0H21.3C9.6 320 0 310.4 0 298.7zM405.3 320c-.2 0-.4 0-.7 0c26.6-23.5 43.3-57.8 43.3-96c0-7.6-.7-15-1.9-22.3c13.6-6.3 28.7-9.7 44.6-9.7h42.7C592.2 192 640 239.8 640 298.7c0 11.8-9.6 21.3-21.3 21.3H405.3zM224 224a96 96 0 1 1 192 0 96 96 0 1 1 -192 0zM128 485.3C128 411.7 187.7 352 261.3 352H378.7C452.3 352 512 411.7 512 485.3c0 14.7-11.9 26.7-26.7 26.7H154.7c-14.7 0-26.7-11.9-26.7-26.7z"/></svg>
-						<p class="mb-0 ml-2">Shared</p>
-					</li>
-					<li class="mb-2 d-flex align-items-center btn-settings" :class="{'btn-active-settings': scrollSpyVar=='calendar-settings' && isHelpOpen==false}" @click="scrollSpy('calendar-settings')">
-						<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><path d="M152 24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H64C28.7 64 0 92.7 0 128v16 48V448c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V192 144 128c0-35.3-28.7-64-64-64H344V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H152V24zM48 192H400V448c0 8.8-7.2 16-16 16H64c-8.8 0-16-7.2-16-16V192z"/></svg>
-						<p class="mb-0 ml-2">Calendar</p>
-					</li>
-					<li class="mb-2 d-flex align-items-center btn-settings" :class="{'btn-active-settings': isHelpOpen==true}" @click="isHelpOpen=!isHelpOpen">
-						<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 320 512"><path d="M80 160c0-35.3 28.7-64 64-64h32c35.3 0 64 28.7 64 64v3.6c0 21.8-11.1 42.1-29.4 53.8l-42.2 27.1c-25.2 16.2-40.4 44.1-40.4 74V320c0 17.7 14.3 32 32 32s32-14.3 32-32v-1.4c0-8.2 4.2-15.8 11-20.2l42.2-27.1c36.6-23.6 58.8-64.1 58.8-107.7V160c0-70.7-57.3-128-128-128H144C73.3 32 16 89.3 16 160c0 17.7 14.3 32 32 32s32-14.3 32-32zm80 320a40 40 0 1 0 0-80 40 40 0 1 0 0 80z"/></svg>
-						<p class="mb-0 ml-2">Help</p>
-					</li>
-				</ul>
+		<div class="header-WorkPage">
+			<div class="alert-page text-sm" role="alert" v-if="alertOpen == true">
+				{{ alertText }} 
 			</div>
-			<div class="col-10">
-				<div id="notification-settings" v-if="isHelpOpen==false">
-					<h2 class="fw-bold">Notification</h2>
-					<div class="row">
-						<div class="col-6">
-							<h6 class="fw-bold">Comments</h6>
-							<p>These are notification for comments on your WorkPage and replies to your comments</p>
-						</div>
-						<div class="col-6">
-							<label>
-								<input class="sr-only" type="checkbox" checked name="my-toggle" id="my-toggle" />
-								<div class="slider"></div>
-								<span class="label">Email</span>
-							</label>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-6">
-							<h6 class="fw-bold">WorkPage Changes</h6>
-							<p>These are notification for Change on your WorkPage</p>
-						</div>
-						<div class="col-6">
-							<label>
-								<input class="sr-only" type="checkbox" checked name="my-toggle" id="my-toggle" />
-								<div class="slider"></div>
-								<span class="label">Email</span>
-							</label>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-6">
-							<h6 class="fw-bold">Shared WorkPage</h6>
-							<p>People are notified that the work Page has been shared with them</p>
-						</div>
-						<div class="col-6">
-							<label>
-								<input class="sr-only" type="checkbox" checked name="my-toggle" id="my-toggle" />
-								<div class="slider"></div>
-								<span class="label">Email</span>
-							</label>
-						</div>
-					</div>
+			<ul class="p-0 m-0 ml-auto d-flex">
+				<li class="d-block">
+					<button class="btn btn-sm btn-outline-secondary d-flex">
+						<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512">
+							<path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zM432 248a24 24 0 1 1 0 48 24 24 0 1 1 0-48z"/>
+						</svg>
+					</button>
+				</li>
+				<li class="d-block ml-2">
+					<router-link class="btn btn-sm btn-outline-secondary" :to="{name: 'settingsPage', params: {id: pageId}}">
+						<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512">
+							<path d="M495.9 166.6c3.2 8.7 .5 18.4-6.4 24.6l-43.3 39.4c1.1 8.3 1.7 16.8 1.7 25.4s-.6 17.1-1.7 25.4l43.3 39.4c6.9 6.2 9.6 15.9 6.4 24.6c-4.4 11.9-9.7 23.3-15.8 34.3l-4.7 8.1c-6.6 11-14 21.4-22.1 31.2c-5.9 7.2-15.7 9.6-24.5 6.8l-55.7-17.7c-13.4 10.3-28.2 18.9-44 25.4l-12.5 57.1c-2 9.1-9 16.3-18.2 17.8c-13.8 2.3-28 3.5-42.5 3.5s-28.7-1.2-42.5-3.5c-9.2-1.5-16.2-8.7-18.2-17.8l-12.5-57.1c-15.8-6.5-30.6-15.1-44-25.4L83.1 425.9c-8.8 2.8-18.6 .3-24.5-6.8c-8.1-9.8-15.5-20.2-22.1-31.2l-4.7-8.1c-6.1-11-11.4-22.4-15.8-34.3c-3.2-8.7-.5-18.4 6.4-24.6l43.3-39.4C64.6 273.1 64 264.6 64 256s.6-17.1 1.7-25.4L22.4 191.2c-6.9-6.2-9.6-15.9-6.4-24.6c4.4-11.9 9.7-23.3 15.8-34.3l4.7-8.1c6.6-11 14-21.4 22.1-31.2c5.9-7.2 15.7-9.6 24.5-6.8l55.7 17.7c13.4-10.3 28.2-18.9 44-25.4l12.5-57.1c2-9.1 9-16.3 18.2-17.8C227.3 1.2 241.5 0 256 0s28.7 1.2 42.5 3.5c9.2 1.5 16.2 8.7 18.2 17.8l12.5 57.1c15.8 6.5 30.6 15.1 44 25.4l55.7-17.7c8.8-2.8 18.6-.3 24.5 6.8c8.1 9.8 15.5 20.2 22.1 31.2l4.7 8.1c6.1 11 11.4 22.4 15.8 34.3zM256 336a80 80 0 1 0 0-160 80 80 0 1 0 0 160z"/>
+						</svg>
+					</router-link>
+				</li>
+			</ul>
+		</div>
+		<div class="editor-container">
+			<div class="preload-page" v-if="preloader == ''">
+				<div class="preloader">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+						<circle fill="#4e88e0" stroke="#4e88e0" stroke-width="15" r="15" cx="40" cy="65">
+							<animate attributeName="cy" calcMode="spline" dur="2" values="65;135;65;" keySplines=".5 0 .5 1;.5 0 .5 1" repeatCount="indefinite" begin="-.4"></animate>
+						</circle>
+						<circle fill="#4e88e0" stroke="#4e88e0" stroke-width="15" r="15" cx="100" cy="65">
+							<animate attributeName="cy" calcMode="spline" dur="2" values="65;135;65;" keySplines=".5 0 .5 1;.5 0 .5 1" repeatCount="indefinite" begin="-.2"></animate>
+						</circle>
+						<circle fill="#4e88e0" stroke="#4e88e0" stroke-width="15" r="15" cx="160" cy="65">
+							<animate attributeName="cy" calcMode="spline" dur="2" values="65;135;65;" keySplines=".5 0 .5 1;.5 0 .5 1" repeatCount="indefinite" begin="0"></animate>
+						</circle>
+					</svg>
 				</div>
-				<div id="shared-settings" v-if="isHelpOpen==false">
-					<!-- <h2 class="fw-bold">Shared</h2> -->
-				</div>
-				<div id="calendar-settings" v-if="isHelpOpen==false">
-					<!-- <h3 class="fw-bold">Calendar</h3> -->
-				</div>
-				<div id="help-settings" v-if="isHelpOpen">
-					<h5 class="fw-bold mt-4">How to Save?</h5>
-					<p>To save changes to the WorkPage, use the <span class="command">Control+s</span> command.</p>
-
-					<h5 class="fw-bold mt-4">How to Delete?</h5>
-					<p>To delete Work Page you must go to <button class="btn btn-sm btn-danger">Remove page</button> and write the page id</p>
-
-
-					<h5 class="fw-bold mt-4 mb-3">Blocks</h5>
-					<h6 class="fw-bold"><v-icon name="bi-text-left" class="w-5 h-5"/>Text</h6> 
-					<p>This block allows writing inside an HTML(p) element.</p>
-
-					<h6 class="fw-bold"><v-icon name="oi-heading" class="w-5 h-5"/>Heading (1, 2, 3, 4, 5, 6)</h6>
-					<p>This block allows writing inside an HTML element (H1, H2, H3, H4, H5, H6)</p>
-
-					<h6 class="fw-bold"><v-icon name="bi-hr" class="w-5 h-5"/>Divider</h6>
-					<p>This block allows you to add a dividing line between one block and another.</p>
-
-					<h6 class="fw-bold"><v-icon name="bi-quote" class="w-5 h-5"/>Quote</h6>
-					<p>This block allows writing inside an HTML(p) element, with a border on the left side of the p element.</p>
-
-					<h6 class="fw-bold"><v-icon name="md-image-outlined" class="w-5 h-5"/>Image</h6>
-					<p>This block allows adding an image, in the worksheet, the image is added by selecting or pasting the image in the worksheet.</p>
-				</div>
+			</div>
+			<div class="error-load text-center pt-5" v-else-if="preloader == 'error'">
+				<svg xmlns="http://www.w3.org/2000/svg" height="3em" viewBox="0 0 512 512"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zm0-384c13.3 0 24 10.7 24 24V264c0 13.3-10.7 24-24 24s-24-10.7-24-24V152c0-13.3 10.7-24 24-24zM224 352a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z"/></svg>
+				<h4 class="text-secondary fw-bold mt-4">Error loading page</h4>
 			</div>
 		</div>
 	</Dashboard>
 </template>
 
 <script setup lang="ts">
-	import { ref }		from 'vue'
-	import Dashboard	from '@/components/Dashboard.vue'
+	import { ref, onMounted }	from 'vue'
+	import Dashboard			from '@/components/Dashboard.vue'
+	import { usePageStore }		from '@/stores/Page'
+	import { BlockType }		from '@/utils/types'
+	import { v4 as uuidv4 }		from 'uuid'
+	import { useRoute }			from 'vue-router'
 
-	const isHelpOpen	= ref<Boolean>(true)
-	const scrollSpyVar	= ref<string>('')
+	const readonly			= ref(false)
+	const isSettingsOpen	= ref(false)
+	const PageStore			= usePageStore();
+	const router			= useRoute();
+	const pageId			= ref(router.params.id.toString());
+	const preloader			= ref<string>('')
+	const alertText			= ref<string>('')
+	const alertType			= ref<string>('')
+	const alertOpen			= ref<boolean>(false)
+	const page				= ref({
+		title: '',
+		blocks:	[{
+			id: uuidv4(),
+			type: BlockType.Text,
+			details: { value: '' },
+		}],
+		settings: []
+	});
+	const comment 			= ref([
+		{
+			blockId: '976ee59e-08cf-4b3c-82a3-662b867181e7',
+			pageId:	'655665b78c8790859156e9c0',
+			commentId: '9a339410-1784-4bde-ab01-b7bc60ce6685',
+			comment: {
+				createdAt: '2023-11-16T18:55:51.442+00:00',
+				updatedAt: '2023-11-16T18:55:51.442+00:00',
+				value: 'This is the comment',
+				author: 'code4guate.santo@gmail.com',
+			},
+			replies: [
+				{
+					createdAt: '2023-11-16T18:55:51.442+00:00',
+					updatedAt: '2023-11-16T18:55:51.442+00:00',
+					value: 'This is the replies comment',
+					author: 'code4guate.santo@gmail.com',
+				},
+				{
+					createdAt: '2023-11-16T18:55:51.442+00:00',
+					updatedAt: '2023-11-16T18:55:51.442+00:00',
+					value: 'This is the replies comment',
+					author: 'example.santo@gmail.com',
+				}
+			]
+		},
+		{
+			blockId: '976ee59e-08cf-4b3c-82a3-662b867181e7',
+			pageId:	'655665b78c8790859156e9c0',
+			commentId: '4a1c527c-e2f1-4b7a-a84b-7ff5c0f14072',
+			comment: {
+				createdAt: '2023-11-16T18:55:51.442+00:00',
+				updatedAt: '2023-11-16T18:55:51.442+00:00',
+				value: 'This is the comment 1',
+				author: 'code4guate.santo@gmail.com',
+			},
+			replies: [
+				{
+					createdAt: '2023-11-16T18:55:51.442+00:00',
+					updatedAt: '2023-11-16T18:55:51.442+00:00',
+					value: 'This is the replies comment 1',
+					author: 'code4guate.santo@gmail.com',
+				},
+				{
+					createdAt: '2023-11-16T18:55:51.442+00:00',
+					updatedAt: '2023-11-16T18:55:51.442+00:00',
+					value: 'This is the replies comment 1',
+					author: 'example.santo@gmail.com',
+				}
+			]
+		},
+	])
 
-	function scrollSpy(val:  string) {
-		scrollSpyVar.value=val;
-		isHelpOpen.value = false;
+	onMounted(() => getWorkPage())
+
+	document.body.addEventListener('keydown', (e) => {
+		e = e || window.event;
+		let keyCode = e.which || e.keyCode;
+
+		if (e.ctrlKey && keyCode === 83) {
+			e.preventDefault();
+			e.stopPropagation();
+			saveWorkPage();
+		}
+	});
+
+	async function saveWorkPage() {
+		await PageStore.updatePage(pageId.value, page.value)
+		.then(res => alertData('Save', 'success'))
+		.catch(err => preloader.value = 'error');
+	}
+
+	async function getWorkPage() {
+		await PageStore.getPage(pageId.value)
+		.then(res => {
+			page.value = res.page;
+			preloader.value = 'success';
+		})
+		.catch(error => {
+			preloader.value = 'error';
+		});
+	}
+
+	function alertData(text: string, type: string) {
+		alertText.value=text;
+		alertType.value=type;
+		alertOpen.value=true;
+		setTimeout(() => {
+			alertText.value='';
+			alertType.value='';
+			alertOpen.value=false;
+		}, 1000);
 	}
 </script>
 
 <style lang="scss">
-	.btn-settings {
-		padding: 10px;
-		border-radius: 10px;
-		transition: 300sm;
-		cursor: pointer;
-		&:hover { background-color: rgba(#c4c4c4, 0.4); }
-	}
+	.content-dash { position: relative; }
 
-	.btn-active-settings { background-color: rgba(#c4c4c4, 0.4); }
-	.command {
-		font-size: 12px;
-		background-color: rgba(#000, 0.2);
-		padding: 5px;
-		border-radius: 5px;
-	}
-
-	// Checkbox
-	label {
-		display: inline-flex !important;
+	.preload-page {
+		width: 100%;
+		min-height: 400px;
+		display: flex;
+		justify-content: center;
 		align-items: center;
-		gap: 0.75rem;
-		cursor: pointer;
+		.preloader {width: 100px; }
+	}
 
-		--slide-distance: 1rem;
-		--slider-size: 1rem;
-		--slider-padding: 0.2rem;
-		--transition-duration: 200ms;
-
-		.slider {
-			flex-shrink: 0;
-			width: calc(var(--slider-size) + var(--slide-distance) + var(--slider-padding) * 2);
-			padding: var(--slider-padding);
-			border-radius: 50px;
-			background-color: #d1d5db;
-			transition: background-color var(--transition-duration);
-	
-			&::after {
-				content: "";
-				display: block;
-				width: var(--slider-size);
-				height: var(--slider-size);
-				background-color: #fff;
-				border-radius: 50px;
-				transition: transform var(--transition-duration);
-			}
-		}
-
-		input:checked + .slider {
-			background-color: hsl(210deg, 100%, 40%);
-			&::after { transform: translateX(var(--slide-distance)); }
-		}
-
-		input:focus-visible + .slider {
-			outline-offset: 2px;
-			outline: 2px solid hsl(210deg, 100%, 40%);
-		}
-
-		.sr-only {
-			position: absolute;
-			width: 1px;
-			height: 1px;
-			padding: 0;
-			margin: -1px;
-			overflow: hidden;
-			clip: rect(0, 0, 0, 0);
-			white-space: nowrap;
-			border-width: 0;
-		}
+	.header-WorkPage {
+		background-color: #f8f9fc;
+		box-shadow: 0 0 2px 0px #808080c7;
+		display: flex;
+		align-items: center;
+		padding: 5px 15px;
+		a { display: flex; }
 	}
 </style>

@@ -5,7 +5,7 @@ import type { AxiosInstance }	from "axios";
 
 export function useApiPrivate(): AxiosInstance  {
 
-	const authStore = useAuthStore()
+	const authStore = useAuthStore();
 	watchEffect(()=>{
 		axiosPrivateInstance.interceptors.request.use(
 			(config) => {
@@ -17,8 +17,7 @@ export function useApiPrivate(): AxiosInstance  {
 			(error) => Promise.reject(error)
 		)
 	
-		axiosPrivateInstance.interceptors.response.use(
-			response => response,
+		axiosPrivateInstance.interceptors.response.use(response => response,
 			async (error) => {
 				const prevRequest = error?.config
 				if((error?.response?.status === 403 || error?.response?.status === 401) && !prevRequest.sent) {
@@ -41,6 +40,6 @@ export function useApiPrivate(): AxiosInstance  {
 }
 
 
-export function useApi(){
+export function useApi() {
 	return axiosInstance
 }

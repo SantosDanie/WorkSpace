@@ -1,42 +1,37 @@
 <template>
-	<div class="group flex w-full rounded m-0">
-		<div class="menu-tooltip"
+	<div class="group flex w-full rounded" :class="{ 'pt-12 first:pt-0': block.type === BlockType.H1, 'pt-4 first:pt-0': block.type === BlockType.H2, }">
+		<div class="action-block h-full pl-4 pr-2 text-center cursor-pointer transition-all duration-150 text-neutral-300 flex"
 			:class="{
-				'pHeading-1': block.type === BlockType.H1,
-				'pHeading-2': block.type === BlockType.H2,
-				'pHeading-3': block.type === BlockType.H3,
-				'pHeading-4': block.type === BlockType.H4,
-				'pHeading-5': block.type === BlockType.H5,
-				'pHeading-6': block.type === BlockType.H6,
+				'invisible': props.readonly,
+				'py-3.5': block.type === BlockType.H1,
+				'py-3': block.type === BlockType.H2,
+				'py-2.5': block.type === BlockType.H3,
+				'py-1.5': ![BlockType.H1, BlockType.H2, BlockType.H3].includes(block.type),
 			}">
-
-			<Tooltip value="<span class='text-neutral-400'><span class='text-white'>Click</span> to add block below</span>">
-				<v-icon name="hi-plus" @click="emit('newBlock')" class="w-6 h-6 hover:bg-neutral-100 hover:text-neutral-400 p-0.5 rounded group-hover:opacity-100 opacity-0" />
+			<Tooltip value="<span class='action-icon text-neutral-400'><span class='text-white'>Click</span> to add block below</span>">
+				<v-icon name="hi-plus" @click="emit('newBlock')" class="w-6 h-6 hover:bg-neutral-100 hover:text-neutral-400 p-0.5 rounded"/>
 			</Tooltip>
-			<BlockMenu ref="menu" @setBlockType="setBlockType" :blockTypes="props.block.details.blockTypes || props.blockTypes"/>
+			<BlockMenu ref="menu" @setBlockType="setBlockType" :blockTypes="props.block.details.blockTypes || props.blockTypes" />
 		</div>
 		<div class="w-full relative" :class="{ 'px-0': block.type !== BlockType.Divider }">
 			<component
-				ref="content"
-				:is="BlockComponents[props.block.type]"
-				:block="block"
-				:readonly="props.readonly"
-				:id="`block-id-${props.block.id}`"
-				@keydown="keyDownHandler"
-				@keyup="parseMarkdown"/>
+			:is="BlockComponents[props.block.type]"
+			ref="content"
+			:block="block"
+			:readonly="props.readonly"
+			@keydown="keyDownHandler"
+			@keyup="parseMarkdown"  class="py-1.5"/>
 		</div>
 	</div>
 </template>
-
+  
 <script setup lang="ts">
-	import { ref, PropType }	from 'vue'
+	import { ref, PropType } from 'vue'
 	import { Block, BlockType, BlockComponents, isTextBlock } from '@/utils/types'
-	import BlockMenu			from '@/components/BlockMenu.vue'
-	import Tooltip				from '@/components/elements/Tooltip.vue'
-
-	const content	= ref<any>(null)
-	const menu		= ref<typeof BlockMenu|null>(null)
-	const props		= defineProps({
+	import BlockMenu	from './Elements/BlockMenu.vue'
+	import Tooltip		from './elements/Tooltip.vue'
+	
+	const props = defineProps({
 		block: {
 			type: Object as PropType<Block>,
 			default: {
@@ -46,16 +41,11 @@
 				},
 			},
 		},
-		blockTypes: {
-			type: Object as PropType<null|(string|BlockType)[]>,
-			default: null,
-		},
-		readonly: {
-			type: Boolean,
-			default: false,
-		},
+		blockTypes: { type: Object as PropType<null|(string|BlockType)[]>, default: null},
+		readonly: { type: Boolean, default: false },
 	})
-	const emit		= defineEmits([
+	
+	const emit = defineEmits([
 		'deleteBlock',
 		'newBlock',
 		'moveToPrevChar',
@@ -65,69 +55,66 @@
 		'merge',
 		'split',
 		'setBlockType',
-		'setNewBlockType'
 	])
-
+	
 	function getFirstChild () {
 		if (isTextBlock(props.block.type)) {
 			if ((content.value as any).$el.firstChild.firstChild.childNodes.length > 1) {
 				return (content.value as any).$el.firstChild.firstChild.firstChild
 			} else {
-				return (content.value as any).$el.firstChild.firstChild.firstChild
+				return (content.value as any).$el.lastChild.firstChild.firstChild
 			}
 		} else {
 			if ((content.value as any).$el) return (content.value as any).$el.firstChild || content.value.$el
 			else return (content.value as any).firstChild || content.value
 		}
 	}
-
+	
 	function getLastChild () {
 		if (isTextBlock(props.block.type)) {
 			if ((content.value as any).$el.firstChild.firstChild.childNodes.length > 1) {
 				return (content.value as any).$el.firstChild.firstChild.lastChild
 			} else {
-				return (content.value as any).$el.firstChild.firstChild.firstChild
+				return (content.value as any).$el.lastChild.firstChild.firstChild
 			}
 		} else {
 			if ((content.value as any).$el) return (content.value as any).$el.firstChild || content.value.$el
 			else return (content.value as any).firstChild || content.value
 		}
 	}
-
+	
 	function getInnerContent () {
 		if (isTextBlock(props.block.type)) {
-			return (content.value as any).$el.firstChild.firstChild.firstChild
+			return (content.value as any).$el.lastChild.firstChild.firstChild
 		} else {
 			return (content.value as any).$el.firstChild
 		}
 	}
-
+	
 	function getTextContent () {
 		const innerContent = getInnerContent()
 		if (innerContent) return innerContent.parentElement ? innerContent.parentElement.textContent : innerContent.textContent
 		else return ''
 	}
-
+	
 	function getHtmlContent () {
 		const innerContent = getInnerContent()
 		if (innerContent) return innerContent.parentElement.innerHTML
 		else return ''
 	}
-
+	
 	function keyDownHandler (event:KeyboardEvent) {
 		if (event.key === 'ArrowUp') {
 			if (menu.value?.open) {
 				event.preventDefault()
-			}
-			else if (atFirstLine()) {
+			} else if (atFirstLine()) {
 				event.preventDefault()
 				emit('moveToPrevLine')
 			}
 		} else if (event.key === 'ArrowDown') {
 			if (menu.value?.open) {
 				event.preventDefault()
-			}
-			else if (atLastLine()) {
+			} else if (atLastLine()) {
 				event.preventDefault()
 				emit('moveToNextLine')
 			}
@@ -149,58 +136,47 @@
 			}
 		} else if (event.key === 'Enter') {
 			event.preventDefault()
-			if(
-				props.block.type == BlockType.CheckText ||
-				props.block.type == BlockType.NumList
-			) {
-				emit('setNewBlockType', props.block.type)
-			} else if (!(menu.value && menu.value.open) && !props.readonly) {
+			if (!(menu.value && menu.value.open) && !props.readonly) {
 				emit('split')
 			}
 		}
 	}
-
+	
 	function isContentBlock () {
-		return [
-			BlockType.Text,
-			BlockType.Quote,
-			BlockType.H1,
-			BlockType.H2,
-			BlockType.H3,
-			BlockType.H4,
-			BlockType.H5,
-			BlockType.H6,
-		].includes(props.block.type)
+		return [BlockType.Text, BlockType.Quote, BlockType.H1, BlockType.H2, BlockType.H3].includes(props.block.type)
 	}
-
+	
+	const content	= ref<any>(null)
+	const menu		= ref<typeof BlockMenu|null>(null)
+	
 	function atFirstChar () {
 		const startCoord = getStartCoordinates()
 		const coord = getCaretCoordinates()
 		return coord?.x === startCoord.x && coord?.y === startCoord.y
 	}
-
+	
 	function atLastChar () {
 		const endCoord = getEndCoordinates()
 		const coord = getCaretCoordinates()
 		return coord?.x === endCoord.x && coord?.y === endCoord.y
 	}
-
+	
 	function atFirstLine () {
 		const startCoord = getStartCoordinates()
 		const coord = getCaretCoordinates()
 		return coord?.y === startCoord.y
 	}
-
+	
 	function atLastLine () {
 		const endCoord = getEndCoordinates()
 		const coord = getCaretCoordinates()
 		return coord?.y === endCoord.y
 	}
-
+	
 	function highlightedLength () {
 		return window.getSelection()?.toString().length
 	}
-
+	
 	function moveToStart () {
 		if (isContentBlock()) {
 			const firstChild = getFirstChild()
@@ -211,12 +187,12 @@
 				range.collapse(true)
 				selection?.removeAllRanges()
 				selection?.addRange(range)
-			} 
+			}
 		} else {
 			emit('moveToNextChar')
 		}
 	}
-
+	
 	function moveToEnd () {
 		if (isContentBlock()) {
 			const lastChild = getLastChild()
@@ -232,22 +208,22 @@
 			emit('moveToPrevChar')
 		}
 	}
-
+	
 	async function moveToFirstLine () {
 		if (isContentBlock()) {
-			const textContent = getTextContent()
-			if (!textContent) {
-				moveToStart()
-			} else {
-				let prevCoord = getCaretCoordinates()
-				let prevDist = 99999
-				let caretPos = 1
-				while (true) {
-					setCaretPos(caretPos)
-					const newCoord = getCaretCoordinates()
-					const newDist = Math.abs((newCoord?.x as number) - (prevCoord?.x as number))
-					if (newDist > prevDist) {
-						if (caretPos > 0) setCaretPos(caretPos - 1)
+		const textContent = getTextContent()
+		if (!textContent) {
+			moveToStart()
+		} else {
+			let prevCoord = getCaretCoordinates()
+			let prevDist = 99999
+			let caretPos = 1
+			while (true) {
+				setCaretPos(caretPos)
+				const newCoord = getCaretCoordinates()
+				const newDist = Math.abs((newCoord?.x as number) - (prevCoord?.x as number))
+				if (newDist > prevDist) {
+					if (caretPos > 0) setCaretPos(caretPos - 1)
 						break
 					} else if (caretPos === textContent.length || caretPos > 999) {
 						// Reached end of line
@@ -257,42 +233,41 @@
 						caretPos += 1
 					}
 				}
-			} 
+			}
 		} else {
 			emit('moveToNextLine')
 		}
 	}
-
+	
 	async function moveToLastLine () {
 		if (isContentBlock()) {
-			const textContent = getTextContent()
-			if (!textContent) {
-				moveToStart()
-			} else {
-				let prevCoord = getCaretCoordinates()
-				let prevDist = 99999
-				let caretPos = textContent.length
-				while (true) {
-					setCaretPos(caretPos)
-					const newCoord = getCaretCoordinates()
-					const newDist = Math.abs((newCoord?.x as number) - (prevCoord?.x as number))
-					if (newDist > prevDist) {
-						if (caretPos < textContent.length) setCaretPos(caretPos + 1)
-						break
-					} else if (caretPos === 0) {
-						// Reached start of line
-						break
-					} else {
-						prevDist = newDist
-						caretPos -= 1
-					}
+		const textContent = getTextContent()
+		if (!textContent) {
+			moveToStart()
+		} else {
+			let prevCoord = getCaretCoordinates()
+			let prevDist = 99999
+			let caretPos = textContent.length
+			while (true) {
+				setCaretPos(caretPos)
+				const newCoord = getCaretCoordinates()
+				const newDist = Math.abs((newCoord?.x as number) - (prevCoord?.x as number))
+				if (newDist > prevDist) {
+					if (caretPos < textContent.length) setCaretPos(caretPos + 1)
+					break
+				} else if (caretPos === 0) {
+					break
+				} else {
+					prevDist = newDist
+					caretPos -= 1
 				}
 			}
+		}
 		} else {
-			emit('moveToPrevLine')
+		emit('moveToPrevLine')
 		}
 	}
-
+	
 	function getCaretCoordinates () {
 		let x = 0, y = 0
 		const selection = window.getSelection()
@@ -310,55 +285,53 @@
 		}
 		return { x, y }
 	}
-
+	
 	function getCaretPos () {
 		const selection = window.getSelection()
 		if (selection) {
 		if (isTextBlock(props.block.type)) {
-				let offsetNode, offset = 0, tag = null
-				let selectedNode = selection.anchorNode
-				if (['STRONG', 'EM'].includes(selectedNode?.parentElement?.tagName as string)) {
-					selectedNode = selectedNode?.parentElement as Node
-					tag = (selectedNode as HTMLElement).tagName.toLowerCase()
-				}
-				// Edge case when character length is 1
-				if (selectedNode !== null && selectedNode.childNodes.length > 0) {
-					if (selectedNode.childNodes[0].textContent && selectedNode.childNodes[0].textContent.length <= 1)
-						selectedNode = selectedNode.childNodes[0];
-				}
-				for (const [i, node] of (content.value as any).$el.firstChild.firstChild.childNodes.entries()) {
-					if (node === selectedNode) {
-						offsetNode = node
-						if (node.tagName) offset += 2 + node.tagName.length
-						break
-					}
-					if (node.tagName) offset += node.outerHTML.length
-					else offset += node.textContent.length
-					offsetNode = node
-				}
-				return { pos: offset + selection.anchorOffset, tag }
-			} else {
-				return { pos: selection.anchorOffset }
+			let offsetNode, offset = 0, tag = null
+			let selectedNode = selection.anchorNode
+			if (['STRONG', 'EM'].includes(selectedNode?.parentElement?.tagName as string)) {
+				selectedNode = selectedNode?.parentElement as Node
+				tag = (selectedNode as HTMLElement).tagName.toLowerCase()
 			}
+			if (selectedNode !== null && selectedNode.childNodes.length > 0) {
+			if (selectedNode.childNodes[0].textContent && selectedNode.childNodes[0].textContent.length <= 1)
+				selectedNode = selectedNode.childNodes[0];
+			}
+			for (const [i, node] of (content.value as any).$el.firstChild.firstChild.childNodes.entries()) {
+			if (node === selectedNode) {
+				offsetNode = node
+				if (node.tagName) offset += 2 + node.tagName.length
+				break
+			}
+			if (node.tagName) offset += node.outerHTML.length
+			else offset += node.textContent.length
+			offsetNode = node
+			}
+			return { pos: offset + selection.anchorOffset, tag }
 		} else {
-			return { pos: 0 }
+			return { pos: selection.anchorOffset }
+		}
+		} else {
+		return { pos: 0 }
 		}
 	}
-
+	
 	function getCaretPosWithoutTags () {
 		const selection = window.getSelection()
 		if (selection) {
 		if (isTextBlock(props.block.type)) {
-				let offsetNode, offset = 0, tag = null
-				let selectedNode = selection.anchorNode
-				if (['STRONG', 'EM'].includes(selectedNode?.parentElement?.tagName as string)) {
-					selectedNode = selectedNode?.parentElement as Node
-					tag = (selectedNode as HTMLElement).tagName.toLowerCase()
-				}
-				// Edge case when character length is 1
-				if (selectedNode !== null && selectedNode.childNodes.length > 0) {
-					if (selectedNode.childNodes[0].textContent && selectedNode.childNodes[0].textContent.length <= 1)
-						selectedNode = selectedNode.childNodes[0];
+			let offsetNode, offset = 0, tag = null
+			let selectedNode = selection.anchorNode
+			if (['STRONG', 'EM'].includes(selectedNode?.parentElement?.tagName as string)) {
+				selectedNode = selectedNode?.parentElement as Node
+				tag = (selectedNode as HTMLElement).tagName.toLowerCase()
+			}
+			if (selectedNode !== null && selectedNode.childNodes.length > 0) {
+				if (selectedNode.childNodes[0].textContent && selectedNode.childNodes[0].textContent.length <= 1)
+					selectedNode = selectedNode.childNodes[0];
 				}
 				for (const [i, node] of (content.value as any).$el.firstChild.firstChild.childNodes.entries()) {
 					if (node === selectedNode) {
@@ -376,14 +349,14 @@
 			return { pos: 0 }
 		}
 	}
-
+	
 	function setCaretPos (caretPos:number) {
-		const innerContent = getInnerContent();
+		const innerContent = getInnerContent()
 		if (innerContent) {
 			if (isTextBlock(props.block.type)) {
 				let offsetNode, offset = 0
-				const numNodes = (content.value as any).$el.firstChild.firstChild.childNodes.length
-				for (const [i, node] of (content.value as any).$el.firstChild.firstChild.childNodes.entries()) {
+				const numNodes = (content.value as any).$el.lastChild.firstChild.childNodes.length
+				for (const [i, node] of (content.value as any).$el.lastChild.firstChild.childNodes.entries()) {
 					if (offset + node.textContent.length > caretPos || i === numNodes - 1) {
 						offsetNode = node
 						break
@@ -391,15 +364,15 @@
 					offset += node.textContent.length
 					offsetNode = node
 				}
-				const selection = window.getSelection()
-				const range = document.createRange()
+				const selection	= window.getSelection()
+				const range		= document.createRange()
 				range.setStart(offsetNode.firstChild || offsetNode, caretPos - offset)
 				range.setEnd(offsetNode.firstChild || offsetNode, caretPos - offset)
 				selection?.removeAllRanges()
 				selection?.addRange(range)
 			} else {
-				const selection = window.getSelection()
-				const range = document.createRange()
+				const selection	= window.getSelection()
+				const range		= document.createRange()
 				range.setStart(innerContent, caretPos)
 				range.setEnd(innerContent, caretPos)
 				selection?.removeAllRanges()
@@ -407,7 +380,7 @@
 			}
 		}
 	}
-
+	
 	function getStartCoordinates () {
 		let x = 0, y = 0
 		const firstChild = getFirstChild()
@@ -421,7 +394,7 @@
 		}
 		return { x, y }
 	}
-
+	
 	function getEndCoordinates () {
 		let x = 0, y = 0
 		const lastChild = getLastChild()
@@ -435,44 +408,34 @@
 		}
 		return { x, y }
 	}
-
+	
 	function parseMarkdown (event:KeyboardEvent) {
 		const textContent = getTextContent()
 		if(!textContent) return
-
+	
 		const markdownRegexpMap = {
 			[BlockType.H1]: /^#\s(.*)$/,
 			[BlockType.H2]: /^##\s(.*)$/,
 			[BlockType.H3]: /^###\s(.*)$/,
-			[BlockType.H4]: /^###\s(.*)$/,
-			[BlockType.H5]: /^###\s(.*)$/,
-			[BlockType.H6]: /^###\s(.*)$/,
 			[BlockType.Quote]: /^>\s(.*)$/,
 			[BlockType.Divider]: /^---\s$/
 		}
 
 		const handleMarkdownContent = (blockType: keyof typeof markdownRegexpMap) => {
 			const newContent = textContent.replace(markdownRegexpMap[blockType], '$1')
-			
 			emit('setBlockType', blockType)
 			setTimeout(() => {
 				props.block.details.value = newContent
 				moveToStart()
 			})
 		}
-
+	
 		if (textContent.match(markdownRegexpMap[BlockType.H1]) && event.key === ' ') {
 			handleMarkdownContent(BlockType.H1)
 		} else if (textContent.match(markdownRegexpMap[BlockType.H2]) && event.key === ' ') {
 			handleMarkdownContent(BlockType.H2)
 		} else if (textContent.match(markdownRegexpMap[BlockType.H3]) && event.key === ' ') {
 			handleMarkdownContent(BlockType.H3)
-		} else if (textContent.match(markdownRegexpMap[BlockType.H4]) && event.key === ' ') {
-			handleMarkdownContent(BlockType.H4)
-		} else if (textContent.match(markdownRegexpMap[BlockType.H5]) && event.key === ' ') {
-			handleMarkdownContent(BlockType.H5)
-		} else if (textContent.match(markdownRegexpMap[BlockType.H6]) && event.key === ' ') {
-			handleMarkdownContent(BlockType.H6)
 		} else if (textContent.match(markdownRegexpMap[BlockType.Quote]) && event.key === ' ') {
 			handleMarkdownContent(BlockType.Quote)
 		} else if (textContent.match(markdownRegexpMap[BlockType.Divider]) && event.key === ' ') {
@@ -485,19 +448,20 @@
 			}
 		}
 	}
-
+	
 	function setBlockType (blockType: BlockType, searchTermLength: number, openedWithSlash: boolean = false) {
 		clearSearch(searchTermLength, blockType, openedWithSlash)
-			.then(caretPos => {
-				emit('setBlockType', blockType)
-				setTimeout(() => {
-					if (searchTermLength < 1 && !openedWithSlash) moveToEnd()
-					else setCaretPos(caretPos)
-				})
+		.then(caretPos => {
+			emit('setBlockType', blockType)
+			setTimeout(() => {
+			if (searchTermLength < 1 && !openedWithSlash) moveToEnd()
+			else setCaretPos(caretPos)
 			})
+		})
 	}
-
+	
 	async function clearSearch (searchTermLength: number, newBlockType: BlockType, openedWithSlash: boolean = false) {
+		// If openedWithSlash, searchTermLength = 0 but we still need to clear
 		const pos = getCaretPosWithoutTags().pos
 		let startIdx = pos - (searchTermLength ? searchTermLength + 1 : 0)
 		let endIdx = pos
@@ -510,7 +474,7 @@
 			})
 		})
 	}
-
+	
 	defineExpose({
 		content,
 		getTextContent,
@@ -523,3 +487,16 @@
 		setCaretPos,
 	})
 </script>
+
+<style lang="scss">
+	.group {
+		position: relative;
+		margin: 0 !important;
+		.action-block {
+			position: absolute;
+			left: -80px;
+			opacity: 0;
+		}
+		&:hover .action-block { opacity: 1; }
+	}
+</style>

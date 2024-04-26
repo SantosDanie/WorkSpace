@@ -1,17 +1,22 @@
 <template>
 	<Dashboard>
 		<div class="header-WorkPage">
-			<div class="alert-page text-sm" role="alert" v-if="alertOpen == true">
-				{{ alertText }} 
-			</div>
+			<div class="alert-page text-sm" role="alert" v-if="alertOpen == true">{{ alertText }}</div>
 			<ul class="p-0 m-0 ml-auto d-flex">
 				<li class="d-block">
+					<button class="btn btn-sm btn-outline-secondary d-flex" id="all-comments">
+						<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" class="bi bi-chat-fill" viewBox="0 0 16 16">
+							<path d="M8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6-.097 1.016-.417 2.13-.771 2.966-.079.186.074.394.273.362 2.256-.37 3.597-.938 4.18-1.234A9 9 0 0 0 8 15"/>
+						</svg>
+					</button>
+				</li>
+				<!-- <li class="d-block ml-2">
 					<button class="btn btn-sm btn-outline-secondary d-flex">
 						<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512">
 							<path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zM432 248a24 24 0 1 1 0 48 24 24 0 1 1 0-48z"/>
 						</svg>
 					</button>
-				</li>
+				</li> -->
 				<li class="d-block ml-2">
 					<router-link class="btn btn-sm btn-outline-secondary" :to="{name: 'settingsPage', params: {id: pageId}}">
 						<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512">
@@ -21,7 +26,7 @@
 				</li>
 			</ul>
 		</div>
-		<div class="editor-container">
+		<div class="editor-container" style="height: calc(100% - 35px);">
 			<div class="preload-page" v-if="preloader == ''">
 				<div class="preloader">
 					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
@@ -37,7 +42,26 @@
 					</svg>
 				</div>
 			</div>
-			<Lotion :page="page" :readonly="readonly" v-else-if="preloader == 'success'"/>
+			<div v-else-if="preloader == 'success'" class="container-fluid containerEditor">
+				<div class="row h-100">
+					<div class="col-12">
+						<Editor
+							:page="page"
+							:comments="comments"
+							:readonly="readonly"
+							@save="saveWorkPage"
+							@createComment="createComment"
+							@updateComment="updateComment"
+							@deleteComment="deleteComment"
+							/>
+					</div>
+					<div class="col-12">
+						<pre>
+{{ page.blocks }}
+						</pre>
+					</div>
+				</div>
+			</div>
 			<div class="error-load text-center pt-5" v-else-if="preloader == 'error'">
 				<svg xmlns="http://www.w3.org/2000/svg" height="3em" viewBox="0 0 512 512"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zm0-384c13.3 0 24 10.7 24 24V264c0 13.3-10.7 24-24 24s-24-10.7-24-24V152c0-13.3 10.7-24 24-24zM224 352a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z"/></svg>
 				<h4 class="text-secondary fw-bold mt-4">Error loading page</h4>
@@ -48,83 +72,34 @@
 
 <script setup lang="ts">
 	import { ref, onMounted }	from 'vue'
-	import Dashboard			from '@/components/Dashboard.vue'
-	import Lotion				from '@/components/Lotion.vue'
-	import { usePageStore }		from '@/stores/Page'
-	import { BlockType }		from '@/utils/types'
 	import { v4 as uuidv4 }		from 'uuid'
 	import { useRoute }			from 'vue-router'
+	import Dashboard			from '@/components/Dashboard.vue'
+	import Editor				from '@/components/Editor/Editor.vue'
+	import { usePageStore }		from '@/stores/Page'
+	import { useCommentStore }	from '@/stores/Comment'
+	import { BlockType }		from '@/utils/types'
 
-	const readonly			= ref(false)
-	const isSettingsOpen	= ref(false)
+	const readonly			= ref(false);
+	// const isSettingsOpen	= ref(false);
 	const PageStore			= usePageStore();
+	const CommentStore		= useCommentStore();
 	const router			= useRoute();
 	const pageId			= ref(router.params.id.toString());
-	const preloader			= ref<string>('')
-	const alertText			= ref<string>('')
-	const alertType			= ref<string>('')
-	const alertOpen			= ref<boolean>(false)
+	const preloader			= ref<string>('');
+	const alertText			= ref<string>('');
+	const alertType			= ref<string>('');
+	const alertOpen			= ref<boolean>(false);
 	const page				= ref({
 		title: '',
 		blocks:	[{
 			id: uuidv4(),
 			type: BlockType.Text,
-			details: { value: '' },
+			details: { value: 'Thi page' },
 		}],
 		settings: []
 	});
-	const comment 			= ref([
-		{
-			blockId: '976ee59e-08cf-4b3c-82a3-662b867181e7',
-			pageId:	'655665b78c8790859156e9c0',
-			commentId: '9a339410-1784-4bde-ab01-b7bc60ce6685',
-			comment: {
-				createdAt: '2023-11-16T18:55:51.442+00:00',
-				updatedAt: '2023-11-16T18:55:51.442+00:00',
-				value: 'This is the comment',
-				author: 'code4guate.santo@gmail.com',
-			},
-			replies: [
-				{
-					createdAt: '2023-11-16T18:55:51.442+00:00',
-					updatedAt: '2023-11-16T18:55:51.442+00:00',
-					value: 'This is the replies comment',
-					author: 'code4guate.santo@gmail.com',
-				},
-				{
-					createdAt: '2023-11-16T18:55:51.442+00:00',
-					updatedAt: '2023-11-16T18:55:51.442+00:00',
-					value: 'This is the replies comment',
-					author: 'example.santo@gmail.com',
-				}
-			]
-		},
-		{
-			blockId: '976ee59e-08cf-4b3c-82a3-662b867181e7',
-			pageId:	'655665b78c8790859156e9c0',
-			commentId: '4a1c527c-e2f1-4b7a-a84b-7ff5c0f14072',
-			comment: {
-				createdAt: '2023-11-16T18:55:51.442+00:00',
-				updatedAt: '2023-11-16T18:55:51.442+00:00',
-				value: 'This is the comment 1',
-				author: 'code4guate.santo@gmail.com',
-			},
-			replies: [
-				{
-					createdAt: '2023-11-16T18:55:51.442+00:00',
-					updatedAt: '2023-11-16T18:55:51.442+00:00',
-					value: 'This is the replies comment 1',
-					author: 'code4guate.santo@gmail.com',
-				},
-				{
-					createdAt: '2023-11-16T18:55:51.442+00:00',
-					updatedAt: '2023-11-16T18:55:51.442+00:00',
-					value: 'This is the replies comment 1',
-					author: 'example.santo@gmail.com',
-				}
-			]
-		},
-	])
+	const comments 			= ref<object>([])
 
 	onMounted(() => getWorkPage())
 
@@ -143,6 +118,27 @@
 		await PageStore.updatePage(pageId.value, page.value)
 		.then(res => alertData('Save', 'success'))
 		.catch(err => preloader.value = 'error');
+	}
+
+	async function updateComment() {
+		console.log('updateComment');
+		// await CommentStore.updateComment(pageId.value)
+		// .then(res => alertData('Save', 'success'))
+		// .catch(err => preloader.value = 'error');
+	}
+
+	async function createComment() {
+		console.log('createComment');
+		// await PageStore.createPage(page.value)
+		// .then(res	=> router.replace({name: "workPage", params: { id: res.pageId }}) )
+		// .catch(err	=> console.log(err.message));
+	}
+
+	async function deleteComment() {
+		console.log('deleteComment');
+		// await PageStore.createPage(page.value)
+		// .then(res	=> router.replace({name: "workPage", params: { id: res.pageId }}) )
+		// .catch(err	=> console.log(err.message));
 	}
 
 	async function getWorkPage() {
@@ -188,4 +184,6 @@
 		padding: 5px 15px;
 		a { display: flex; }
 	}
+
+	.containerEditor { height: 100%; }
 </style>

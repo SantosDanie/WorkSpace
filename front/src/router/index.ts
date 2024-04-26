@@ -106,7 +106,6 @@ const router = createRouter({
 
 router.beforeResolve(async (to, from, next)=> {
 	const authStore = useAuthStore()
-
 	if (to.meta.requiresAuth && !authStore.isAuthenticated) {   
 		return next({name: 'login', query: {redirect: to.fullPath}})
 	} else if(to.meta.requiresGuest && authStore.isAuthenticated) {
