@@ -1,8 +1,8 @@
 * {
-	font-family: $primaryFont;
-	padding: 0;
 	margin: 0;
+	padding: 0;
 	box-sizing: border-box;
+	font-family: $primaryFont;
 }
 
 h1, .h1,
@@ -11,9 +11,9 @@ h3, .h3,
 h4, .h4,
 h5, .h5,
 h6, .h6 { 
-	font-family: $secondaryFont;
 	color: $bg-text;
 	font-weight: bold;
+	font-family: $secondaryFont;
 }
 
 p, .p 	{
@@ -23,15 +23,13 @@ p, .p 	{
 }
 
 body {
+	min-height: 100vh;
 	background-color: rgba(gray, 0.1);
-	min-height: 100vh;
 }
 
-body, #app, #wrapper {
-	min-height: 100vh;
-}
-
-img { max-width: 100%; }
+img	{ max-width: 100%; }
+.cursor-pointer { cursor: pointer; }
+body, #app, #wrapper { min-height: 100vh; }
 
 .link-hover {
 	transition: 300ms;
@@ -41,37 +39,69 @@ img { max-width: 100%; }
 	}
 }
 
-.cursor-pointer {
-	cursor: pointer;
-}
-
-// new code
 .isEmpty		{ color: rgba(gray, 0.5); }
 .isEmpty:after	{ content: 'Work Space Name' }
 .typeWorkSpae .dropdown {
-	padding: 5px 10px;
-	background-color: rgba(gray, 0.15);
-	border-radius: 5px;
-	p { margin-bottom: 0; }
-	position: relative;
 	z-index: 5;
 	cursor: pointer;
+	padding: 5px 10px;
+	border-radius: 5px;
+	position: relative;
+	background-color: rgba(gray, 0.15);
+	p { margin-bottom: 0; }
 	.dropdown-option {
+		top: 100%;
+		color: #000;
+		padding: 15px;
 		display: none;
 		position: absolute;
-		top: 100%;
-		background-color: rgb(235, 235, 235);
 		width: calc(100% - 20px);
-		padding: 15px;
 		border-radius: 0 0 5px 5px;
-		color: #000;
+		background-color: rgb(235, 235, 235);
 		span {
 			width: 100%;
 			display: block;
-			border-radius: 3px;
 			padding: 3px 5px;
+			border-radius: 3px;
 			&:hover { background-color: rgba(gray, 0.2); }
 		}
 	}
 	.dropdown-option.active { display: block; }
+}
+
+// new code
+.button {
+	padding: 5px;
+	font-size: 16px;
+	border-radius: 5px;
+	-o-border-radius: 5px;
+	-ms-border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	// background-color: #f3f3f3;
+	// box-shadow: 0 0 2px #979797;
+	// &:hover { background-color: #e0e0e0; }
+	transition: 300ms;
+	-o-transition: 300ms;
+	-ms-transition: 300ms;
+	-moz-transition: 300ms;
+	-webkit-transition: 300ms;
+}
+
+.button-sm {
+	padding: 3px 5px;
+	font-size: 14px;
+	border-radius: 5px;
+	-o-border-radius: 5px;
+	-ms-border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	// background-color: #f3f3f3;
+	// box-shadow: 0 0 2px #979797;
+	// &:hover { background-color: #e0e0e0; }
+	transition: 300ms;
+	-o-transition: 300ms;
+	-ms-transition: 300ms;
+	-moz-transition: 300ms;
+	-webkit-transition: 300ms;
 }

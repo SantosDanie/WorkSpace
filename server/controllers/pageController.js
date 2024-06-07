@@ -197,10 +197,10 @@ const clearImage = (filePath) => {
 	fs.unlink(filePath, (err) => console.log(err));
 };
 
-exports.getPages	= getPages;
 exports.getPage		= getPage;
-exports.createPage	= createPage;
 exports.putPage		= putPage;
-exports.deletePage	= deletePage;
+exports.getPages	= getPages;
 exports.postImage	= postImage;
+exports.createPage	= createPage;
+exports.deletePage	= deletePage;
 exports.deleteImage	= deleteImage;

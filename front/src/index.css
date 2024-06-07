@@ -9,18 +9,13 @@
 }
 
 .lotion [contenteditable='true']:focus-visible,
-.lotion [contenteditable='true']:focus {
-	outline: none;
-}
+.lotion [contenteditable='true']:focus { outline: none; }
+.lotion p, pre.lotion-md { margin: 0; }
 
 .lotion [contenteditable]:empty:after {
 	content: attr(data-ph);
 	color: rgba(0, 0, 0, 0.2);
 	cursor: text;
-}
-
-.lotion p, pre.lotion-md {
-	margin: 0;
 }
 
 pre.lotion-md {
@@ -32,8 +27,7 @@ pre.lotion-md {
 		Consolas,
 		"Liberation Mono",
 		"Courier New",
-		monospace
-	);
+		monospace);
 	font-size: 1em;
 }
 
@@ -51,9 +45,9 @@ pre.lotion-md {
 }
 
 /* New Styles */
-.w-100 { width: 100%; }
-.w-50 { width: 50%; }
-.row { display: flex; }
+.w-100	{ width: 100%; }
+.w-50	{ width: 50%; }
+.row	{ display: flex; }
 .column-2 { width: 50%; }
 .column-3 { width: 33.33%; }
 .column-4 { width: 25%; }

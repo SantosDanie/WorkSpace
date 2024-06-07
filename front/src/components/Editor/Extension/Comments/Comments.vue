@@ -19,7 +19,7 @@
 					<div class="comment-b">
 						<div class="body-content">{{ comment.comment.value }}</div>
 						<div class="mt-2">
-							<button class="mr-1" @click="editComment(comment.commentId)">Edit</button>
+							<button class="mr-1">Edit</button>
 							<button class="mr-1" @click="replyComment(comment.commentId)">Reply</button>
 						</div>
 					</div>
@@ -55,23 +55,27 @@
 				</div>
 				<div class="user-details">
 					<h6 class="user-name">Santos</h6>
-					<span class="update">{{ formatDate(comment.comment.updatedAt) }}</span>
+					<!-- <span class="update">{{ formatDate(comment.comment.updatedAt) }}</span> -->
 				</div>
-				<!-- <button class="trash-comment">
-					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"/></svg>
-				</button> -->
+				<div class="comment-action">
+					<button class="btn-resolved-comment mr-1">
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg>
+					</button>
+					<button class="btn-action-comment">
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 512"><path d="M64 360a56 56 0 1 0 0 112 56 56 0 1 0 0-112zm0-160a56 56 0 1 0 0 112 56 56 0 1 0 0-112zM120 96A56 56 0 1 0 8 96a56 56 0 1 0 112 0z"/></svg>
+					</button>
+				</div>
 			</div>
 			<div class="comment-b">
-				<div class="body-content" ref="editableCommentHTML" contenteditable="true">{{ comment.comment.value }}</div>
+				<!-- <div class="body-content" ref="editableCommentHTML" :contenteditable="!focusBodyComment">{{ comment.comment.value }}</div> -->
 				<div class="mt-2">
-					<button @click="replyComment(comment.commentId)" class="mr-1">Reply</button>
-					<button @click="saveComment(comment.commentId)">Save</button>
+					<!-- <button @click="saveComment(comment.commentId)" :style="focusBodyComment==true ? 'display: none;': 'display: inline-block;'">Save</button> -->
 				</div>
 			</div>
 			<div class="comment-reply">
 				<div class="editor-reply">
 					<div class="reply" ref="replyCommentHTML" contenteditable="true"></div>
-					<button @click="saveReply(comment.commentId)">Save</button>
+					<!-- <button @click="saveReply(comment.commentId)">Save</button> -->
 				</div>
 			</div>
 		</div>
@@ -79,12 +83,13 @@
 </template>
 
 <script setup lang="ts">
-	import { ref, computed, HtmlHTMLAttributes }	from 'vue';
+	import { ref, computed }	from 'vue';
 	import { useAuthStore }		from '@/stores/auth';
 
-	const authStore		= useAuthStore();
-	const user			= computed(() => authStore.user);
-	const actionComment	= ref<string>();
+	const authStore				= useAuthStore();
+	const user					= computed(() => authStore.user);
+	const actionComment			= ref<string>();
+	const focusBodyComment		= ref<Boolean>(false);
 	const replyCommentHTML		= ref<HTMLDivElement>();
 	const editableCommentHTML	= ref<HTMLDivElement>();
 	const comment				= ref<object>({
@@ -106,8 +111,7 @@
 			// }
 		]
 	});
-
-	const props					= defineProps({ comments: { type: Object, required: true }, });
+	const props					= defineProps({ comments: { type: Object, required: true }});
 	const emit					= defineEmits(['saveComment']);
 
 	let waitForEl = function(selector: any, callback: any) {
@@ -132,11 +136,13 @@
 	waitForEl('.comment-text', () => {
 		document.querySelectorAll('.comment-text')?.forEach((item, index) => {
 			item.addEventListener('click', (e) => {
+				console.log(e);
 				e.preventDefault();
-				let commentID		= item.dataset.commentId;
-				let data			= props.comments.find((item: { commentId: any; }) => item.commentId == commentID);
-				console.log(data);
-				// if(data) {
+				// let commentID		= item.dataset.commentId;
+				// let data			= props.comments.find((item: { commentId: any; }) => item.commentId == commentID);
+				// console.log(data);
+				console.log(item);
+				// if(data != undefined) {
 				// 	// comment.value		= data;
 				// }
 				actionComment.value	= 'edit';
@@ -144,10 +150,20 @@
 		});
 	});
 
+	function isToday (date: any) {  
+		const now = new Date()
+
+		return date.getDate() === now.getDate() && date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
+	}
+
 	function formatDate(date: string) {
 		let d = new Date(date);
-		let dateString = d.getDate()+"/"+(d.getMonth()+1)+"/"+d.getFullYear()+" "+d.toLocaleTimeString();
-		return dateString;
+		if(isToday(new Date())) {
+			return 'Today '+d.toLocaleTimeString();
+		} else {
+			let dateString = d.getDate()+"/"+(d.getMonth()+1)+"/"+d.getFullYear();
+			return dateString;
+		}
 	}
 
 	function saveComment(id: string) {
@@ -157,7 +173,8 @@
 				item.comment.updatedAt	= new Date();
 			}
 		});
-		emit('saveComment');
+		// emit('saveComment');
+		focusBodyComment.value = true;
 	}
 
 	function saveReply() {
@@ -169,9 +186,17 @@
 	}
 
 	function createComment(id: string) {
-		comment.value.commentId	= id;
+		// comment.value.commentId	= id;
 		props.comments.push(comment.value);
 		actionComment.value = 'edit'; 
+	}
+
+	function editComment(id: string) {
+		focusBodyComment.value = false;
+	}
+
+	function solvedComment(id: string) {
+		console.log(id);
 	}
 
 	defineExpose({ createComment })
@@ -209,15 +234,20 @@
 					max-height: 25px;
 					border-radius: 50%;
 					svg {
-						padding: 7px;
+						padding: 6.5px;
 						width: 100%;
 					}
 				}
 
 				.user-details {
 					padding-left: 10px;
+					display: flex;
+					align-items: center;
 					.user-name	{ margin-bottom: 0;	}
-					.update		{ font-size: 14px;	}
+					.update		{
+						font-size: 14px;
+						margin-left: 5px;
+					}
 				}
 			}
 
@@ -233,7 +263,22 @@
 				}
 			}
 
-			.comment-reply { padding-top: 5px; }
+			.comment-reply {
+				padding-top: 5px;
+				display: none;
+			}
+		}
+
+		.comment-action {
+			margin-left: auto;
+			display: flex;
+			button {
+				display: flex;
+				height: fit-content;
+			}
+			button svg { height: 12px; }
+			.btn-resolved-comment svg path { fill: green; }
+			// .btn-trash-comment svg path { fill: red; }
 		}
 	}
 

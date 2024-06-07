@@ -1,11 +1,22 @@
 <template>
-	<div class="editor-workPage lotion mx-auto font-sans text-base" v-if="props.page" ref="editor">
-		<Toolbar :ref="el => toolbar = el"/>
+	<div class="editor-workPage lotion mx-auto my-5 font-sans text-base" v-if="props.page" ref="editor">
+		<Toolbar :ref="el => toolbar = el" @createComment="createComment"/>
+		<Comments :ref="el => commentComponent = el" :comments="props.comments" @saveComment="saveComment"/>
+		<h1 id="title" ref="title"
+			:contenteditable="!props.readonly"
+			spellcheck="false" data-ph="Untitled"
+			@keydown.enter.prevent="splitTitle"
+			@keydown.down="blockElements[0]?.moveToFirstLine(); scrollIntoView();"
+			@keyup="props.page.title=($event.target as HTMLElement).innerText.replace('\n', '')"
+			class="focus:outline-none focus-visible:outline-none text-5xl font-bold mb-4"
+			:class="props.page.title ? '' : 'empty'">
+			{{ props.page.title || '' }}
+		</h1>
 		<draggable
 			id="blocks" tag="div"
 			:list="props.page.blocks"
 			handle=".handle" v-bind="dragOptions"
-			class=" space-y-2 pb-5 h-100">
+			class=" space-y-2 pb-4 h-100">
 			<transition-group type="transition">
 				<BlockComponent
 					v-for="block, i in props.page.blocks" :key="i"
@@ -36,20 +47,23 @@
 	import { ref, onBeforeUpdate, PropType } from 'vue'
 	import Toolbar				from "./Elements/Toolbar.vue"
 	import { VueDraggableNext as draggable } from 'vue-draggable-next'
-	import { Block, BlockImage, BlockType, isTextBlock, availableBlockTypes } from '@/utils/types'
+	import Comments				from "./Extension/Comments/Comments.vue"
+	import { Block, BlockType, isTextBlock, availableBlockTypes } from '@/utils/types'
 	
-	const props 			= defineProps({
-		page:			{ type: Object as PropType<{ blocks:Block[] }>, required: true },
-		blockTypes:		{ type: Object as PropType<null|(string|BlockType)[]>, default: null },
-		readonly:		{ type: Boolean, default: false },
-		onSetAll:		{ type: Function as PropType<(block:Block) => void>},
-		onUnsetAll:		{ type: Function as PropType<(block:Block) => void>},
+	const props		= defineProps({
+		page:		{ type: Object as PropType<{ title:string, blocks:Block[] }>, required: true },
+		comments:	{ type: Object, required: true },
+		blockTypes:	{ type: Object as PropType<null|(string|BlockType)[]>, default: null },
+		readonly:	{ type: Boolean, default: false },
+		onSetAll:	{ type: Function as PropType<(block:Block) => void>},
+		onUnsetAll:	{ type: Function as PropType<(block:Block) => void>},
 		onCreateBlock:	{ type: Function as PropType<(block:Block) => void>},
 		onDeleteBlock:	{ type: Function as PropType<(block:Block) => void>},
 	})
-	const emit 				= defineEmits(['save']);
-	const editor			= ref<HTMLDivElement|null>(null);
+	const emit 		= defineEmits(['save']);
+	const editor	= ref<HTMLDivElement|null>(null);
 	const blocksElements	= ref<HTMLDivElement|null>(null);
+
 
 	let waitForElBlocks = function(selector: any, callback: any) {
 		if (document.querySelector(selector) != null) {
@@ -63,61 +77,59 @@
 
 	waitForElBlocks('#blocks', () => {
 		blocksElements.value = document.querySelector('#blocks');
-		if(blocksElements.value !== null) {
-			blocksElements.value?.addEventListener("click", (event:MouseEvent) => {
-				const blocks		= document.querySelector('#blocks');
-				const title			= document.querySelector('#title');
-				const editorRect	= editor.value?.getClientRects()[0];
-				if (!blocks || !editorRect) { return }
+		blocksElements.value?.addEventListener('click', (event:MouseEvent) => {
+			const blocks		= document.getElementById('blocks');
+			const title			= document.getElementById('title');
+			const editorRect	= editor.value?.getClientRects()[0];
+			if (!blocks || !title || !editorRect) { return }
 
-				if ((event.clientX < ((editorRect as DOMRect).left || -1)) || (event.clientX > (editorRect?.right || window.innerWidth))) {
-					const titleRect = title?.getClientRects()[0]
-					if (event.clientY > (titleRect?.top || window.innerHeight) && event.clientY < (titleRect?.bottom || 0)) {
-						const rect		= title?.getClientRects()[0];
-						const selection	= window.getSelection();
-						const range		= document.createRange();
-						let moveToStart	= true;
-						if (event.x > (rect as DOMRect).right) moveToStart = false 
-						range.selectNodeContents(title as Node)
-						range.collapse(moveToStart)
-						selection?.removeAllRanges()
-						selection?.addRange(range)
-						return
-					}
-					const blockRects = Array.from(blocks?.children as HTMLCollection)
-					const block = blockRects.find(child => {
-						const rect = child.getClientRects()[0]
-						return event.clientY > rect.top && event.clientY < rect.bottom
-					})
-					const blockIdx = blockRects.findIndex(child => {
-						const rect = child.getClientRects()[0]
-						return event.clientY > rect.top && event.clientY < rect.bottom
-					})
-					if (block) {
-						const rect = block.getClientRects()[0]
-						if (event.x < rect.left) {
-							blockElements.value[blockIdx].moveToStart()
-						} else {
-							blockElements.value[blockIdx].moveToEnd()
-						}
-						return
-					}
+			if ((event.clientX < ((editorRect as DOMRect).left || -1)) || (event.clientX > (editorRect?.right || window.innerWidth))) {
+				const titleRect = title?.getClientRects()[0]
+				if (event.clientY > (titleRect?.top || window.innerHeight) && event.clientY < (titleRect?.bottom || 0)) {
+					const rect		= title?.getClientRects()[0];
+					const selection	= window.getSelection();
+					const range		= document.createRange();
+					let moveToStart	= true;
+					if (event.x > (rect as DOMRect).right) moveToStart = false 
+					range.selectNodeContents(title as Node)
+					range.collapse(moveToStart)
+					selection?.removeAllRanges()
+					selection?.addRange(range)
+					return
 				}
-
-				const lastBlockRect = blocks?.lastElementChild?.getClientRects()[0];
-				if (!lastBlockRect) return
-				if (event.clientX > (lastBlockRect as DOMRect).left && event.clientX < (lastBlockRect as DOMRect).right && event.clientY > (lastBlockRect as DOMRect).bottom) {
-					const lastBlock				= props.page.blocks[props.page.blocks.length-1];
-					const lastBlockComponent	= blockElements.value[props.page.blocks.length-1];
-
-					if (lastBlock.type === BlockType.Text && lastBlockComponent.getTextContent() === '') {
-						setTimeout(lastBlockComponent.moveToEnd);
+				const blockRects = Array.from(blocks?.children as HTMLCollection)
+				const block = blockRects.find(child => {
+					const rect = child.getClientRects()[0]
+					return event.clientY > rect.top && event.clientY < rect.bottom
+				})
+				const blockIdx = blockRects.findIndex(child => {
+					const rect = child.getClientRects()[0]
+					return event.clientY > rect.top && event.clientY < rect.bottom
+				})
+				if (block) {
+					const rect = block.getClientRects()[0]
+					if (event.x < rect.left) {
+						blockElements.value[blockIdx].moveToStart()
 					} else {
-						insertBlock(props.page.blocks.length-1);
+						blockElements.value[blockIdx].moveToEnd()
 					}
+					return
 				}
-			});
-		}
+			}
+
+			const lastBlockRect = blocks?.lastElementChild?.getClientRects()[0];
+			if (!lastBlockRect) return
+			if (event.clientX > (lastBlockRect as DOMRect).left && event.clientX < (lastBlockRect as DOMRect).right && event.clientY > (lastBlockRect as DOMRect).bottom) {
+				const lastBlock				= props.page.blocks[props.page.blocks.length-1];
+				const lastBlockComponent	= blockElements.value[props.page.blocks.length-1];
+
+				if (lastBlock.type === BlockType.Text && lastBlockComponent.getTextContent() === '') {
+					setTimeout(lastBlockComponent.moveToEnd);
+				} else {
+					insertBlock(props.page.blocks.length-1);
+				}
+			}
+		})
 	});
 	
 	const dragOptions		= {
@@ -129,7 +141,9 @@
 	onBeforeUpdate(()		=> { blockElements.value = [] })
 	const blockElements		= ref<typeof BlockComponent[]>([])
 	const toolbar			= ref<any>();
+	const commentComponent	= ref<any>();
 	const title				= ref<HTMLDivElement|null>(null)
+	const createComment		= (id: string) => { commentComponent.value.createComment(id); }
 	
 	function scrollIntoView () {
 		const selection = window.getSelection()
@@ -149,8 +163,8 @@
 				const range = document.createRange();
 
 				if (title.value.childNodes.length) {
-					// range.setStart(title.value.childNodes[0],	props.page.title.length);
-					// range.setEnd(title.value.childNodes[0],		props.page.title.length);
+					range.setStart(title.value.childNodes[0],	props.page.title.length);
+					range.setEnd(title.value.childNodes[0],		props.page.title.length);
 				} else {
 					range.setStart(title.value, 0);
 					range.setEnd(title.value, 0);
@@ -167,7 +181,9 @@
 		const newBlock = {
 			id: uuidv4(),
 			type: BlockType.Text,
-			details: { value: '', },
+			details: {
+				value: '',
+			},
 		}
 		props.page.blocks.splice(blockIdx + 1, 0, newBlock)
 		if (props.onCreateBlock) props.onCreateBlock(props.page.blocks[blockIdx+1])
@@ -249,14 +265,14 @@
 	function mergeTitle (blockIdx:number = 0) {
 		const titleElement = document.getElementById('title')
 		if (!titleElement) return
-			// const title = props.page.title
-			// props.page.title = title + blockElements.value[blockIdx].getTextContent()
+			const title = props.page.title
+			props.page.title = title + blockElements.value[blockIdx].getTextContent()
 			props.page.blocks.splice(blockIdx, 1)
 			setTimeout(() => {
 			const selection = window.getSelection()
 			const range = document.createRange()
-			// range.setStart(titleElement.childNodes[0], title.length)
-			// range.setEnd(titleElement.childNodes[0], title.length)
+			range.setStart(titleElement.childNodes[0], title.length)
+			range.setEnd(titleElement.childNodes[0], title.length)
 			selection?.removeAllRanges()
 			selection?.addRange(range)
 		})
@@ -276,16 +292,19 @@
 		setTimeout(() => blockElements.value[blockIdx+1].moveToStart())
 	}
 	
-	// function splitTitle () {
-	// 	if (!title.value) return
-	// 	const selection = window.getSelection()
-	// 	if (!selection) return
-	// 	const caretPos = selection.anchorOffset
-	// 	insertBlock(-1)
-	// 	const titleString = title.value.textContent as string
-	// 	props.page.title = titleString.slice(0, caretPos)
-	// 	props.page.blocks[0].details.value = titleString.slice(caretPos)
-	// }
+	function splitTitle () {
+		if (!title.value) return
+		const selection = window.getSelection()
+		if (!selection) return
+		const caretPos = selection.anchorOffset
+		insertBlock(-1)
+		const titleString = title.value.textContent as string
+		props.page.title = titleString.slice(0, caretPos)
+		props.page.blocks[0].details.value = titleString.slice(caretPos)
+	}
+
+	// save page
+	function saveComment() {  }//emit('save');
 </script>
 
 <style lang="scss">

@@ -24,7 +24,8 @@ import {
 	IoCheckboxOutline,
 	CoListNumbered,
 	ViFileTypeTextile,
-	CoViewColumn
+	CoViewColumn,
+	IoImageOutline
 }								from "oh-vue-icons/icons"
 
 import './index.css'
@@ -52,7 +53,8 @@ addIcons(
 	IoCheckboxOutline,
 	CoListNumbered,
 	ViFileTypeTextile,
-	CoViewColumn
+	CoViewColumn,
+	IoImageOutline
 )
 
 const app = createApp(App)

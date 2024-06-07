@@ -12,7 +12,7 @@
 						<v-icon name="hi-solid-search" class="w-4 shrink-0" />
 						<div class="truncate"> {{ searchTerm }} </div>
 					</div>
-					<div class="px-2 py-2" v-if="options.filter(option => option.type === 'Turn into').length">
+					<div class="px-2 py-2 block-list-menu" v-if="options.filter(option => option.type === 'Turn into').length">
 						<div class="px-2 pb-2 font-semibold uppercase text-xs text-neutral-400">Turn into</div>
 						<div
 							v-for="option, i in options.filter(option => option.type === 'Turn into')"
@@ -38,12 +38,7 @@
 	import Fuse		from 'fuse.js'
 	import Tooltip	from '../elements/Tooltip.vue'
 
-	const props = defineProps({
-		blockTypes: {
-			type: Object as PropType<null|(string|BlockType)[]>,
-			default: null,
-		},
-	})
+	const props = defineProps({ blockTypes: { type: Object as PropType<null|(string|BlockType)[]>, default: null}})
 	const emit	= defineEmits(['setBlockType', 'clearSearch'])
 	const open	= ref(false)
 	const menu	= ref<HTMLDivElement|null>(null)
@@ -119,7 +114,14 @@
 
 <style lang="scss">
 	.toolbar-menu {
-		position: absolute;
 		left: 100%;
+		position: absolute;
+		.block-list-menu {
+			max-height: 200px !important;
+			overflow-y: scroll !important;
+			scrollbar-width: none;
+			-ms-overflow-style: none;
+			&::-webkit-scrollbar { display: none; }
+		}
 	}
 </style>

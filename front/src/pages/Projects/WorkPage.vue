@@ -55,11 +55,11 @@
 							@deleteComment="deleteComment"
 							/>
 					</div>
-					<div class="col-12">
+					<!-- <div class="col-12">
 						<pre>
-{{ page.blocks }}
+{{ comments }}
 						</pre>
-					</div>
+					</div> -->
 				</div>
 			</div>
 			<div class="error-load text-center pt-5" v-else-if="preloader == 'error'">
@@ -96,8 +96,7 @@
 			id: uuidv4(),
 			type: BlockType.Text,
 			details: { value: 'Thi page' },
-		}],
-		settings: []
+		}]
 	});
 	const comments 			= ref<object>([])
 
@@ -115,30 +114,21 @@
 	});
 
 	async function saveWorkPage() {
-		await PageStore.updatePage(pageId.value, page.value)
-		.then(res => alertData('Save', 'success'))
-		.catch(err => preloader.value = 'error');
-	}
-
-	async function updateComment() {
-		console.log('updateComment');
-		// await CommentStore.updateComment(pageId.value)
+		// await PageStore.createPage(pageId.value, page.value)
 		// .then(res => alertData('Save', 'success'))
 		// .catch(err => preloader.value = 'error');
 	}
 
+	async function updateComment() {
+		console.log('updateComment');
+	}
+
 	async function createComment() {
 		console.log('createComment');
-		// await PageStore.createPage(page.value)
-		// .then(res	=> router.replace({name: "workPage", params: { id: res.pageId }}) )
-		// .catch(err	=> console.log(err.message));
 	}
 
 	async function deleteComment() {
 		console.log('deleteComment');
-		// await PageStore.createPage(page.value)
-		// .then(res	=> router.replace({name: "workPage", params: { id: res.pageId }}) )
-		// .catch(err	=> console.log(err.message));
 	}
 
 	async function getWorkPage() {

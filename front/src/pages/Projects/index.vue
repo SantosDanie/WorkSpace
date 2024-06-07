@@ -1,66 +1,82 @@
 <template>
 	<Dashboard>
-		<div class="px-4">
-			<div class="row pb-3 pt-5">
-				<div class="col-12">
-					<div class="header-project d-flex align-items-center">
-						<h2 class="mb-0 pr-3">WorkPage</h2>
-						<button class="btn btn-primary btn-sm" @click="createNewPage">Create Page</button>
-					</div>
-					<div class="filters-search mt-5 d-flex w-100 justify-content-end">
-						<form class="form w-100" style="max-width: 400px;">
-							<div class="input-group">
-								<input type="text" @keyup="searchPage" class="form-control" placeholder="Search by title" aria-label="Recipient's username" aria-describedby="basic-addon2">
-								<span class="input-group-text" id="basic-addon2">Search</span>
+		<div class="index-projects py-3 px-3">
+			<div class="header-filter">
+				<h3>Projects</h3>
+				<div class="filters">
+					<router-link class="btn btn-sm btn-primary mr-2 px-2" :to="{name: 'createProject'}">
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM232 344V280H168c-13.3 0-24-10.7-24-24s10.7-24 24-24h64V168c0-13.3 10.7-24 24-24s24 10.7 24 24v64h64c13.3 0 24 10.7 24 24s-10.7 24-24 24H280v64c0 13.3-10.7 24-24 24s-24-10.7-24-24z"/></svg>
+						Create Project
+					</router-link>
+					<button class="btn btn-sm btn-outline-secondary ml-2">All Projects</button>
+					<button class="btn btn-sm btn-outline-secondary ml-2">Started</button>
+					<button class="btn btn-sm btn-outline-secondary ml-2">Approval</button>
+					<button class="btn btn-sm btn-outline-secondary ml-2">Completed</button>
+				</div>
+			</div>
+			<div class="container-fluid mt-4">
+				<div class="row">
+					<div class="col-4" v-for="project, i in projects" :key="i">
+						<div class="card card-project mb-4">
+							<div class="card-heading">
+								<router-link class="btn btn-sm p-1 btn-outline-secondary ml-2" :to="{name: 'editProject', params: {id: project._id}}">
+									<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160V416c0 53 43 96 96 96H352c53 0 96-43 96-96V320c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H96z"/></svg>
+								</router-link>
+								<button class="btn btn-sm p-1s btn-outline-secondary ml-2">
+									<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"/></svg>
+								</button>
 							</div>
-						</form>
-					</div>
-				</div>
-			</div>
-			<div class="rows">
-				<div class="col-12">
-					<table class="table table-sm table-hover">
-						<thead>
-							<tr class="text-sm">
-								<th>Name</th>
-								<th>Comments</th>
-								<th>Date</th>
-								<th>Last edited time</th>
-								<td style="width: 25px;"></td>
-							</tr>
-						</thead>
-						<tbody>
-							<tr v-for="(item, index) in pagesResult" :key="index">
-								<td class="fw-bold text-dark">
-									<router-link :to="{name: 'workPage', params: { id: item._id }}">{{ item.title ? item.title : 'Untitled' }}</router-link>
-									<span class="text-xs bg-primary-subtle border p-1 ml-2 rounded-2">Privates</span>
-								</td>
-								<td>0</td>
-								<td class="text-sm text-dark">{{ formateDate(item.createdAt) }}</td>
-								<td class="text-sm text-dark">{{ formateDate(item.updatedAt) }}</td>
-								<td class="td-hover" @click="getWorkPage(item._id)">
-									<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512"><path d="M495.9 166.6c3.2 8.7 .5 18.4-6.4 24.6l-43.3 39.4c1.1 8.3 1.7 16.8 1.7 25.4s-.6 17.1-1.7 25.4l43.3 39.4c6.9 6.2 9.6 15.9 6.4 24.6c-4.4 11.9-9.7 23.3-15.8 34.3l-4.7 8.1c-6.6 11-14 21.4-22.1 31.2c-5.9 7.2-15.7 9.6-24.5 6.8l-55.7-17.7c-13.4 10.3-28.2 18.9-44 25.4l-12.5 57.1c-2 9.1-9 16.3-18.2 17.8c-13.8 2.3-28 3.5-42.5 3.5s-28.7-1.2-42.5-3.5c-9.2-1.5-16.2-8.7-18.2-17.8l-12.5-57.1c-15.8-6.5-30.6-15.1-44-25.4L83.1 425.9c-8.8 2.8-18.6 .3-24.5-6.8c-8.1-9.8-15.5-20.2-22.1-31.2l-4.7-8.1c-6.1-11-11.4-22.4-15.8-34.3c-3.2-8.7-.5-18.4 6.4-24.6l43.3-39.4C64.6 273.1 64 264.6 64 256s.6-17.1 1.7-25.4L22.4 191.2c-6.9-6.2-9.6-15.9-6.4-24.6c4.4-11.9 9.7-23.3 15.8-34.3l4.7-8.1c6.6-11 14-21.4 22.1-31.2c5.9-7.2 15.7-9.6 24.5-6.8l55.7 17.7c13.4-10.3 28.2-18.9 44-25.4l12.5-57.1c2-9.1 9-16.3 18.2-17.8C227.3 1.2 241.5 0 256 0s28.7 1.2 42.5 3.5c9.2 1.5 16.2 8.7 18.2 17.8l12.5 57.1c15.8 6.5 30.6 15.1 44 25.4l55.7-17.7c8.8-2.8 18.6-.3 24.5 6.8c8.1 9.8 15.5 20.2 22.1 31.2l4.7 8.1c6.1 11 11.4 22.4 15.8 34.3zM256 336a80 80 0 1 0 0-160 80 80 0 1 0 0 160z"/></svg>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			</div>
-		</div>
-
-		<div class="bg-modal" v-if="previewWorkPageModal == true">
-			<div class="modal d-block" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-				<div class="modal-dialog modal-dialog-centered">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h2 class="modal-title fs-6" id="staticBackdropLabel">Preview Page</h2>
-							<button type="button" class="btn-close btn-sm" data-bs-dismiss="modal" aria-label="Close" @click="previewWorkPageModal=false; preloader='';"></button>
-						</div>
-						<div class="modal-body">
-							<button type="button" class="btn btn-danger btn-sm" title="Working">Delete</button>
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-secondary btn-sm" @click="previewWorkPageModal=false; preloader='';">Close</button>
+							<div class="card-body">
+								<h6>{{ project.title ? project.title : "Undefined" }}</h6>
+								<div class="users">
+									<div class="user-create">
+										<div class="thumbnail">
+											<img src="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png" alt="">
+										</div>
+										<p>Santos</p>
+									</div>
+									<div class="user-assigned">
+										<div class="user">
+											<div class="thumbnail">
+												<img src="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png" alt="">
+											</div>
+										</div>
+										<div class="user">
+											<div class="thumbnail">
+												<img src="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png" alt="">
+											</div>
+										</div>
+										<div class="user">
+											<div class="thumbnail">
+												<img src="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png" alt="">
+											</div>
+										</div>
+										<div class="user">
+											<div class="thumbnail">
+												<img src="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png" alt="">
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="details">
+									<span class="text-sm">Files: 7 Files Attach</span>
+									<span class="text-sm">Deadline: 2 April 2023</span>
+								</div>
+								<div class="container-progress">
+									<div class="heading">
+										<span class="text-sm">progress</span>
+										<span class="text-sm">155 days Left</span>
+									</div>
+									<div class="progress">
+										<div class="bar"
+										:class="{
+											'bar-danger': project.progress < 50,
+											'bar-success': project.progress > 49,
+											}"
+										:style="project.progress > 0 ? `width: ${50}%;`: ''"></div>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -70,130 +86,115 @@
 </template>
 
 <script setup lang="ts">
-	import { ref, computed, onMounted }	from 'vue';
-	import { useRouter }		from 'vue-router';
-	import { usePageStore }		from '@/stores/Page';
-	import { useAuthStore } 	from '@/stores/auth';
+	import { ref }				from "vue";
+	import { useProjectStore }	from '@/stores/project';
 	import Dashboard			from '@/components/Dashboard.vue';
-	import { BlockType }		from '@/utils/types';
-	import { v4 as uuidv4 }		from 'uuid';
 
-	const PageStore		= usePageStore();
-	const router		= useRouter();
-	const authStore		= useAuthStore();
-	const UserId		= computed(() => authStore.user);
-	const id			= UserId.value.id.toString();
-	const pages			= ref()
-	const pagesResult	= ref()
-	const page			= ref({
-		title: '',
-		blocks: [
-			{
-				id: uuidv4(),
-				type: BlockType.Text,
-				details: { value: '' }
-			}
-		],
-		settings: null,
-		userId: id
-	});
+	const projects				= ref();
+	const ProjectStore			= useProjectStore();
 
-	const previewPage	= ref(page);
-	const readonly		= ref(true);
-	const preloader		= ref<string>('');
-	const pageSelected	= ref<string>('');
-	const previewWorkPageModal=ref<Boolean>(false);
-	onMounted(() => getPages());
-
-	async function createNewPage() {
-		await PageStore.createPage(page.value)
-		.then(res	=> router.replace({name: "workPage", params: { id: res.pageId }}) )
-		.catch(err	=> console.log(err.message));
-	}
-	
-	async function getPages() {
-		await PageStore.getPages(id)
-		.then(res	=> {
-			pages.value			= res.pages;
-			pagesResult.value	= res.pages;
-		})
-		.catch(err	=> console.log(err.message));
-	}
-
-	async function getWorkPage(pageId: string) {
-		previewWorkPageModal.value = true;
-		pageSelected.value = pageId;
-		await PageStore.getPage(pageId)
-		.then(res => {
-			preloader.value = 'success';
-			previewPage.value = res.page;
-		})
-		.catch(error => preloader.value = 'error');
-	}
-
-	function formateDate(timestamp: string) {
-		const date		= new Date(timestamp);
-		const day		= date.getDate();
-		const month		= date.getMonth();
-		const year		= date.getFullYear();
-		const hours		= date.getHours();
-		const minutes	= date.getMinutes();
-		const seconds	= date.getSeconds();
-		const AMPM		= hours >= 12 ? 'PM' : 'AM';
-		const formate	= `${day}/${month+1}/${year} ${hours}:${minutes}:${seconds} ${AMPM}`;
-		return formate; 
-	}
-
-	function searchPage(e: any) {
-		let searchString = e.target.value;
-		pagesResult.value = pages.value.filter(function(item: { title: string; }) {
-			return item.title.toLowerCase().indexOf(searchString.toLowerCase()) !== -1;
-		});
+	createProject();
+	async function createProject() {
+		await ProjectStore.getProjects()
+		.then(res =>	projects.value=res)
+		.catch(err =>	console.error(err.message));
 	}
 </script>
 
 <style lang="scss">
-	.btn-purple { background-color: #190482 !important; }
-	.btn-skyblue  { background-color: #40746d !important; }
-
-	.btn-xs {
-		display: grid !important;
-		font-size: 16px;
-		padding: 6px 8px !important;
-	}
-	
-	.btn-selected {
-		color: #fff;
-		background-color: #2e59d9;
-		border-color: #2653d4;
-		box-shadow: 0 0 0 0.2rem rgba(105,136,228,.5);
+	.header-filter {
+		display: flex;
+		align-items: flex-end;
+		justify-content: space-between;	
 	}
 
-	// table
-	.td-hover { cursor: pointer; }
-	.td-hover path { fill: rgba(black, 0.8); }
-	.td-hover:hover {
-		background-color: #4e73df;
-		border-radius: 5px;
-		path { fill: #fff; }
+	.filters {
+		display: flex;
+		flex-direction: flex-end;
+		svg { height: 13px; }
+		svg { margin-right: 5px; }
+		svg path { fill: #fff; }
 	}
-	.bg-modal {
-		position: fixed;
-		width: 100%;
-		height: 100%;
-		display: block;
-		top: 0;
-		left: 0;
-		background-color: rgba(#000000, 0.5);
-		color: #464646;
-		.group .menu-tooltip {
-			opacity: 0;
-			cursor: default;
+
+	.card-project {
+		.card-heading {
+			display: flex;
+			padding-top: 10px;
+			padding-right: 10px;
+			justify-content: flex-end;
+			button, a {
+				display: flex;
+				height: fit-content;
+				svg {
+					height: 15px;
+					transition: 300ms;
+				}
+			}
+
+			button:hover svg { fill: #fff; }
 		}
+		.card-body {
+			.users {
+				display: flex;
+				justify-content: space-between;
+				.user-create {
+					display: flex;
+					align-items: center;
+					.thumbnail {
+						width: 30px;
+						height: 30px;
+						overflow: hidden;
+						margin-right: 5px;
+						border-radius: 50%;
+						border: 1px solid gray;
+					}
+					p {
+						margin-bottom: 0;
+						font-weight: 600;
+					}
+				}
 
-		.modal-body {
-			max-height: 500px;
-			overflow: hidden;
+				.user-assigned {
+					display: flex;
+					padding-right: 15px;
+					.user { width: 10px; }
+					.thumbnail {
+						width: 25px;
+						height: 25px;
+						overflow: hidden;
+						border-radius: 50%;
+						background-color: #fff;
+						border: 1px solid gray;
+					}
+				}
+			}
+
+			.container-progress {
+				padding-top: 5px;
+				.heading {
+					display: flex;
+					margin-bottom: 5px;
+					justify-content: space-between;
+				}
+
+				.progress {
+					width: 100%;
+					height: 8px;
+					display: flex;
+					.bar {
+						height: 100%;
+						border-radius: 5px;
+					}
+					.bar-success	{ background-color: #35DDAA; }
+					.bar-danger		{ background-color: #FB6D6C; }
+				}
+			}
+
+			.details {
+				display: flex;
+				margin-top: 20px;
+				justify-content: space-between;
+			}
 		}
 	}
 </style>

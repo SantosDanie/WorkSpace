@@ -2,10 +2,14 @@ import { defineStore }			from "pinia"
 import {useApi, useApiPrivate}	from "@/composables/useApi"
 
 export interface Project {
-	id: number,
-	title: string,
-	description: string,
-	image: string
+	title:		string,
+	progress:	Number,
+	deadline:	String,
+	user:		String,
+	details:	Object,
+	members:	Object,
+	files:		Object,
+	settings:	Object
 }
 
 export interface State {
@@ -13,27 +17,29 @@ export interface State {
 }
 
 export interface CreateProjectData {
-	title: string,
-	description: string,
-	// image: File
+	title:		string,
+	progress:	Number,
+	deadline:	String,
+	user:		String,
+	details:	Object,
+	members:	Object,
+	files:		Object,
+	settings:	Object
 }
 
 export interface UpdateProjectData {
-	title: string,
-	description: string,
-	image: File
-	old_image: string,
+	title:		string,
+	progress:	Number,
+	deadline:	String,
+	user:		String,
+	details:	Object,
+	members:	Object,
+	files:		Object,
+	settings:	Object
 }
 
-const config = {
-	headers: {
-	  'Content-Type': 'multipart/form-data',
-	},
-};
-
-const configJson = {
-	headers: { 'Content-Type': 'application/json'},
-};
+const config		= { headers: { 'Content-Type': 'multipart/form-data' }};
+const configJson	= { headers: { 'Content-Type': 'application/json' }};
 
 export const useProjectStore = defineStore('project', {
 	state: (): State => {
@@ -83,7 +89,7 @@ export const useProjectStore = defineStore('project', {
 
 		async updateProject(id: string, payload: UpdateProjectData) {
 			try {
-				const { data } = await useApi().patch(`/api/project/${id}`, payload, config);
+				const { data } = await useApi().patch(`/api/project/${id}`, payload, configJson);
 				return data
 			} catch (error: Error | any) {
 				throw error.message

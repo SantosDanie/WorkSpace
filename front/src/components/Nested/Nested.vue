@@ -12,18 +12,9 @@
 
 	export default {
 		props: {
-			tasks: {
-				required: true,
-				type: Array
-			},
-			level: {
-				default: 1,
-				type: Number
-			},
-			maxLevel: {
-				default: 0,
-				type: Number
-			},
+			tasks:		{ required: true, type: Array },
+			level:		{ default: 1, type: Number },
+			maxLevel:	{ default: 0, type: Number },
 		},
 		components: { draggable },
 		name: "nested-draggable"

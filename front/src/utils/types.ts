@@ -1,22 +1,13 @@
-import TextBlock    from '@/components/Editor/blocks/TextBlock.vue'
-import DividerBlock from '@/components/Editor/blocks/DividerBlock.vue'
-import HeadingBlock from '@/components/Editor/blocks/HeadingBlock.vue'
-import QuoteBlock   from '@/components/Editor/blocks/QuoteBlock.vue'
+import TextBlock    from '@/components/Editor/blocks/TextBlock.vue';
+import QuoteBlock   from '@/components/Editor/blocks/QuoteBlock.vue';
+import ImageBlock	from '@/components/Editor/Blocks/ImageBlock.vue';
+import DividerBlock from '@/components/Editor/blocks/DividerBlock.vue';
+import HeadingBlock from '@/components/Editor/blocks/HeadingBlock.vue';
 
 export interface Block {
 	id: string,
 	type: BlockType;
-	content: object;
-	details: Object;
-}
-
-export enum BlockType {
-	Text    = 'TEXT',
-	H1      = 'H1',
-	H2      = 'H2',
-	H3      = 'H3',
-	Divider = 'DIVIDER',
-	Quote   = 'QUOTE'
+	details: Details;
 }
 
 export interface Details {
@@ -24,13 +15,43 @@ export interface Details {
 	blockTypes?: BlockType[];
 }
 
+export interface BlockImage {
+	id: string,
+	type: BlockType;
+	details: DetailsImage;
+}
+
+export interface DetailsImage {
+	value?: string;
+	width?: string;
+	type?: string;
+	blockTypes?: BlockType[];
+}
+
+export enum BlockType {
+	Text    = 'TEXT',
+	H1      = 'H1',
+	H2      = 'H2',
+	H3      = 'H3',
+	H4      = 'H4',
+	H5      = 'H5',
+	H6      = 'H6',
+	Divider = 'DIVIDER',
+	Quote   = 'QUOTE',
+	Image   = 'IMAGE',
+}
+
 export const BlockComponents = {
-	[BlockType.Text]:	TextBlock,
-	[BlockType.H1]:		HeadingBlock,
-	[BlockType.H2]:		HeadingBlock,
-	[BlockType.H3]:		HeadingBlock,
-	[BlockType.Divider]: DividerBlock,
-	[BlockType.Quote]:	QuoteBlock,
+	[BlockType.Text]:		TextBlock,
+	[BlockType.H1]:			HeadingBlock,
+	[BlockType.H2]:			HeadingBlock,
+	[BlockType.H3]:			HeadingBlock,
+	[BlockType.H4]:			HeadingBlock,
+	[BlockType.H5]:			HeadingBlock,
+	[BlockType.H6]:			HeadingBlock,
+	[BlockType.Divider]:	DividerBlock,
+	[BlockType.Quote]:		QuoteBlock,
+	[BlockType.Image]:		ImageBlock,
 }
 
 export const textBlockMap	= [BlockType.Text, BlockType.Quote]
@@ -63,6 +84,24 @@ export const availableBlockTypes = [
 		canSplit: true,
 	}, {
 		type: 'Turn into',
+		icon: 'bi-type-h3',
+		label: 'Heading 4',
+		blockType: BlockType.H4,
+		canSplit: true,
+	}, {
+		type: 'Turn into',
+		icon: 'bi-type-h3',
+		label: 'Heading 5',
+		blockType: BlockType.H5,
+		canSplit: true,
+	}, {
+		type: 'Turn into',
+		icon: 'bi-type-h3',
+		label: 'Heading 6',
+		blockType: BlockType.H6,
+		canSplit: true,
+	}, {
+		type: 'Turn into',
 		icon: 'bi-hr',
 		label: 'Divider',
 		blockType: BlockType.Divider,
@@ -73,7 +112,13 @@ export const availableBlockTypes = [
 		label: 'Quote',
 		blockType: BlockType.Quote,
 		canSplit: true,
-	},
+	}, {
+		type: 'Turn into',
+		icon: 'io-image-outline',
+		label: 'Image',
+		blockType: BlockType.Image,
+		canSplit: true,
+	}
 ] as {
 	type:string,
 	icon:string,
