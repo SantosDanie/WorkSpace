@@ -36,7 +36,7 @@
 	import { ref, onBeforeUpdate, PropType } from 'vue'
 	import Toolbar				from "./Elements/Toolbar.vue"
 	import { VueDraggableNext as draggable } from 'vue-draggable-next'
-	import { Block, BlockImage, BlockType, isTextBlock, availableBlockTypes } from '@/utils/types'
+	import { Block, BlockType, isTextBlock, availableBlockTypes } from '@/utils/types'
 	
 	const props 			= defineProps({
 		page:			{ type: Object as PropType<{ blocks:Block[] }>, required: true },

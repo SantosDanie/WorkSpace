@@ -37,39 +37,13 @@ async function createProject(req, res) {
 }
 
 // Update Post
-async function updateProject(req, res) {
-	// const id = req.params.id;
-	// let new_image = ''
-	
-	// if (req.file) {
-	// 	new_image = req.file.filename
-
-	// 	try {
-	// 		fs.unlinkSync('./uploads/' + req.body.old_image)
-	// 	} catch (err) {
-	// 		console.log(err)
-	// 	}
-	// } else {
-	// 	new_image = req.body.old_image
-	// }
-
-	// const newPost = req.body
-	// newPost.image = new_image
-
-	// try {
-	// 	await Post.findByIdAndUpdate(id, newPost)
-	// 	res.status(200).json({ message: 'Post updated successfully.' })
-	// } catch (error) {
-	// 	res.status(400).json({ message: err.message })
-	// }
-
-	// console.log(req.body);
-	const pageId = req.params.pageId;
-	const updated = req.body;
-	// const title = req.body.title;
+async function updateProject(req, res, next) {
+	const pageId	= req.params.id;
+	const updated	= req.body;
+	console.log(updated);
 
 	try {
-		const page = await Page.findById(pageId);
+		const page = await Project.findById(pageId);
 		if (!page) {
 			const err = new Error("Could not find page by id.");
 			err.statusCode = 404;
@@ -82,9 +56,7 @@ async function updateProject(req, res) {
 				page: savedPage,
 			});
 		}
-	} catch (err) {
-		next(err);
-	}
+	} catch (err) { next(err); }
 }
 
 // Delete Post

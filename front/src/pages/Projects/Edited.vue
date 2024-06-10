@@ -172,6 +172,9 @@
 					</div>
 					<div class="project-list"></div>
 				</div>
+<pre>
+{{ project.details }}
+</pre>
 			</div>
 		</div>
 	</Dashboard>
@@ -229,8 +232,8 @@
 	async function updateProject() {
 		project.value.details = details.value;
 		await ProjectStore.updateProject(pageId.value, project.value)
-		.then(res =>	project.value=res)
-		.catch(err =>	console.log('error'));
+		.then(res =>	console.log(res))//updated
+		.catch(err =>	console.log(err.message));
 	}
 </script>
 

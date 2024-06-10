@@ -7,14 +7,14 @@
 					<button class="btn-close" @click="openModal=false"></button>
 					<div class="modal-heading border-bottom pb-3">
 						<button class="btn btn-sm btn-outline-primary mr-2" :class="{'active':modal == 'upload'}" @click="modal = 'upload'">Upload</button>
-						<button class="btn btn-sm btn-outline-primary" :class="{'active':modal == 'link'}" @click="modal = 'link'">Embed Link</button>
+						<button class="btn btn-sm btn-outline-primary" :class="{'active':modal == 'embed'}" @click="modal = 'embed'">Embed Link</button>
 					</div>
 					<hr/>
 					<div class="modal-body">
 						<div class="content " v-if="modal=='upload'">
 							<button class="btn btn-primary w-100">Upload File</button>
 						</div>
-						<div class="content" v-else-if="modal=='link'">
+						<div class="content" v-else-if="modal=='embed'">
 							<input type="url" placeholder="URL" class="mb-3" ref="inputEmbed">
 							<button class="btn btn-sm btn-primary m-auto" @click="EmbedImage">Embed Image</button>
 						</div>
@@ -31,7 +31,7 @@
 
 <script setup lang="ts">
 	import { ref, PropType }		from "vue";
-	import { BlockImage, Block }	from "@/utils/types"
+	import { BlockImage }			from "@/utils/types"
 	
 	const openModal			= ref<boolean>(false);
 	const modal				= ref<string>('upload');
@@ -54,6 +54,7 @@
 		if(inputEmbed.value?.value != '') {
 			imageUrl.value = inputEmbed.value?.value;
 			openModal.value = false;
+			props.block.details.value = inputEmbed.value?.value;
 		}
 	}
 
@@ -87,6 +88,29 @@
 		document.documentElement.removeEventListener('mousemove', doDrag, false);
 		document.documentElement.removeEventListener('mouseup', stopDrag, false);
 	}
+
+	function checkImage(url: any) {
+		let image = new Image();
+		image.onload = function() {
+			if (this.width > 0) {
+				console.log("image exists");
+				return true;
+			}
+		}
+		image.onerror = function() {
+			console.log("image doesn't exist");
+			return false;
+		}
+		image.src = url;
+	}
+
+	function onSet() {
+		if(checkImage(props.block.details.value) == undefined) {
+			props.block.details.value = '';
+		}
+	}
+	
+	defineExpose({ onSet })
 </script>
 
 <style lang="scss">

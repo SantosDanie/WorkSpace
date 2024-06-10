@@ -22,15 +22,14 @@
 		[BlockType.H4]: { placeholder: 'Heading 4', class: 'font-medium' },
 		[BlockType.H5]: { placeholder: 'Heading 5', class: 'font-medium' },
 		[BlockType.H6]: { placeholder: 'Heading 6', class: 'font-medium' },
-		// Irrelevant BlockTypes
-		[BlockType.Text]: null,
-		[BlockType.Divider]: null,
-		[BlockType.Quote]: null,
+		[BlockType.Text]:		null,
+		[BlockType.Divider]:	null,
+		[BlockType.Quote]:		null,
 	}
 	
 	const props = defineProps({
-		block: { type: Object as PropType<Block>, required: true },
-		readonly: { type: Boolean, default: false },
+		block:		{ type: Object as PropType<Block>, required: true },
+		readonly:	{ type: Boolean, default: false },
 	})
 	
 	const content = ref<HTMLDivElement>()

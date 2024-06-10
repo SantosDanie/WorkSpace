@@ -101,8 +101,8 @@ const putPage = async (req, res, next) => {
 			err.statusCode = 404;
 			throw err;
 		} else {
-			page.blocks = blocks;
-			page.title = title;
+			page.blocks	= blocks;
+			page.title	= title;
 			const savedPage = await page.save();
 			res.status(200).json({
 				message: "Updated page successfully.",
