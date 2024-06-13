@@ -32,6 +32,10 @@ app.use('/api/media',			require('./routes/api/media'))			// Media
 app.use('/api/comment',			require('./routes/api/comment'))		// Comments
 app.use('/api/project',			require('./routes/api/project'))		// Project
 app.use('/api/notification',	require('./routes/api/notification'))	// Notification
+app.use('/api/example', () => {
+	console.log('example');
+	return 'example';
+});
 
 app.all('*', (req, res) => {
 	res.status(404)
