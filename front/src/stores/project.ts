@@ -42,11 +42,7 @@ const config		= { headers: { 'Content-Type': 'multipart/form-data' }};
 const configJson	= { headers: { 'Content-Type': 'application/json' }};
 
 export const useProjectStore = defineStore('project', {
-	state: (): State => {
-		return {
-			project: {} as Project,
-		}
-	},
+	state: (): State => { return { project: {} as Project }},
 
 	actions:{
 		async attempt() {

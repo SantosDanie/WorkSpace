@@ -87,4 +87,19 @@ async function user(req, res) {
 	return res.status(200).json(user)
 }
 
-module.exports = {register, login, logout, refresh, user}
+async function getUserById(req, res) {
+	const userId = req.params.id;
+	try {
+		const userData = await User.findById(userId);
+		const newData = {
+			username: userData.username,
+			email: userData.email,
+			thumbnail: '',
+		}
+		res.status(200).json(newData);
+	} catch (err) {
+		res.status(404).json({ message: err.message })
+	}
+}
+
+module.exports = {register, login, logout, refresh, user, getUserById}

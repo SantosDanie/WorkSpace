@@ -106,10 +106,16 @@ const router = createRouter({
 			name: "editProject",
 			component: editProject,
 			meta: { requiresAuth: true }
+			
 		}, {
 			path: "/projects/",
 			name: "projects",
 			component: Projects,
+			meta: { requiresAuth: true }
+		}, {
+			path: "/project/view/:id",
+			name: "viewProject",
+			component: editProject,
 			meta: { requiresAuth: true }
 		}
 	]

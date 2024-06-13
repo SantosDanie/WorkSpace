@@ -1,9 +1,13 @@
 <template>
 	<Dashboard>
 		<div class="create-project">
+			<div class="alert alert-success text-sm p-2" ref="messageProject" id="js_alert-success" style="display: none;">
+				Change are saved
+			</div>
+			
 			<div class="d-flex justify-content-between">
 				<h4 class="mb-5">Update project</h4>
-				<button type="button" class="btn btn-primary h-fit" @click="updateProject">Save</button>
+				<button type="button" class="btn btn-sm btn-info h-fit" @click="updateProject">Save</button>
 			</div>
 			<div>
 				<input type="text" placeholder="Title Project" class="h4" v-model="project.title">
@@ -32,65 +36,68 @@
 								</div>
 							</div>
 							<div class="tab-content" v-else-if="tab == 'team'">
-								<div class="content-assigned py-5">
-									<div class="cards row">
-										<div class="col-3">
-											<div class="card p-3 bg-light">
-												<h5>Has Access</h5>
-											</div>
-										</div>
-										<div class="col-3">
-											<div class="card p-3 bg-light">
-												<h5>All Members</h5>
-											</div>
-										</div>
-									</div>
-									<hr>
-									<div class="table-actions">
-										<div class="filters">
-											<h6>All Members (03)</h6>
-											<div class="filter-search">
-												<form action="#0" class="search-form">
-													<input type="text" name="search" placeholder="Search...">
-												</form>
-												<button class="btn btn-sm btn-outline-primary">
-													<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M3.9 54.9C10.5 40.9 24.5 32 40 32H472c15.5 0 29.5 8.9 36.1 22.9s4.6 30.5-5.2 42.5L320 320.9V448c0 12.1-6.8 23.2-17.7 28.6s-23.8 4.3-33.5-3l-64-48c-8.1-6-12.8-15.5-12.8-25.6V320.9L9 97.3C-.7 85.4-2.8 68.8 3.9 54.9z"/></svg>
-													Filter
-												</button>
-											</div>
-										</div>
-									</div>
-									<div class="task-list table-responsive-sm">
-										<table class="table table-sm">
-											<thead>
-												<tr>
-													<th class="text-sm">Name</th>
-													<th class="text-sm">Role</th>
-													<th class="text-sm">Mentions</th>
-													<th class="text-sm">Enrolled</th>
-													<th></th>
-												</tr>
-											</thead>
-											<tbody>
-												<tr>
-													<td class="text-sm">Santos</td>
-													<td class="text-sm">Admin</td>
-													<td class="text-sm">@santos</td>
-													<td class="text-sm">May 12, 2019</td>
-													<td class="content-right">
-														<button>
-															<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 512"><path d="M64 360a56 56 0 1 0 0 112 56 56 0 1 0 0-112zm0-160a56 56 0 1 0 0 112 56 56 0 1 0 0-112zM120 96A56 56 0 1 0 8 96a56 56 0 1 0 112 0z"/></svg>
-														</button>
-													</td>
-												</tr>
-											</tbody>
-										</table>
-									</div>
-								</div>
+								<div class="content-assigned py-2">
+									<h5>Members</h5>
 
+									<table class="table table-sm mt-5">
+										<thead>
+											<tr>
+												<th scope="col"></th>
+												<th scope="col">Name</th>
+												<th scope="col">Permission</th>
+												<th scope="col">Access level</th>
+												<th scope="col" style="max-width: 80px; width: 80px;">Actions</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<th scope="row"></th>
+												<td>Sam</td>
+												<td>
+													<div class="dropdown">
+														<button class="btn btn-sm btn-primary">
+															Admin
+															<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"/></svg>
+														</button>
+														<div class="option-dropdown">
+															<ul>
+																<li class="mb-1" data-option="read">
+																	<p class="mb-0">Read</p>
+																	<span>Can view, and comment project.</span>
+																</li>
+																<li class="mb-1" data-option="write">
+																	<p class="mb-0">Write</p>
+																	<span>Can comment, chatting, manage Task project</span>
+																</li>
+																<li class="mb-1" data-option="editor">
+																	<p class="mb-0">Editor</p>
+																	<span>Can manage project settings and users, and also inherits all Write Permission.</span>
+																</li>
+																<li class="mb-1" data-option="admin">
+																	<p class="mb-0">Admin</p>
+																	<span>Can manage project settings and users, delete project, and also inherits all Write Permission.</span>
+																</li>
+															</ul>
+														</div>
+													</div>
+												</td>
+												<td>All</td>
+												<td><a href="#0" class="fw-bold text-sm">Remove</a></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
 							</div>
 							<div class="tab-content" v-else-if="tab == 'files'">
-								<p>Working</p>
+								<div class="d-flex mb-3">
+									<button class="btn btn-sm btn-primary mr-2">All</button>
+									<button class="btn btn-sm btn-primary mr-2">Use on Details</button>
+									<button class="btn btn-sm btn-primary mr-2">Image</button>
+									<button class="btn btn-sm btn-primary mr-2">Files</button>
+								</div>
+								<div class="editor-files">
+									
+								</div>
 							</div>
 							<div class="tab-content" v-else-if="tab == 'settings'">
 								<p>Setting</p>
@@ -101,9 +108,9 @@
 										</div>
 										<div class="col-3">
 											<div class="dateTimePicker">
-												<input type="date" id="date" value="03/07/2018" ref="date" @change="dateTimePicker">
+												<input type="date" id="date" ref="date" :value="updateTime('date')" @change="dateTimePicker">
 												<span></span>
-												<input type="time" id="time" value="08:00" ref="time" @change="dateTimePicker">
+												<input type="time" id="time" ref="time" :value="updateTime('time')" @change="dateTimePicker">
 											</div>
 										</div>
 									</div>
@@ -116,12 +123,12 @@
 											<div class="btn-group">
 												<div class="btn-group-horizontal" role="group" aria-label="Horizontal radio toggle button group">
 													<input type="radio" class="btn-check" name="active-chat" id="active-chat-no"
+													:checked="project.settings.chat==false ? true : false"
 													@input="project.settings.chat = false">
-													<!-- :checked="project.settings.chat==false ? true : false" -->
 													<label class="btn btn-sm btn-outline-primary mb-0 mr-1" for="active-chat-no">No</label>
 													<input type="radio" class="btn-check" name="active-chat" id="active-chat-yes"
+													:checked="project.settings.chat==true ? true : false"
 													@input="project.settings.chat = true">
-													<!-- :checked="project.settings.chat==true ? true : false" -->
 													<label class="btn btn-sm btn-outline-primary mb-0" for="active-chat-yes">Yes</label>
 												</div>
 											</div>
@@ -136,12 +143,12 @@
 											<div class="btn-group">
 												<div class="btn-group-horizontal" role="group" aria-label="Horizontal radio toggle button group">
 													<input type="radio" class="btn-check" name="active-comments" id="active-comment-no" 
+													:checked="project.settings.comments==false ? true : false"
 													@input="project.settings.comments = false">
-													<!-- :checked="project.settings.comments==false ? true : false" -->
 													<label class="btn btn-sm btn-outline-primary mb-0 mr-1" for="active-comment-no">No</label>
 													<input type="radio" class="btn-check" name="active-comments" id="active-comment-yes"
+													:checked="project.settings.comments==true ? true : false"
 													@input="project.settings.comments = true">
-													<!-- :checked="project.settings.comments==true ? true : false" -->
 													<label class="btn btn-sm btn-outline-primary mb-0" for="active-comment-yes">Yes</label>
 												</div>
 											</div>
@@ -155,12 +162,12 @@
 											<div class="btn-group">
 												<div class="btn-group-horizontal" role="group" aria-label="Horizontal radio toggle button group">
 													<input type="radio" class="btn-check" name="active-progress" id="active-progress-no"
+													:checked="project.settings.progress==false ? true : false"
 													@input="project.settings.progress = false">
-													<!-- :checked="project.settings.progress==false ? true : false" -->
 													<label class="btn btn-sm btn-outline-primary mb-0 mr-1" for="active-progress-no">No</label>
 													<input type="radio" class="btn-check" name="active-progress" id="active-progress-yes"
+													:checked="project.settings.progress==true ? true : false"
 													@input="project.settings.progress = true">
-													<!-- :checked="project.settings.progress==true ? true : false" -->
 													<label class="btn btn-sm btn-outline-primary mb-0" for="active-progress-yes">Yes</label>
 												</div>
 											</div>
@@ -172,9 +179,6 @@
 					</div>
 					<div class="project-list"></div>
 				</div>
-<pre>
-{{ project.details }}
-</pre>
 			</div>
 		</div>
 	</Dashboard>
@@ -195,6 +199,7 @@
 	const pageId				= ref(router.params.id.toString());
 	const date					= ref<HTMLInputElement>();
 	const time					= ref<HTMLInputElement>();
+	const messageProject		= ref<HTMLDivElement>();
 	const details				= ref({
 		blocks:	[{
 			id: uuidv4(),
@@ -216,24 +221,75 @@
 			progress:	true,
 		}
 	})
+	getProject();
 
 	function dateTimePicker() {
 		let deadline = date.value?.value+" "+time.value?.value;
 		project.value.deadline = deadline;
 	}
 
-	getProject();
 	async function getProject() {
 		await ProjectStore.getProject(pageId.value)
-		.then(res =>	project.value=res)
-		.catch(err =>	console.log('error'));
+		.then(res => project.value=res)
+		.catch(err => {
+			if(messageProject.value) {
+				messageProject.value.classList.remove('alert-success');
+				messageProject.value.classList.add('alert-danger');
+				messageProject.value.innerText		= 'Field to load project';
+				messageProject.value.style.display	= 'block';
+			}
+			setTimeout(() => {
+				if(messageProject.value) {
+					messageProject.value.classList.remove('alert-success');
+					messageProject.value.classList.remove('alert-danger');
+					messageProject.value.innerText		= '';
+					messageProject.value.style.display	= 'none';
+				}
+			}, 3000);
+		});
+	}
+
+	function updateTime(time:string) {
+		const updateDate = project.value.deadline.split(' ');
+		if(time == 'date') { return updateDate[0] }
+		if(time == 'time') { return updateDate[1] }
 	}
 
 	async function updateProject() {
-		project.value.details = details.value;
 		await ProjectStore.updateProject(pageId.value, project.value)
-		.then(res =>	console.log(res))//updated
-		.catch(err =>	console.log(err.message));
+		.then(res => {
+			project.value=res.page;
+			if(messageProject.value) {
+				messageProject.value.innerText		= 'Change are saved';
+				messageProject.value.classList.remove('alert-danger');
+				messageProject.value.classList.add('alert-success');
+				messageProject.value.style.display	= 'block';
+			}
+			setTimeout(() => {
+				if(messageProject.value) {
+					messageProject.value.innerText		= '';
+					messageProject.value.classList.remove('alert-danger');
+					messageProject.value.classList.remove('alert-success');
+					messageProject.value.style.display	= 'none';
+				}
+			}, 3000);
+		})
+		.catch(err =>	{
+			if(messageProject.value) {
+				messageProject.value.innerText		= 'Error: Change are not saved';
+				messageProject.value.classList.remove('alert-success');
+				messageProject.value.classList.add('alert-danger');
+				messageProject.value.style.display	= 'block';
+			}
+			setTimeout(() => {
+				if(messageProject.value) {
+					messageProject.value.innerText		= '';
+					messageProject.value.classList.remove('alert-success');
+					messageProject.value.classList.remove('alert-danger');
+					messageProject.value.style.display	= 'none';
+				}
+			}, 3000);
+		});
 	}
 </script>
 
@@ -264,7 +320,7 @@
 		}
 	}
 
-	.editor-details {
+	.editor-details, .editor-files {
 		width: 100%;
 		height: 100%;
 		display: table;
@@ -326,6 +382,39 @@
 				box-shadow: 0 0 2px gray;
 				svg { height: 12px; }
 				svg { margin-right: 5px; }
+			}
+		}
+	}
+
+	.dropdown {
+		border-radius: 5px;
+		width: fit-content;
+		position: relative;
+		svg { height: 15px; }
+		svg path { fill: #fff; }
+		.option-dropdown {
+			display: none;
+			padding: 5px 5px;
+			margin-top: 5px;
+			min-width: 300px;
+			border-radius: 5px;
+			position: absolute;
+			background-color: #f0f0f0;
+			box-shadow: 0 0 5px 0 rgba(#000, 0.1);
+			ul { margin: 0; }
+			ul { padding: 0; }
+			span { font-size: 12px; }
+			li {
+				padding: 5px;
+				display: flex;
+				transition: 300ms;
+				border-radius: 5px;
+				flex-direction: column;
+				p {
+					font-size: 14px;
+					font-weight: 600;
+				}
+				&:hover { background-color: #dddddd; }
 			}
 		}
 	}

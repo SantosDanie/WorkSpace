@@ -1,5 +1,5 @@
 <template>
-	<div class="w-100">
+	<div class="w-100 py-2">
 		<div class="modal-blockImage" v-if="props.block.details.value == ''">
 			<button class="btn btn-outline-primary w-100" @click="openModal=true">Upload Image</button>
 			<div class="modal-upload-image" v-if="openModal==true">
@@ -12,7 +12,10 @@
 					<hr/>
 					<div class="modal-body">
 						<div class="content " v-if="modal=='upload'">
-							<button class="btn btn-primary w-100">Upload File</button>
+							<label for="openFile" class="btn btn-primary w-100">
+								Upload File
+							</label>
+							<input type="file" id="openFile" class="d-none" @input="uploadImage"/>
 						</div>
 						<div class="content" v-else-if="modal=='embed'">
 							<input type="url" placeholder="URL" class="mb-3" ref="inputEmbed">
@@ -33,9 +36,11 @@
 	import { ref, PropType }		from "vue";
 	import { BlockImage }			from "@/utils/types"
 	
+	const containerImage	= ref();
+	const startX			= ref<number>(0);
+	const startWidth		= ref<number>(0);
 	const openModal			= ref<boolean>(false);
 	const modal				= ref<string>('upload');
-	const containerImage	= ref();
 	const inputEmbed		= ref<HTMLInputElement>();
 	const imageUrl			= ref<string|undefined>('');
 	const props				= defineProps({
@@ -58,10 +63,15 @@
 		}
 	}
 
-	// new code
-	const startX		= ref<number>(0);
-	const startWidth	= ref<number>(0);
-
+	function uploadImage(event: any) {
+		event.preventDefault();
+		const imageFile = URL.createObjectURL(event.target.files[0]);
+		if (imageFile) {
+			openModal.value				= false;
+			props.block.details.value	= imageFile;
+		}
+	}
+	
 	function initDrag(e: any) {
 		startX.value = e.clientX;
 		if(containerImage.value != null && document.defaultView) {
@@ -76,10 +86,13 @@
 			let maxWidth = parseInt(document.defaultView.getComputedStyle(containerImage.value.parentElement).width, 10);
 			if((startWidth.value + e.clientX - startX.value) > maxWidth-1) {
 				containerImage.value.style.maxWidth = '100%';
+				props.block.details.width = '100%';
 			} else if((startWidth.value + e.clientX - startX.value) < 50) {
 				containerImage.value.style.maxWidth = '60px';
+				props.block.details.width = '60px';
 			} else {
 				containerImage.value.style.maxWidth = (startWidth.value + e.clientX - startX.value) + 'px';
+				props.block.details.width = (startWidth.value + e.clientX - startX.value) + 'px';
 			}
 		}
 	}
@@ -92,10 +105,9 @@
 	function checkImage(url: any) {
 		let image = new Image();
 		image.onload = function() {
-			if (this.width > 0) {
-				console.log("image exists");
-				return true;
-			}
+			// if (this.width > 0) {}
+			console.log("image exists");
+			return true;
 		}
 		image.onerror = function() {
 			console.log("image doesn't exist");
@@ -105,9 +117,7 @@
 	}
 
 	function onSet() {
-		if(checkImage(props.block.details.value) == undefined) {
-			props.block.details.value = '';
-		}
+		if(checkImage(props.block.details.value) == undefined) { props.block.details.value = ''; }
 	}
 	
 	defineExpose({ onSet })
@@ -150,7 +160,6 @@
 
 	.blockImage {
 		width: 100%;
-		padding: 10px 0;
 		position: relative;
 
 		.resizing-image-right {

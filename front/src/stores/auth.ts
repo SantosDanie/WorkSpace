@@ -104,6 +104,16 @@ export const useAuthStore = defineStore('auth', {
 			} catch (error: Error | any) {
 				throw error.message
 			}
-		}
+		},
+
+		async getUserById(id: string) {
+			try {
+				const {data} = await useApi().get(`/api/auth/user/${id}`);
+				this.user = data
+				return data
+			} catch (error: Error | any) {
+				throw error.message
+			}
+		}, 
 	}
 })

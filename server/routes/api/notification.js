@@ -3,6 +3,6 @@ const router				= express.Router()
 const isAuth				= require("../../middleware/isAuth");
 const activitiesController	= require("../../controllers/notificationController");
 
-router.get('/:userId',		isAuth, activitiesController.getNotifications)
 router.post('/',			activitiesController.createNotifications)
+router.get('/:userId',		isAuth, activitiesController.getNotifications)
 module.exports				= router

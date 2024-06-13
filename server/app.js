@@ -27,11 +27,11 @@ app.use(errorHandlerMiddleware)											// Default Error Handler
 
 // Routes
 app.use('/api/auth',			require('./routes/api/auth'))			// auth
-app.use('/api/project',			require('./routes/api/project'))		// Project
 app.use('/api/page',			require('./routes/api/pages'))			// Pages
 app.use('/api/media',			require('./routes/api/media'))			// Media
-app.use('/api/notification',	require('./routes/api/notification'))	// Notification
 app.use('/api/comment',			require('./routes/api/comment'))		// Comments
+app.use('/api/project',			require('./routes/api/project'))		// Project
+app.use('/api/notification',	require('./routes/api/notification'))	// Notification
 
 app.all('*', (req, res) => {
 	res.status(404)
@@ -44,6 +44,6 @@ app.all('*', (req, res) => {
 })
 
 mongoose.connection.once('open', () => {
-	console.log('DB connected')
+	console.log('DB connected');
 	app.listen(PORT, () => { console.log(`Listening on port ${PORT}`) })
 })

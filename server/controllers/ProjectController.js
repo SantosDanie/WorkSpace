@@ -40,17 +40,23 @@ async function createProject(req, res) {
 async function updateProject(req, res, next) {
 	const pageId	= req.params.id;
 	const updated	= req.body;
-	console.log(updated);
-
 	try {
-		const page = await Project.findById(pageId);
-		if (!page) {
+		const project = await Project.findById(pageId);
+		if (!project) {
 			const err = new Error("Could not find page by id.");
 			err.statusCode = 404;
 			throw err;
-		} else {
-			page = updated;
-			const savedPage = await page.save();
+		} 
+		if(project) {
+			project.title		= updated.title;
+			project.progress	= updated.progress;
+			project.deadline	= updated.deadline;
+			project.details		= updated.details;
+			project.members		= updated.members;
+			project.files		= updated.files;
+			project.settings	= updated.settings;
+
+			const savedPage = await project.save();
 			res.status(200).json({
 				message: "Updated page successfully.",
 				page: savedPage,
