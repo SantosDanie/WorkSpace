@@ -119,10 +119,4 @@ export const availableBlockTypes = [
 		blockType: BlockType.Image,
 		canSplit: true,
 	}
-] as {
-	type:string,
-	icon:string,
-	label:string,
-	blockType:BlockType|string,
-	canSplit:boolean
-}[]
+] as { type:string, icon:string, label:string, blockType:BlockType|string, canSplit:boolean }[]

@@ -114,6 +114,16 @@ export const useAuthStore = defineStore('auth', {
 			} catch (error: Error | any) {
 				throw error.message
 			}
+		},
+
+		async getExample() {
+			try {
+				const {data} = await useApi().get(`/api/example`);
+				this.user = data
+				return data
+			} catch (error: Error | any) {
+				throw error.message
+			}
 		}, 
 	}
 })
