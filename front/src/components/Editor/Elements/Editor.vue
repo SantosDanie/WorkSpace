@@ -22,7 +22,7 @@
 	// import Comment				from "../Extension/Comments/extension";
 	import { computed, watch }	from 'vue';
 	import { useEditor, EditorContent }			from "@tiptap/vue-3";
-	import { markdownToHtml, htmlToMarkdown }	from '@/utils/utils'
+	import { markdownToHtml, htmlToMarkdown }	from '@/utils/utils';
 	
 	const props		= defineProps({
 		modelValue:	{ type: String,		default: [] },

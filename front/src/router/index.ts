@@ -20,6 +20,7 @@ import setPage			from '@/pages/Projects/SettingsSpace.vue'
 import CreateProject	from '@/pages/Projects/Create.vue'
 import editProject		from '@/pages/Projects/Edited.vue'
 import Projects			from '@/pages/Projects/index.vue'
+import viewProjects		from '@/pages/Projects/View.vue'
 
 // Routes
 const router = createRouter({
@@ -89,12 +90,13 @@ const router = createRouter({
 			name: 'workPage',
 			component: WorkPage,
 			meta: { requiresAuth: true }
-		}, {
-			path: "/settings/:id",
-			name:  'settingsPage',
-			component: setPage,
-			meta: { requiresAuth: true }
-		}, 
+		},
+		//  {
+		// 	path: "/settings/:id",
+		// 	name:  'settingsPage',
+		// 	component: setPage,
+		// 	meta: { requiresAuth: true }
+		// }, 
 		// Projects
 		{
 			path: "/project/create",

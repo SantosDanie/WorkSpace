@@ -12,10 +12,9 @@
 					<hr/>
 					<div class="modal-body">
 						<div class="content " v-if="modal=='upload'">
-							<label for="openFile" class="btn btn-primary w-100">
-								Upload File
-							</label>
-							<input type="file" id="openFile" class="d-none" @input="uploadImage"/>
+							<p>Working...</p>
+							<!-- <label for="openFile" class="btn btn-primary w-100">Upload File</label>
+							<input type="file" id="openFile" class="d-none" @input="uploadImage"/> -->
 						</div>
 						<div class="content" v-else-if="modal=='embed'">
 							<input type="url" placeholder="URL" class="mb-3" ref="inputEmbed">
@@ -28,6 +27,17 @@
 		<div class="blockImage" ref="containerImage" v-else-if="props.block.details.value != ''">
 			<img :src="props.block.details.value">
 			<div class="resizing-image-right" @mousedown="initDrag"></div>
+
+			<div class="image-dropdown">
+				<button class="btn btn-light btn-sm" @click="openImageOption = !openImageOption">
+					<svg xmlns="http://www.w3.org/2000/svg" width="5px" viewBox="0 0 128 512"><path d="M64 360a56 56 0 1 0 0 112 56 56 0 1 0 0-112zm0-160a56 56 0 1 0 0 112 56 56 0 1 0 0-112zM120 96A56 56 0 1 0 8 96a56 56 0 1 0 112 0z"/></svg>
+				</button>
+				<div class="content-image-dropdown" :class="{'d-none': openImageOption==false}">
+					<ul class="p-0 m-0">
+						<li @click="emit('delete')">Delete</li>
+					</ul>
+				</div>
+			</div>
 		</div>
 	</div>
 </template>
@@ -43,10 +53,13 @@
 	const modal				= ref<string>('upload');
 	const inputEmbed		= ref<HTMLInputElement>();
 	const imageUrl			= ref<string|undefined>('');
+	const openImageOption	= ref<boolean>(false);
 	const props				= defineProps({
 		block:		{ type: Object as PropType<BlockImage>, required: true },
 		readonly:	{ type: Boolean, default: false },
 	});
+	const emit				= defineEmits(['delete']);
+	
 
 	setTimeout(() => {
 		if(containerImage.value != null) {
@@ -119,7 +132,7 @@
 	function onSet() {
 		if(checkImage(props.block.details.value) == undefined) { props.block.details.value = ''; }
 	}
-	
+
 	defineExpose({ onSet })
 </script>
 
@@ -161,7 +174,6 @@
 	.blockImage {
 		width: 100%;
 		position: relative;
-
 		.resizing-image-right {
 			top: 50%;
 			right: 3px;
@@ -177,7 +189,28 @@
 			box-shadow: 0 0 0 1px #fff;
 			background-color: rgba(#000, 0.5);
 		}
-
+		&:hover .image-dropdown { opacity: 1; }
 		&:hover .resizing-image-right { opacity: 1; }
+		img { width: 100%; }
+
+		.image-dropdown {
+			top: 5px;
+			right: 10px;
+			opacity: 0;
+			position: absolute;
+			transition: 300ms;
+			.content-image-dropdown {
+				padding: 5px;
+				border-radius: 5px;
+				position: absolute;
+				top: calc(100% + 2px);
+				background-color: #fff;
+				box-shadow: 0 0 3px 0 gray;
+				li {
+					display: block;
+					cursor: pointer;
+				}
+			}
+		}
 	}
 </style>

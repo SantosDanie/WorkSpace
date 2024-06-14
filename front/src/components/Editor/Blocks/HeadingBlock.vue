@@ -2,7 +2,7 @@
 	<div ref="content" :key="props.block.type"
 		:contenteditable="!props.readonly" spellcheck="false"
 		@blur="props.block.details.value=content?.innerText"
-		class="block-heading focus:outline-none focus-visible:outline-none py-0 w-full font-semibold"
+		class="mb-1 block-heading focus:outline-none focus-visible:outline-none py-0 w-full font-semibold"
 		:block-type="props.block.type"
 		>
 		<!-- :class="headingConfig[props.block.type]?.class"

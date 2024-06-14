@@ -1,5 +1,5 @@
 <template>
-	<Editor v-model="props.block.details.value" class="py-2 border-l-3 border-black border-solid px-3"/>
+	<Editor v-model="props.block.details.value" class="my-1 py-2 border-l-3 border-black border-solid px-3"/>
 </template>
 
 <script setup lang="ts">

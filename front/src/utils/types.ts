@@ -3,6 +3,7 @@ import QuoteBlock   from '@/components/Editor/blocks/QuoteBlock.vue';
 import ImageBlock	from '@/components/Editor/Blocks/ImageBlock.vue';
 import DividerBlock from '@/components/Editor/blocks/DividerBlock.vue';
 import HeadingBlock from '@/components/Editor/blocks/HeadingBlock.vue';
+import CalloutBlock from '@/components/Editor/blocks/CalloutBlock.vue';
 
 export interface Block {
 	id: string,
@@ -29,32 +30,38 @@ export interface DetailsImage {
 }
 
 export enum BlockType {
-	Text    = 'TEXT',
-	H1      = 'H1',
-	H2      = 'H2',
-	H3      = 'H3',
-	H4      = 'H4',
-	H5      = 'H5',
-	H6      = 'H6',
-	Divider = 'DIVIDER',
-	Quote   = 'QUOTE',
-	Image   = 'IMAGE',
+	Text			= 'TEXT',
+	H1				= 'H1',
+	H2				= 'H2',
+	H3				= 'H3',
+	H4				= 'H4',
+	H5				= 'H5',
+	H6				= 'H6',
+	Divider			= 'DIVIDER',
+	Quote			= 'QUOTE',
+	Image			= 'IMAGE',
+	Callout	= "CALLOUT"
 }
 
 export const BlockComponents = {
-	[BlockType.Text]:		TextBlock,
-	[BlockType.H1]:			HeadingBlock,
-	[BlockType.H2]:			HeadingBlock,
-	[BlockType.H3]:			HeadingBlock,
-	[BlockType.H4]:			HeadingBlock,
-	[BlockType.H5]:			HeadingBlock,
-	[BlockType.H6]:			HeadingBlock,
-	[BlockType.Divider]:	DividerBlock,
-	[BlockType.Quote]:		QuoteBlock,
-	[BlockType.Image]:		ImageBlock,
+	[BlockType.Text]:			TextBlock,
+	[BlockType.H1]:				HeadingBlock,
+	[BlockType.H2]:				HeadingBlock,
+	[BlockType.H3]:				HeadingBlock,
+	[BlockType.H4]:				HeadingBlock,
+	[BlockType.H5]:				HeadingBlock,
+	[BlockType.H6]:				HeadingBlock,
+	[BlockType.Divider]:		DividerBlock,
+	[BlockType.Quote]:			QuoteBlock,
+	[BlockType.Image]:			ImageBlock,
+	[BlockType.Callout]:		CalloutBlock,
 }
 
-export const textBlockMap	= [BlockType.Text, BlockType.Quote]
+export const textBlockMap	= [
+	BlockType.Text,
+	BlockType.Quote,
+	BlockType.Callout
+]
 export const isTextBlock	= (type: string) => { return textBlockMap.some(textBlock => textBlock === type) }
 
 export const availableBlockTypes = [
@@ -117,6 +124,12 @@ export const availableBlockTypes = [
 		icon: 'io-image-outline',
 		label: 'Image',
 		blockType: BlockType.Image,
+		canSplit: true,
+	}, {
+		type: 'Turn into',
+		icon: 'px-card-text',
+		label: 'CallOut',
+		blockType: BlockType.Callout,
 		canSplit: true,
 	}
 ] as { type:string, icon:string, label:string, blockType:BlockType|string, canSplit:boolean }[]

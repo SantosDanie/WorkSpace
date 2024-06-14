@@ -1,5 +1,5 @@
 <template>
-	<Editor v-model="props.block.details.value"/>
+	<Editor v-model="props.block.details.value" class="mb-1"/>
 </template>
   
 <script setup lang="ts">

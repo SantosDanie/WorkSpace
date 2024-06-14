@@ -25,7 +25,8 @@ import {
 	CoListNumbered,
 	ViFileTypeTextile,
 	CoViewColumn,
-	IoImageOutline
+	IoImageOutline,
+	PxCardText,
 }								from "oh-vue-icons/icons"
 
 import './index.css'
@@ -54,7 +55,8 @@ addIcons(
 	CoListNumbered,
 	ViFileTypeTextile,
 	CoViewColumn,
-	IoImageOutline
+	IoImageOutline,
+	PxCardText
 )
 
 const app = createApp(App)

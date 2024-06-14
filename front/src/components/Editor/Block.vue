@@ -22,6 +22,7 @@
 			:readonly="props.readonly"
 			@keydown="keyDownHandler"
 			@keyup="parseMarkdown"
+			@delete="emit('deleteBlock')"
 			:class="{
 				'py-0': ![
 					BlockType.H1,
@@ -36,10 +37,10 @@
 </template>
   
 <script setup lang="ts">
-	import { ref, PropType } from 'vue'
+	import { ref, PropType }	from 'vue'
+	import Tooltip				from './elements/Tooltip.vue'
+	import BlockMenu			from './Elements/BlockMenu.vue'
 	import { Block, BlockType, BlockComponents, isTextBlock } from '@/utils/types'
-	import BlockMenu	from './Elements/BlockMenu.vue'
-	import Tooltip		from './elements/Tooltip.vue'
 
 	const props = defineProps({
 		block: {
@@ -154,6 +155,7 @@
 		return [
 			BlockType.Text,
 			BlockType.Quote,
+			BlockType.Callout,
 			BlockType.H1,
 			BlockType.H2,
 			BlockType.H3,
